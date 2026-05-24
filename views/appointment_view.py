@@ -29,3 +29,28 @@ Date: {appointment.appointment_date}
 Reason: {appointment.reason}
             """)
 
+
+    def get_appointment_update_data(self):
+        appointment_id = int(
+            input("Appointment ID: ")
+        )
+
+        appointment_date = input(
+            "New date (YYYY-MM-DD HH:MM): "
+        )
+
+        reason = input(
+            "New reason: "
+        )
+
+        return (
+            appointment_id,
+            appointment_date,
+            reason
+        )
+
+
+    def get_appointment_id(self):
+        return int(
+            input("Appointment ID: ")
+        )

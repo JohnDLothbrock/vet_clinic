@@ -50,6 +50,16 @@ class PetService:
     def get_all_pets(self) -> list[Pet]:
         return self.pet_repository.get_all()
 
+    # READ BY ID
+    def get_pet_by_id(
+            self,
+            pet_id: int
+    ):
+
+        return self.pet_repository.get_by_id(
+            pet_id
+        )
+
 
     # UPDATE
     def update_pet(

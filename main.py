@@ -34,9 +34,11 @@ while True:
     APPOINTMENTS
     7. Add Appointment
     8. View Appointments
+    9. Update Appointment
+    10. Delete Appointment
 
-    9. Exit
-    """)
+    11. Exit
+        """)
 
 
     option = input("Choose option: ")
@@ -66,6 +68,12 @@ while True:
         appointment_controller.show_appointments()
 
     elif option == "9":
+        appointment_controller.update_appointment()
+
+    elif option == "10":
+        appointment_controller.delete_appointment()
+
+    elif option == "11":
         break
 
     else:
