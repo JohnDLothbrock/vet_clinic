@@ -9,12 +9,12 @@ from repositories.owner_repository import (
 
 class OwnerController:
 
-    def __init__(self):
+    def __init__(
+            self,
+            owner_service
+    ):
 
-        owner_repository = OwnerRepository()
-        self.owner_service = OwnerService(
-            owner_repository
-        )
+        self.owner_service = owner_service
         self.owner_view = OwnerView()
 
     def create_owner(self):
@@ -29,7 +29,7 @@ class OwnerController:
         self.owner_view.display_owners(owners)
 
     def update_owner(self):
-        
+
         try:
             owner_id, name, phone = self.owner_view.get_owner_update_data()
             self.owner_service.update_owner(owner_id, name, phone)

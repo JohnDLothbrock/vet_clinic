@@ -20,35 +20,15 @@ from services.owner_service import (
 )
 
 
-
 class AppointmentController:
 
-
-
-    def __init__(self):
-
-        owner_repository = OwnerRepository()
-
-        owner_service = OwnerService(
-            owner_repository
-        )
-
-        pet_repository = PetRepository()
-
-        pet_service = PetService(
-            pet_repository,
-            owner_service
-        )
-
-        appointment_repository = (
-            AppointmentRepository()
-        )
+    def __init__(
+            self,
+            appointment_service
+    ):
 
         self.appointment_service = (
-            AppointmentService(
-                appointment_repository,
-                pet_service
-            )
+            appointment_service
         )
 
         self.appointment_view = (
