@@ -19,23 +19,11 @@ from exceptions.pet_not_found_exception import (
 class PetController:
 
 
-    def __init__(self):
-
-        pet_repository = PetRepository()
-
-        owner_repository = (
-            OwnerRepository()
-        )
-
-        owner_service = OwnerService(
-            owner_repository
-        )
-
-        self.pet_service = PetService(
-            pet_repository,
-            owner_service
-        )
-
+    def __init__(
+        self,
+        pet_service
+    ):
+        self.pet_service = pet_service
         self.pet_view = PetView()
 
 

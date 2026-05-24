@@ -4,6 +4,24 @@ from controllers.owner_controller import OwnerController
 from controllers.appointment_controller import (
     AppointmentController
 )
+from repositories.owner_repository import (
+    OwnerRepository
+)
+from repositories.pet_repository import (
+    PetRepository
+)
+from repositories.appointment_repository import (
+    AppointmentRepository
+)
+from services.owner_service import (
+    OwnerService
+)
+from services.pet_service import (
+    PetService
+)
+from services.appointment_service import (
+    AppointmentService
+)
 
 
 try:
@@ -13,9 +31,34 @@ except Exception as e:
     print("Connection error:", e)
 
 
-controller = PetController()
-owner_controller = OwnerController()
-appointment_controller = AppointmentController()
+# Repositories
+owner_repository = OwnerRepository()
+pet_repository = PetRepository()
+appointment_repository = AppointmentRepository()
+
+# Services
+owner_service = OwnerService(
+    owner_repository
+)
+pet_service = PetService(
+    pet_repository,
+    owner_service
+)
+appointment_service = AppointmentService(
+    appointment_repository,
+    pet_service
+)
+
+# Controllers
+controller = PetController(
+    pet_service
+)
+owner_controller = OwnerController(
+    owner_service
+)
+appointment_controller = AppointmentController(
+    appointment_service
+)
 
 while True:
     print("""
