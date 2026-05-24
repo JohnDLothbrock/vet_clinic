@@ -1,5 +1,7 @@
 import logging
 
+from config.settings import LOG_FILE
+
 logger = logging.getLogger(
     "vet_clinic"
 )
@@ -13,7 +15,7 @@ formatter = logging.Formatter(
 )
 
 file_handler = logging.FileHandler(
-    "vet_clinic.log"
+    LOG_FILE
 )
 
 file_handler.setFormatter(
@@ -26,10 +28,12 @@ console_handler.setFormatter(
     formatter
 )
 
-logger.addHandler(
-    file_handler
-)
+if not logger.handlers:
 
-logger.addHandler(
-    console_handler
-)
+    logger.addHandler(
+        file_handler
+    )
+
+    logger.addHandler(
+        console_handler
+    )

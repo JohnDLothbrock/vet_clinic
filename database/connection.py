@@ -1,20 +1,22 @@
 import pyodbc
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
-
-server = os.getenv("DB_SERVER")
-database = os.getenv("DB_DATABASE")
-driver = os.getenv("DB_DRIVER")
+from config.settings import (
+    DB_SERVER,
+    DB_DATABASE,
+    DB_DRIVER
+)
 
 connection_string = f"""
-DRIVER={{{driver}}};
-SERVER={server};
-DATABASE={database};
+DRIVER={{{DB_DRIVER}}};
+SERVER={DB_SERVER};
+DATABASE={DB_DATABASE};
 Trusted_Connection=yes;
 TrustServerCertificate=yes;
 """
 
+
 def get_connection():
-    return pyodbc.connect(connection_string)
+
+    return pyodbc.connect(
+        connection_string
+    )

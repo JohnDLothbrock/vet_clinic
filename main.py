@@ -24,11 +24,26 @@ from services.appointment_service import (
 )
 
 
-try:
-    conn = get_connection()
-    print("Database connected successfully!")
-except Exception as e:
-    print("Connection error:", e)
+def test_connection():
+
+    try:
+
+        connection = get_connection()
+
+        print(
+            "Database connected successfully!"
+        )
+
+        connection.close()
+
+    except Exception as error:
+
+        print(
+            "Connection error:",
+            error
+        )
+
+test_connection()
 
 
 # Repositories
@@ -50,7 +65,7 @@ appointment_service = AppointmentService(
 )
 
 # Controllers
-controller = PetController(
+pet_controller = PetController(
     pet_service
 )
 owner_controller = OwnerController(
@@ -87,16 +102,16 @@ while True:
     option = input("Choose option: ")
 
     if option == "1":
-        controller.create_pet()
+        pet_controller.create_pet()
 
     elif option == "2":
-        controller.show_pets()
+        pet_controller.show_pets()
 
     elif option == "3":
-        controller.update_pet()
+        pet_controller.update_pet()
 
     elif option == "4":
-        controller.delete_pet()
+        pet_controller.delete_pet()
 
     elif option == "5":
         owner_controller.create_owner()

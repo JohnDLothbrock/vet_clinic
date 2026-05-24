@@ -1,5 +1,10 @@
+from exceptions.application_exception import (
+    ApplicationException
+)
+
+
 class AppointmentNotFoundException(
-    Exception
+    ApplicationException
 ):
 
     def __init__(
@@ -8,7 +13,5 @@ class AppointmentNotFoundException(
     ):
 
         super().__init__(
-            f"Appointment with ID "
-            f"{appointment_id} does not exist."
+            f"Appointment with ID {appointment_id} does not exist."
         )
-
