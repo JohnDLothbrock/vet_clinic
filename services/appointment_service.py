@@ -4,6 +4,7 @@ from exceptions.pet_not_found_exception import (
 from exceptions.appointment_not_found_exception import (
     AppointmentNotFoundException
 )
+from utils.logger import logger
 
 
 
@@ -20,11 +21,18 @@ class AppointmentService:
         pet = self.pet_service.get_pet_by_id(appointment.pet_id)
 
         if not pet:
+            logger.warning(
+                f"Pet ID {appointment.pet_id} not found"
+            )
+
             raise PetNotFoundException(
                 appointment.pet_id
             )
 
         self.appointment_repository.create(appointment)
+        logger.info(
+            f"Appointment created for pet {appointment.pet_id}"
+        )
 
 
     def get_all_appointments(self):
@@ -45,6 +53,10 @@ class AppointmentService:
         )
 
         if not appointment:
+            logger.warning(
+                f"Appointment ID {appointment_id} not found"
+            )
+
             raise AppointmentNotFoundException(
                 appointment_id
             )
@@ -57,6 +69,9 @@ class AppointmentService:
 
         self.appointment_repository.update(
             appointment
+        )
+        logger.info(
+            f"Appointment updated: {appointment_id}"
         )
 
     def delete_appointment(
@@ -71,6 +86,10 @@ class AppointmentService:
         )
 
         if not appointment:
+            logger.warning(
+                f"Appointment ID {appointment_id} not found"
+            )
+
             raise AppointmentNotFoundException(
                 appointment_id
             )
@@ -78,6 +97,7 @@ class AppointmentService:
         self.appointment_repository.delete(
             appointment_id
         )
+        logger.info(
+            f"Appointment deleted: {appointment_id}"
+        )
 
-
-    

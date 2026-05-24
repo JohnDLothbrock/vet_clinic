@@ -1,15 +1,7 @@
 from models.pet import Pet
-from services.pet_service import PetService
 from views.pet_view import PetView
-from services.owner_service import OwnerService
 from exceptions.owner_not_found_exception import (
     OwnerNotFoundException
-)
-from repositories.pet_repository import (
-    PetRepository
-)
-from repositories.owner_repository import (
-    OwnerRepository
 )
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
