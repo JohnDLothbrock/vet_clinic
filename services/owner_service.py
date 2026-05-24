@@ -2,9 +2,13 @@ from repositories.owner_repository import (
     OwnerRepository
 )
 from exceptions.owner_not_found_exception import OwnerNotFoundException
+from utils.logger import logger
+from models.owner import Owner
+
 
 
 class OwnerService:
+
 
     def __init__(
             self,
@@ -14,6 +18,10 @@ class OwnerService:
 
     def create_owner(self, owner) -> None:
         self.owner_repository.create(owner)
+
+        logger.info(
+            f"Owner created: {owner.name}"
+        )
 
     def get_all_owners(self):
         return self.owner_repository.get_all()
@@ -25,7 +33,12 @@ class OwnerService:
         existing_owner = self.owner_repository.get_by_id(owner_id)
 
         if not existing_owner:
-            raise OwnerNotFoundException(owner_id)
+            logger.warning(
+                f"Owner ID {owner_id} not found"
+            )
+            raise OwnerNotFoundException(
+                owner_id
+            )
 
         updated_owner = Owner(
             name=name,
@@ -35,11 +48,24 @@ class OwnerService:
 
         self.owner_repository.update(updated_owner)
 
+        logger.info(
+            f"Owner updated: {owner_id}"
+        )
+
     def delete_owner(self, owner_id):
 
         existing_owner = self.owner_repository.get_by_id(owner_id)
 
         if not existing_owner:
-            raise OwnerNotFoundException(owner_id)
+            logger.warning(
+                f"Owner ID {owner_id} not found"
+            )
+            raise OwnerNotFoundException(
+                owner_id
+            )
 
         self.owner_repository.delete(owner_id)
+
+        logger.info(
+            f"Owner deleted: {owner_id}"
+        )
