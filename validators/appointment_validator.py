@@ -21,14 +21,18 @@ class AppointmentValidator:
 
         try:
 
-            datetime.strptime(
+            appointment_datetime = datetime.strptime(
                 appointment_date,
                 "%Y-%m-%d %H:%M"
             )
+
+            if appointment_datetime < datetime.now():
+                raise ValidationException(
+                    "Appointment date cannot be in the past."
+                )
 
         except ValueError:
 
             raise ValidationException(
                 "Date format must be YYYY-MM-DD HH:MM"
             )
-    

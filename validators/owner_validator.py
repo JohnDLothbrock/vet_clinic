@@ -28,3 +28,16 @@ class OwnerValidator:
             raise ValidationException(
                 "Phone cannot be empty."
             )
+
+        if not phone.isdigit():
+            raise ValidationException(
+                "Phone must contain only numbers."
+            )
+        if len(phone) < 8:
+            raise ValidationException(
+                "Phone must contain at least 8 digits."
+            )
+        if len(phone) > 15:
+            raise ValidationException(
+                "Phone must not contain more than 15 digits."
+            )

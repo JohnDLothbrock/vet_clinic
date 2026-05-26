@@ -24,9 +24,8 @@ class PetValidator:
                 "Species cannot be empty."
             )
 
-        if age < 0:
+        if age <= 0:
 
             raise ValidationException(
                 "Age cannot be negative."
             )
-    
