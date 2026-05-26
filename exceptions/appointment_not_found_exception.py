@@ -1,10 +1,10 @@
-from exceptions.application_exception import (
-    ApplicationException
+from exceptions.not_found_exception import (
+    NotFoundException
 )
 
 
 class AppointmentNotFoundException(
-    ApplicationException
+    NotFoundException
 ):
 
     def __init__(

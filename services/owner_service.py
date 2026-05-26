@@ -4,6 +4,9 @@ from repositories.owner_repository import (
 from exceptions.owner_not_found_exception import OwnerNotFoundException
 from utils.logger import logger
 from models.owner import Owner
+from validators.owner_validator import (
+    OwnerValidator
+)
 
 
 
@@ -17,6 +20,12 @@ class OwnerService:
         self.owner_repository = owner_repository
 
     def create_owner(self, owner) -> None:
+        
+        OwnerValidator.validate(
+            owner.name,
+            owner.phone
+        )
+
         self.owner_repository.create(owner)
 
         logger.info(
@@ -39,6 +48,11 @@ class OwnerService:
             raise OwnerNotFoundException(
                 owner_id
             )
+
+        OwnerValidator.validate(
+            name,
+            phone
+        )
 
         updated_owner = Owner(
             name=name,

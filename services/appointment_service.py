@@ -5,6 +5,9 @@ from exceptions.appointment_not_found_exception import (
     AppointmentNotFoundException
 )
 from utils.logger import logger
+from validators.appointment_validator import (
+    AppointmentValidator
+)
 
 
 
@@ -28,6 +31,11 @@ class AppointmentService:
             raise PetNotFoundException(
                 appointment.pet_id
             )
+
+        AppointmentValidator.validate(
+            appointment.appointment_date,
+            appointment.reason
+        )
 
         self.appointment_repository.create(appointment)
         logger.info(
@@ -66,6 +74,11 @@ class AppointmentService:
         )
 
         appointment.reason = reason
+
+        AppointmentValidator.validate(
+            appointment_date,
+            reason
+        )
 
         self.appointment_repository.update(
             appointment

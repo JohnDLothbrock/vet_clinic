@@ -6,6 +6,9 @@ from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
 from utils.logger import logger
+from validators.pet_validator import (
+    PetValidator
+)
 
 
 class PetService:
@@ -28,6 +31,11 @@ class PetService:
 
         owner = self.owner_service.get_owner_by_id(
             pet.owner_id
+        )
+        PetValidator.validate(
+            pet.name,
+            pet.species,
+            pet.age
         )
 
         if owner is None:
@@ -80,6 +88,11 @@ class PetService:
             raise PetNotFoundException(
                 pet_id
             )
+        PetValidator.validate(
+            name,
+            species,
+            age
+        )
 
         self.pet_repository.update(
             pet_id,
