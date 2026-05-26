@@ -1,26 +1,9 @@
-from database.connection import get_connection
-from controllers.pet_controller import PetController
-from controllers.owner_controller import OwnerController
-from controllers.appointment_controller import (
-    AppointmentController
+from database.connection import (
+    get_connection
 )
-from repositories.owner_repository import (
-    OwnerRepository
-)
-from repositories.pet_repository import (
-    PetRepository
-)
-from repositories.appointment_repository import (
-    AppointmentRepository
-)
-from services.owner_service import (
-    OwnerService
-)
-from services.pet_service import (
-    PetService
-)
-from services.appointment_service import (
-    AppointmentService
+
+from app.bootstrap import (
+    build_application
 )
 
 
@@ -43,36 +26,21 @@ def test_connection():
             error
         )
 
+
 test_connection()
 
+controllers = build_application()
 
-# Repositories
-owner_repository = OwnerRepository()
-pet_repository = PetRepository()
-appointment_repository = AppointmentRepository()
-
-# Services
-owner_service = OwnerService(
-    owner_repository
-)
-pet_service = PetService(
-    pet_repository,
-    owner_service
-)
-appointment_service = AppointmentService(
-    appointment_repository,
-    pet_service
+pet_controller = (
+    controllers["pet_controller"]
 )
 
-# Controllers
-pet_controller = PetController(
-    pet_service
+owner_controller = (
+    controllers["owner_controller"]
 )
-owner_controller = OwnerController(
-    owner_service
-)
-appointment_controller = AppointmentController(
-    appointment_service
+
+appointment_controller = (
+    controllers["appointment_controller"]
 )
 
 while True:
