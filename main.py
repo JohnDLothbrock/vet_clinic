@@ -52,23 +52,24 @@ while True:
     2. View Pets
     3. Update Pet
     4. Delete Pet
+    5. Search Pet by Name
 
     OWNERS
-    5. Add Owner
-    6. View Owners
+    6. Add Owner
+    7. View Owners
 
     APPOINTMENTS
-    7. Add Appointment
-    8. View Appointments
-    9. Update Appointment
-    10. Delete Appointment
+    8. Add Appointment
+    9. View Appointments
+    10. Update Appointment
+    11. Delete Appointment
 
-    11. Exit
+    12. Exit
         """)
-
 
     option = input("Choose option: ")
 
+    # PETS
     if option == "1":
         pet_controller.create_pet()
 
@@ -82,26 +83,31 @@ while True:
         pet_controller.delete_pet()
 
     elif option == "5":
+        pet_controller.search_pet_by_name()
+
+    # OWNERS
+    elif option == "6":
         owner_controller.create_owner()
 
-    elif option == "6":
+    elif option == "7":
         owner_controller.show_owners()
 
-    elif option == "7":
+    # APPOINTMENTS
+    elif option == "8":
         appointment_controller.create_appointment()
 
-    elif option == "8":
+    elif option == "9":
         appointment_controller.show_appointments()
 
-    elif option == "9":
+    elif option == "10":
         appointment_controller.update_appointment()
 
-    elif option == "10":
+    elif option == "11":
         appointment_controller.delete_appointment()
 
-    elif option == "11":
+    # EXIT
+    elif option == "12":
         break
 
     else:
         print("Invalid option")
-

@@ -130,3 +130,13 @@ class PetService:
         logger.info(
             f"Pet deleted: {pet_id}"
         )
+
+    def search_pets_by_name(
+            self,
+            name
+    ):
+
+        return self.pet_repository.get_by_name(
+            name
+        )
+    

@@ -172,3 +172,47 @@ class PetRepository:
 
         cursor.close()
         connection.close()
+
+
+    def get_by_name(
+            self,
+            name
+    ):
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = """
+                SELECT id,
+                       name,
+                       species,
+                       age,
+                       owner_id
+                FROM Pets
+                WHERE name LIKE ? \
+                """
+
+        cursor.execute(
+            query,
+            (f"%{name}%",)
+        )
+
+        rows = cursor.fetchall()
+
+        pets = []
+
+        for row in rows:
+            pet = Pet(
+                name=row[1],
+                species=row[2],
+                age=row[3],
+                owner_id=row[4],
+                pet_id=row[0]
+            )
+
+            pets.append(pet)
+
+        cursor.close()
+        connection.close()
+
+        return pets

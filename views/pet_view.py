@@ -61,3 +61,9 @@ Species: {pet.species}
 Age: {pet.age}
 Owner ID: {pet.owner_id}
 """)
+
+
+    def get_pet_name(self):
+        return input(
+            "Pet name: "
+        )
