@@ -83,3 +83,31 @@ def build_application():
                 appointment_service
             )
     }
+
+def build_services():
+
+    owner_repository = OwnerRepository()
+
+    pet_repository = PetRepository()
+
+    appointment_repository = AppointmentRepository()
+
+    owner_service = OwnerService(
+        owner_repository
+    )
+
+    pet_service = PetService(
+        pet_repository,
+        owner_service
+    )
+
+    appointment_service = AppointmentService(
+        appointment_repository,
+        pet_service
+    )
+
+    return {
+        "owner_service": owner_service,
+        "pet_service": pet_service,
+        "appointment_service": appointment_service
+    }
