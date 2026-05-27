@@ -20,7 +20,7 @@ class OwnerService:
         self.owner_repository = owner_repository
 
     def create_owner(self, owner) -> None:
-        
+
         OwnerValidator.validate(
             owner.name,
             owner.phone
@@ -82,4 +82,16 @@ class OwnerService:
 
         logger.info(
             f"Owner deleted: {owner_id}"
+        )
+
+
+    def search_owners_by_name(
+            self,
+            name
+    ):
+        logger.info(
+            f"Searching owners by name: {name}"
+        )
+        return self.owner_repository.get_by_name(
+            name
         )

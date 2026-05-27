@@ -146,3 +146,46 @@ class AppointmentRepository:
         connection.close()
 
 
+    def get_by_pet_id(
+            self,
+            pet_id
+    ):
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = """
+        SELECT
+            id,
+            pet_id,
+            appointment_date,
+            reason
+        FROM Appointments
+        WHERE pet_id = ?
+        """
+
+        cursor.execute(
+            query,
+            (pet_id,)
+        )
+
+        rows = cursor.fetchall()
+        appointments = []
+
+        for row in rows:
+
+            appointment = Appointment(
+                pet_id=row[1],
+                appointment_date=row[2],
+                reason=row[3],
+                appointment_id=row[0]
+            )
+
+            appointments.append(
+                appointment
+            )
+
+        cursor.close()
+        connection.close()
+
+        return appointments

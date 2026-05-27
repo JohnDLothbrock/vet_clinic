@@ -103,3 +103,21 @@ class PetController:
         self.pet_view.display_pets(
             pets
         )
+
+    def search_pet_by_id(self):
+
+        pet_id = self.pet_view.get_pet_id()
+
+        pet = self.pet_service.get_pet_by_id(
+            pet_id
+        )
+
+        if pet:
+            self.pet_view.display_pets(
+                [pet]
+            )
+        else:
+            print(
+                "Pet not found."
+            )
+

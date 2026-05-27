@@ -54,3 +54,10 @@ Reason: {appointment.reason}
         return int(
             input("Appointment ID: ")
         )
+
+    def get_pet_id(self):
+        return int(
+            input(
+                "Pet ID: "
+            )
+        )

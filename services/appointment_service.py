@@ -114,3 +114,15 @@ class AppointmentService:
             f"Appointment deleted: {appointment_id}"
         )
 
+
+    def search_appointments_by_pet_id(
+            self,
+            pet_id
+    ):
+        logger.info(
+            f"Searching appointments for pet ID: {pet_id}"
+        )
+        return (
+            self.appointment_repository
+            .get_by_pet_id(pet_id)
+        )

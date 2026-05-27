@@ -26,3 +26,9 @@ class OwnerView:
 
     def get_owner_id(self):
         return int(input("Owner ID: "))
+
+    def get_owner_name(self):
+        return input(
+            "Owner name: "
+        )
+    

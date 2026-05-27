@@ -138,3 +138,39 @@ class OwnerRepository:
 
         cursor.close()
         connection.close()
+
+    def get_by_name(
+            self,
+            name
+    ):
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = """
+        SELECT id, name, phone
+        FROM Owners
+        WHERE name LIKE ?
+        """
+
+        cursor.execute(
+            query,
+            (f"%{name}%",)
+        )
+
+        rows = cursor.fetchall()
+        owners = []
+
+        for row in rows:
+
+            owner = Owner(
+                name=row[1],
+                phone=row[2],
+                owner_id=row[0]
+            )
+
+            owners.append(owner)
+
+        cursor.close()
+        connection.close()
+
+        return owners

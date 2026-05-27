@@ -57,14 +57,16 @@ while True:
     OWNERS
     6. Add Owner
     7. View Owners
+    8. Search Owner by Name
 
     APPOINTMENTS
-    8. Add Appointment
-    9. View Appointments
-    10. Update Appointment
-    11. Delete Appointment
+    9. Add Appointment
+    10. View Appointments
+    11. Update Appointment
+    12. Delete Appointment
+    13. Search Appointments by Pet ID
 
-    12. Exit
+    14. Exit
         """)
 
     option = input("Choose option: ")
@@ -92,21 +94,27 @@ while True:
     elif option == "7":
         owner_controller.show_owners()
 
-    # APPOINTMENTS
     elif option == "8":
+        owner_controller.search_owner_by_name()
+
+    # APPOINTMENTS
+    elif option == "9":
         appointment_controller.create_appointment()
 
-    elif option == "9":
+    elif option == "10":
         appointment_controller.show_appointments()
 
-    elif option == "10":
+    elif option == "11":
         appointment_controller.update_appointment()
 
-    elif option == "11":
+    elif option == "12":
         appointment_controller.delete_appointment()
 
+    elif option == "13":
+        appointment_controller.search_appointments_by_pet()
+
     # EXIT
-    elif option == "12":
+    elif option == "14":
         break
 
     else:

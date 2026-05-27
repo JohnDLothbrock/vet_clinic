@@ -50,3 +50,15 @@ class OwnerController:
         except OwnerNotFoundException as error:
 
             print(error)
+
+
+    def search_owner_by_name(self):
+        name = self.owner_view.get_owner_name()
+
+        owners = (
+            self.owner_service
+            .search_owners_by_name(name)
+        )
+        self.owner_view.display_owners(
+            owners
+        )
