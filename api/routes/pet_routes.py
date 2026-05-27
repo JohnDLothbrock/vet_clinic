@@ -1,7 +1,4 @@
-from fastapi import (
-    APIRouter,
-    HTTPException
-)
+from fastapi import APIRouter
 
 from models.pet import Pet
 
@@ -13,6 +10,10 @@ from api.schemas.pet_schema import (
     PetCreate,
     PetUpdate,
     PetResponse
+)
+
+from api.utils.api_response import (
+    success_response
 )
 
 
@@ -43,18 +44,9 @@ def get_pet_by_id(
         pet_id: int
 ):
 
-    pet = pet_service.get_pet_by_id(
+    return pet_service.get_pet_by_id(
         pet_id
     )
-
-    if pet is None:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Pet not found"
-        )
-
-    return pet
 
 
 @router.post("")
@@ -73,9 +65,9 @@ def create_pet(
         pet
     )
 
-    return {
-        "message": "Pet created successfully"
-    }
+    return success_response(
+        "Pet created successfully"
+    )
 
 
 @router.put("/{pet_id}")
@@ -91,9 +83,9 @@ def update_pet(
         pet_data.age
     )
 
-    return {
-        "message": "Pet updated successfully"
-    }
+    return success_response(
+        "Pet updated successfully"
+    )
 
 
 @router.delete("/{pet_id}")
@@ -105,6 +97,6 @@ def delete_pet(
         pet_id
     )
 
-    return {
-        "message": "Pet deleted successfully"
-    }
+    return success_response(
+        "Pet deleted successfully"
+    )

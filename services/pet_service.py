@@ -69,7 +69,7 @@ class PetService:
             pet_id
         )
 
-        if pet is None:
+        if not pet:
             logger.warning(
                 f"Pet ID {pet_id} not found"
             )

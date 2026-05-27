@@ -50,20 +50,26 @@ class OwnerService:
             self.owner_repository.get_all()
         )
 
+
     def get_owner_by_id(
             self,
             owner_id
     ):
 
-        logger.info(
-            f"Searching owner by ID: {owner_id}"
+        owner = self.owner_repository.get_by_id(
+            owner_id
         )
 
-        return (
-            self.owner_repository.get_by_id(
+        if not owner:
+            logger.warning(
+                f"Owner ID {owner_id} not found"
+            )
+
+            raise OwnerNotFoundException(
                 owner_id
             )
-        )
+        return owner
+
 
     def update_owner(
             self,

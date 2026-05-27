@@ -1,64 +1,25 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from exceptions.owner_not_found_exception import (
-    OwnerNotFoundException
-)
-
-from exceptions.pet_not_found_exception import (
-    PetNotFoundException
-)
-
-from exceptions.appointment_not_found_exception import (
-    AppointmentNotFoundException
+from exceptions.application_exception import (
+    ApplicationException
 )
 
 
 def register_exception_handlers(app):
 
     @app.exception_handler(
-        OwnerNotFoundException
+        ApplicationException
     )
-    async def owner_not_found_handler(
+    async def application_exception_handler(
             request: Request,
-            exc: OwnerNotFoundException
+            exc: ApplicationException
     ):
 
         return JSONResponse(
-            status_code=404,
+            status_code=exc.status_code,
             content={
-                "error": str(exc)
-            }
-        )
-
-
-    @app.exception_handler(
-        PetNotFoundException
-    )
-    async def pet_not_found_handler(
-            request: Request,
-            exc: PetNotFoundException
-    ):
-
-        return JSONResponse(
-            status_code=404,
-            content={
-                "error": str(exc)
-            }
-        )
-
-
-    @app.exception_handler(
-        AppointmentNotFoundException
-    )
-    async def appointment_not_found_handler(
-            request: Request,
-            exc: AppointmentNotFoundException
-    ):
-
-        return JSONResponse(
-            status_code=404,
-            content={
-                "error": str(exc)
+                "success": False,
+                "error": exc.message
             }
         )

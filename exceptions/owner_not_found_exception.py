@@ -1,17 +1,18 @@
-from exceptions.not_found_exception import (
-    NotFoundException
+from exceptions.application_exception import (
+    ApplicationException
 )
 
 
 class OwnerNotFoundException(
-    NotFoundException
+    ApplicationException
 ):
 
     def __init__(
-        self,
-        owner_id
+            self,
+            owner_id: int
     ):
 
         super().__init__(
-            f"Owner with ID {owner_id} does not exist."
+            f"Owner with ID {owner_id} not found",
+            404
         )

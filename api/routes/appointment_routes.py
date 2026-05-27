@@ -1,17 +1,20 @@
-from fastapi import (
-    APIRouter,
-    HTTPException
-)
+from fastapi import APIRouter
+
 from models.appointments import Appointment
+
 from app.bootstrap import (
     build_services
 )
+
 from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
     AppointmentResponse
 )
 
+from api.utils.api_response import (
+    success_response
+)
 
 
 router = APIRouter(
@@ -45,21 +48,13 @@ def get_appointments():
 def get_appointment_by_id(
         appointment_id: int
 ):
-    appointment = (
+
+    return (
         appointment_service
         .get_appointment_by_id(
             appointment_id
         )
     )
-
-    if appointment is None:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Appointment not found"
-        )
-
-    return appointment
 
 
 @router.post("")
@@ -79,10 +74,9 @@ def create_appointment(
         appointment
     )
 
-    return {
-        "message":
-            "Appointment created successfully"
-    }
+    return success_response(
+        "Appointment created successfully"
+    )
 
 
 @router.put("/{appointment_id}")
@@ -97,10 +91,9 @@ def update_appointment(
         appointment_data.reason
     )
 
-    return {
-        "message":
-            "Appointment updated successfully"
-    }
+    return success_response(
+        "Appointment updated successfully"
+    )
 
 
 @router.delete("/{appointment_id}")
@@ -112,7 +105,6 @@ def delete_appointment(
         appointment_id
     )
 
-    return {
-        "message":
-            "Appointment deleted successfully"
-    }
+    return success_response(
+        "Appointment deleted successfully"
+    )

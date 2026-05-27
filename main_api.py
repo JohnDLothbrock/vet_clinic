@@ -12,17 +12,40 @@ from api.routes.appointment_routes import (
     router as appointment_router
 )
 
-from api.exception_handlers import (
+from api.handlers.exception_handlers import (
     register_exception_handlers
 )
 
+app = FastAPI(
+    title="Veterinary Clinic API",
+    description="""
+    API for managing:
 
-app = FastAPI()
+    - Pets
+    - Owners
+    - Appointments
 
-register_exception_handlers(
-    app
+    Built with FastAPI and SQL Server.
+    """,
+    version="1.0.0"
 )
 
-app.include_router(pet_router)
-app.include_router(owner_router)
-app.include_router(appointment_router)
+register_exception_handlers(app)
+
+app.include_router(
+    pet_router,
+    prefix="/api/v1",
+    tags=["Pets"]
+)
+
+app.include_router(
+    owner_router,
+    prefix="/api/v1",
+    tags=["Owners"]
+)
+
+app.include_router(
+    appointment_router,
+    prefix="/api/v1",
+    tags=["Appointments"]
+)

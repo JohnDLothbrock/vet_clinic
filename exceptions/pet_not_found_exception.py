@@ -1,17 +1,18 @@
-from exceptions.not_found_exception import (
-    NotFoundException
+from exceptions.application_exception import (
+    ApplicationException
 )
 
 
 class PetNotFoundException(
-    NotFoundException
+    ApplicationException
 ):
 
     def __init__(
-        self,
-        pet_id
+            self,
+            pet_id: int
     ):
 
         super().__init__(
-            f"Pet with ID {pet_id} does not exist."
+            f"Pet with ID {pet_id} not found",
+            404
         )

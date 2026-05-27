@@ -1,7 +1,4 @@
-from fastapi import (
-    APIRouter,
-    HTTPException
-)
+from fastapi import APIRouter
 
 from models.owner import Owner
 
@@ -13,6 +10,10 @@ from api.schemas.owner_schema import (
     OwnerCreate,
     OwnerUpdate,
     OwnerResponse
+)
+
+from api.utils.api_response import (
+    success_response
 )
 
 
@@ -42,20 +43,10 @@ def get_owners():
 def get_owner_by_id(
         owner_id: int
 ):
-    owner = (
-        owner_service.get_owner_by_id(
-            owner_id
-        )
+
+    return owner_service.get_owner_by_id(
+        owner_id
     )
-
-    if owner is None:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Owner not found"
-        )
-
-    return owner
 
 
 @router.post("")
@@ -72,9 +63,9 @@ def create_owner(
         owner
     )
 
-    return {
-        "message": "Owner created successfully"
-    }
+    return success_response(
+        "Owner created successfully"
+    )
 
 
 @router.put("/{owner_id}")
@@ -89,9 +80,9 @@ def update_owner(
         owner_data.phone
     )
 
-    return {
-        "message": "Owner updated successfully"
-    }
+    return success_response(
+        "Owner updated successfully"
+    )
 
 
 @router.delete("/{owner_id}")
@@ -103,6 +94,6 @@ def delete_owner(
         owner_id
     )
 
-    return {
-        "message": "Owner deleted successfully"
-    }
+    return success_response(
+        "Owner deleted successfully"
+    )
