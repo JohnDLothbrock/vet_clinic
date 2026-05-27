@@ -58,15 +58,26 @@ class PetService:
     def get_all_pets(self) -> list[Pet]:
         return self.pet_repository.get_all()
 
+
     # READ BY ID
     def get_pet_by_id(
             self,
-            pet_id: int
+            pet_id
     ):
 
-        return self.pet_repository.get_by_id(
+        pet = self.pet_repository.get_by_id(
             pet_id
         )
+
+        if pet is None:
+            logger.warning(
+                f"Pet ID {pet_id} not found"
+            )
+
+            raise PetNotFoundException(
+                pet_id
+            )
+        return pet
 
 
     # UPDATE

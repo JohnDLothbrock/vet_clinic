@@ -1,29 +1,47 @@
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
+
 from exceptions.appointment_not_found_exception import (
     AppointmentNotFoundException
 )
+
 from utils.logger import logger
+
 from validators.appointment_validator import (
     AppointmentValidator
 )
 
 
-
 class AppointmentService:
 
+    def __init__(
+            self,
+            appointment_repository,
+            pet_service
+    ):
 
-    def __init__(self, appointment_repository, pet_service):
-        self.appointment_repository = appointment_repository
-        self.pet_service = pet_service
+        self.appointment_repository = (
+            appointment_repository
+        )
 
+        self.pet_service = (
+            pet_service
+        )
 
-    def create_appointment(self, appointment):
+    def create_appointment(
+            self,
+            appointment
+    ):
 
-        pet = self.pet_service.get_pet_by_id(appointment.pet_id)
+        pet = (
+            self.pet_service.get_pet_by_id(
+                appointment.pet_id
+            )
+        )
 
         if not pet:
+
             logger.warning(
                 f"Pet ID {appointment.pet_id} not found"
             )
@@ -37,15 +55,36 @@ class AppointmentService:
             appointment.reason
         )
 
-        self.appointment_repository.create(appointment)
+        self.appointment_repository.create(
+            appointment
+        )
+
         logger.info(
             f"Appointment created for pet {appointment.pet_id}"
         )
 
+    def get_all_appointments(
+            self
+    ):
 
-    def get_all_appointments(self):
-        return self.appointment_repository.get_all()
+        return (
+            self.appointment_repository.get_all()
+        )
 
+    def get_appointment_by_id(
+            self,
+            appointment_id
+    ):
+
+        logger.info(
+            f"Searching appointment by ID: {appointment_id}"
+        )
+
+        return (
+            self.appointment_repository.get_by_id(
+                appointment_id
+            )
+        )
 
     def update_appointment(
             self,
@@ -61,6 +100,7 @@ class AppointmentService:
         )
 
         if not appointment:
+
             logger.warning(
                 f"Appointment ID {appointment_id} not found"
             )
@@ -83,6 +123,7 @@ class AppointmentService:
         self.appointment_repository.update(
             appointment
         )
+
         logger.info(
             f"Appointment updated: {appointment_id}"
         )
@@ -99,6 +140,7 @@ class AppointmentService:
         )
 
         if not appointment:
+
             logger.warning(
                 f"Appointment ID {appointment_id} not found"
             )
@@ -110,19 +152,22 @@ class AppointmentService:
         self.appointment_repository.delete(
             appointment_id
         )
+
         logger.info(
             f"Appointment deleted: {appointment_id}"
         )
-
 
     def search_appointments_by_pet_id(
             self,
             pet_id
     ):
+
         logger.info(
             f"Searching appointments for pet ID: {pet_id}"
         )
+
         return (
-            self.appointment_repository
-            .get_by_pet_id(pet_id)
+            self.appointment_repository.get_by_pet_id(
+                pet_id
+            )
         )

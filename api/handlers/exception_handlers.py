@@ -1,18 +1,12 @@
-from fastapi import (
-    Request,
-    HTTPException
-)
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
-from fastapi.responses import (
-    JSONResponse
+from exceptions.owner_not_found_exception import (
+    OwnerNotFoundException
 )
 
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
-)
-
-from exceptions.owner_not_found_exception import (
-    OwnerNotFoundException
 )
 
 from exceptions.appointment_not_found_exception import (
@@ -20,53 +14,51 @@ from exceptions.appointment_not_found_exception import (
 )
 
 
-async def pet_not_found_handler(
-        request: Request,
-        exception: PetNotFoundException
-):
+def register_exception_handlers(app):
 
-    return JSONResponse(
-        status_code=404,
-        content={
-            "error": str(exception)
-        }
+    @app.exception_handler(
+        OwnerNotFoundException
     )
+    async def owner_not_found_handler(
+            request: Request,
+            exc: OwnerNotFoundException
+    ):
+
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": str(exc)
+            }
+        )
 
 
-async def owner_not_found_handler(
-        request: Request,
-        exception: OwnerNotFoundException
-):
-
-    return JSONResponse(
-        status_code=404,
-        content={
-            "error": str(exception)
-        }
+    @app.exception_handler(
+        PetNotFoundException
     )
+    async def pet_not_found_handler(
+            request: Request,
+            exc: PetNotFoundException
+    ):
+
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": str(exc)
+            }
+        )
 
 
-async def appointment_not_found_handler(
-        request: Request,
-        exception: AppointmentNotFoundException
-):
-
-    return JSONResponse(
-        status_code=404,
-        content={
-            "error": str(exception)
-        }
+    @app.exception_handler(
+        AppointmentNotFoundException
     )
+    async def appointment_not_found_handler(
+            request: Request,
+            exc: AppointmentNotFoundException
+    ):
 
-
-async def generic_exception_handler(
-        request: Request,
-        exception: Exception
-):
-
-    return JSONResponse(
-        status_code=500,
-        content={
-            "error": "Internal server error"
-        }
-    )
+        return JSONResponse(
+            status_code=404,
+            content={
+                "error": str(exc)
+            }
+        )

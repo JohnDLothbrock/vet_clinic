@@ -16,7 +16,10 @@ from api.schemas.owner_schema import (
 )
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/owners",
+    tags=["Owners"]
+)
 
 services = build_services()
 
@@ -24,7 +27,7 @@ owner_service = services["owner_service"]
 
 
 @router.get(
-    "/owners",
+    "",
     response_model=list[OwnerResponse]
 )
 def get_owners():
@@ -33,15 +36,16 @@ def get_owners():
 
 
 @router.get(
-    "/owners/{owner_id}",
+    "/{owner_id}",
     response_model=OwnerResponse
 )
 def get_owner_by_id(
         owner_id: int
 ):
-
-    owner = owner_service.get_owner_by_id(
-        owner_id
+    owner = (
+        owner_service.get_owner_by_id(
+            owner_id
+        )
     )
 
     if owner is None:
@@ -54,7 +58,7 @@ def get_owner_by_id(
     return owner
 
 
-@router.post("/owners")
+@router.post("")
 def create_owner(
         owner_data: OwnerCreate
 ):
@@ -73,7 +77,7 @@ def create_owner(
     }
 
 
-@router.put("/owners/{owner_id}")
+@router.put("/{owner_id}")
 def update_owner(
         owner_id: int,
         owner_data: OwnerUpdate
@@ -90,7 +94,7 @@ def update_owner(
     }
 
 
-@router.delete("/owners/{owner_id}")
+@router.delete("/{owner_id}")
 def delete_owner(
         owner_id: int
 ):

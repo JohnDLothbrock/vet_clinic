@@ -16,7 +16,10 @@ from api.schemas.pet_schema import (
 )
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/pets",
+    tags=["Pets"]
+)
 
 services = build_services()
 
@@ -24,7 +27,7 @@ pet_service = services["pet_service"]
 
 
 @router.get(
-    "/pets",
+    "",
     response_model=list[PetResponse]
 )
 def get_pets():
@@ -33,7 +36,7 @@ def get_pets():
 
 
 @router.get(
-    "/pets/{pet_id}",
+    "/{pet_id}",
     response_model=PetResponse
 )
 def get_pet_by_id(
@@ -54,7 +57,7 @@ def get_pet_by_id(
     return pet
 
 
-@router.post("/pets")
+@router.post("")
 def create_pet(
         pet_data: PetCreate
 ):
@@ -75,7 +78,7 @@ def create_pet(
     }
 
 
-@router.put("/pets/{pet_id}")
+@router.put("/{pet_id}")
 def update_pet(
         pet_id: int,
         pet_data: PetUpdate
@@ -93,7 +96,7 @@ def update_pet(
     }
 
 
-@router.delete("/pets/{pet_id}")
+@router.delete("/{pet_id}")
 def delete_pet(
         pet_id: int
 ):

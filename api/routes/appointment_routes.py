@@ -2,13 +2,10 @@ from fastapi import (
     APIRouter,
     HTTPException
 )
-
 from models.appointments import Appointment
-
 from app.bootstrap import (
     build_services
 )
-
 from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
@@ -16,7 +13,11 @@ from api.schemas.appointment_schema import (
 )
 
 
-router = APIRouter()
+
+router = APIRouter(
+    prefix="/appointments",
+    tags=["Appointments"]
+)
 
 services = build_services()
 
@@ -26,7 +27,7 @@ appointment_service = (
 
 
 @router.get(
-    "/appointments",
+    "",
     response_model=list[AppointmentResponse]
 )
 def get_appointments():
@@ -38,17 +39,17 @@ def get_appointments():
 
 
 @router.get(
-    "/appointments/{appointment_id}",
+    "/{appointment_id}",
     response_model=AppointmentResponse
 )
 def get_appointment_by_id(
         appointment_id: int
 ):
-
     appointment = (
         appointment_service
-        .appointment_repository
-        .get_by_id(appointment_id)
+        .get_appointment_by_id(
+            appointment_id
+        )
     )
 
     if appointment is None:
@@ -61,7 +62,7 @@ def get_appointment_by_id(
     return appointment
 
 
-@router.post("/appointments")
+@router.post("")
 def create_appointment(
         appointment_data: AppointmentCreate
 ):
@@ -84,7 +85,7 @@ def create_appointment(
     }
 
 
-@router.put("/appointments/{appointment_id}")
+@router.put("/{appointment_id}")
 def update_appointment(
         appointment_id: int,
         appointment_data: AppointmentUpdate
@@ -102,7 +103,7 @@ def update_appointment(
     }
 
 
-@router.delete("/appointments/{appointment_id}")
+@router.delete("/{appointment_id}")
 def delete_appointment(
         appointment_id: int
 ):
