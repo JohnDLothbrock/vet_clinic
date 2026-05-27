@@ -1,65 +1,135 @@
-from database.connection import get_connection
 from models.pet import Pet
 
+from repositories.base_repository import (
+    BaseRepository
+)
 
-class PetRepository:
 
 
-    # CREATE
-    def create(self, pet: Pet) -> None:
+class PetRepository(
+    BaseRepository
+):
 
-        connection = get_connection()
+
+
+    def create(
+            self,
+            pet: Pet
+    ) -> None:
+
+        connection = self._get_connection()
         cursor = connection.cursor()
 
-        query = """
-        INSERT INTO Pets (
-            name,
-            species,
-            age,
-            owner_id
-        )
-        VALUES (?, ?, ?, ?)
-        """
+        try:
 
-        cursor.execute(
-            query,
-            (
-                pet.name,
-                pet.species,
-                pet.age,
-                pet.owner_id
+            query = """
+            INSERT INTO Pets (
+                name,
+                species,
+                age,
+                owner_id
             )
-        )
+            VALUES (?, ?, ?, ?)
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    pet.name,
+                    pet.species,
+                    pet.age,
+                    pet.owner_id
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            connection.commit()
 
-    # READ ALL
-    def get_all(self) -> list[Pet]:
+        finally:
 
-        connection = get_connection()
+            self._close(
+                connection,
+                cursor
+            )
+
+
+    def get_all(
+            self
+    ) -> list[Pet]:
+
+        connection = self._get_connection()
         cursor = connection.cursor()
 
-        query = """
-        SELECT id,
-               name,
-               species,
-               age,
-               owner_id
-        FROM Pets
-        """
+        try:
 
-        cursor.execute(query)
+            query = """
+            SELECT
+                id,
+                name,
+                species,
+                age,
+                owner_id
+            FROM Pets
+            """
 
-        rows = cursor.fetchall()
+            cursor.execute(query)
 
-        pets = []
+            rows = cursor.fetchall()
 
-        for row in rows:
+            pets = []
 
-            pet = Pet(
+            for row in rows:
+
+                pets.append(
+                    Pet(
+                        name=row.name,
+                        species=row.species,
+                        age=row.age,
+                        owner_id=row.owner_id,
+                        pet_id=row.id
+                    )
+                )
+
+            return pets
+
+        finally:
+
+            self._close(
+                connection,
+                cursor
+            )
+
+
+    def get_by_id(
+            self,
+            pet_id: int
+    ) -> Pet | None:
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+            query = """
+            SELECT
+                id,
+                name,
+                species,
+                age,
+                owner_id
+            FROM Pets
+            WHERE id = ?
+            """
+
+            cursor.execute(
+                query,
+                (pet_id,)
+            )
+
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            return Pet(
                 name=row.name,
                 species=row.species,
                 age=row.age,
@@ -67,152 +137,128 @@ class PetRepository:
                 pet_id=row.id
             )
 
-            pets.append(pet)
+        finally:
 
-        cursor.close()
-        connection.close()
-
-        return pets
-
-    # READ ONE
-    def get_by_id(
-        self,
-        pet_id: int
-    ) -> Pet | None:
-
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        query = """
-        SELECT id,
-               name,
-               species,
-               age,
-               owner_id
-        FROM Pets
-        WHERE id = ?
-        """
-
-        cursor.execute(
-            query,
-            (pet_id,)
-        )
-
-        row = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        if row is None:
-            return None
-
-        return Pet(
-            name=row.name,
-            species=row.species,
-            age=row.age,
-            owner_id=row.owner_id,
-            pet_id=row.id
-        )
-
-    # UPDATE
-    def update(
-        self,
-        pet_id: int,
-        name: str,
-        species: str,
-        age: int
-    ) -> None:
-
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        query = """
-        UPDATE Pets
-        SET name = ?,
-            species = ?,
-            age = ?
-        WHERE id = ?
-        """
-
-        cursor.execute(
-            query,
-            (
-                name,
-                species,
-                age,
-                pet_id
+            self._close(
+                connection,
+                cursor
             )
-        )
 
-        connection.commit()
 
-        cursor.close()
-        connection.close()
+    def update(
+            self,
+            pet_id,
+            name,
+            species,
+            age
+    ):
 
-    # DELETE
-    def delete(
-        self,
-        pet_id: int
-    ) -> None:
-
-        connection = get_connection()
+        connection = self._get_connection()
         cursor = connection.cursor()
 
-        query = """
-        DELETE FROM Pets
-        WHERE id = ?
-        """
+        try:
 
-        cursor.execute(
-            query,
-            (pet_id,)
-        )
+            query = """
+            UPDATE Pets
+            SET
+                name = ?,
+                species = ?,
+                age = ?
+            WHERE id = ?
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    name,
+                    species,
+                    age,
+                    pet_id
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            connection.commit()
+
+        finally:
+
+            self._close(
+                connection,
+                cursor
+            )
+
+
+    def delete(
+            self,
+            pet_id
+    ):
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            query = """
+            DELETE FROM Pets
+            WHERE id = ?
+            """
+
+            cursor.execute(
+                query,
+                (pet_id,)
+            )
+
+            connection.commit()
+
+        finally:
+            self._close(
+                connection,
+                cursor
+            )
 
 
     def get_by_name(
             self,
             name
-    ):
+    ) -> list[Pet]:
 
-        connection = get_connection()
+        connection = self._get_connection()
         cursor = connection.cursor()
 
-        query = """
-                SELECT id,
-                       name,
-                       species,
-                       age,
-                       owner_id
-                FROM Pets
-                WHERE name LIKE ? \
-                """
+        try:
+            query = """
+            SELECT
+                id,
+                name,
+                species,
+                age,
+                owner_id
+            FROM Pets
+            WHERE name LIKE ?
+            """
 
-        cursor.execute(
-            query,
-            (f"%{name}%",)
-        )
-
-        rows = cursor.fetchall()
-
-        pets = []
-
-        for row in rows:
-            pet = Pet(
-                name=row[1],
-                species=row[2],
-                age=row[3],
-                owner_id=row[4],
-                pet_id=row[0]
+            cursor.execute(
+                query,
+                (f"%{name}%",)
             )
 
-            pets.append(pet)
+            rows = cursor.fetchall()
+            pets = []
 
-        cursor.close()
-        connection.close()
+            for row in rows:
 
-        return pets
+                pets.append(
+                    Pet(
+                        name=row.name,
+                        species=row.species,
+                        age=row.age,
+                        owner_id=row.owner_id,
+                        pet_id=row.id
+                    )
+                )
+            return pets
+
+        finally:
+            self._close(
+                connection,
+                cursor
+            )

@@ -62,40 +62,41 @@ class AppointmentRepository:
 
         return appointments
 
-
     def get_by_id(self, appointment_id):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                SELECT id,
-                       pet_id,
-                       appointment_date,
-                       reason
-                FROM Appointments
-                WHERE id = ? \
-                """
+        try:
+            query = """
+                    SELECT id, \
+                           pet_id, \
+                           appointment_date, \
+                           reason
+                    FROM Appointments
+                    WHERE id = ? \
+                    """
 
-        cursor.execute(
-            query,
-            (appointment_id,)
-        )
-
-        row = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        if row:
-            return Appointment(
-                pet_id=row[1],
-                appointment_date=row[2],
-                reason=row[3],
-                appointment_id=row[0]
+            cursor.execute(
+                query,
+                (appointment_id,)
             )
 
-        return None
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            return Appointment(
+                pet_id=row.pet_id,
+                appointment_date=row.appointment_date,
+                reason=row.reason,
+                appointment_id=row.id
+            )
+
+        finally:
+            cursor.close()
+            connection.close()
 
 
     def update(self, appointment):
@@ -154,38 +155,37 @@ class AppointmentRepository:
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-        SELECT
-            id,
-            pet_id,
-            appointment_date,
-            reason
-        FROM Appointments
-        WHERE pet_id = ?
-        """
+        try:
+            query = """
+                    SELECT id, \
+                           pet_id, \
+                           appointment_date, \
+                           reason
+                    FROM Appointments
+                    WHERE pet_id = ? \
+                    """
 
-        cursor.execute(
-            query,
-            (pet_id,)
-        )
-
-        rows = cursor.fetchall()
-        appointments = []
-
-        for row in rows:
-
-            appointment = Appointment(
-                pet_id=row[1],
-                appointment_date=row[2],
-                reason=row[3],
-                appointment_id=row[0]
+            cursor.execute(
+                query,
+                (pet_id,)
             )
 
-            appointments.append(
-                appointment
-            )
+            rows = cursor.fetchall()
+            appointments = []
 
-        cursor.close()
-        connection.close()
+            for row in rows:
+                appointment = Appointment(
+                    pet_id=row.pet_id,
+                    appointment_date=row.appointment_date,
+                    reason=row.reason,
+                    appointment_id=row.id
+                )
 
-        return appointments
+                appointments.append(
+                    appointment
+                )
+            return appointments
+
+        finally:
+            cursor.close()
+            connection.close()

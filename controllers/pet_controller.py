@@ -10,16 +10,34 @@ from exceptions.pet_not_found_exception import (
 
 class PetController:
 
-
     def __init__(
         self,
-        pet_service
+        pet_service,
+        owner_service
     ):
         self.pet_service = pet_service
+        self.owner_service = owner_service
         self.pet_view = PetView()
 
 
     def create_pet(self):
+        owners = self.owner_service.get_all_owners()
+
+        if not owners:
+            print(
+                "No owners registered. Create an owner first."
+            )
+
+            return
+
+        print("\n--- AVAILABLE OWNERS ---")
+
+        for owner in owners:
+            print(
+                f"ID: {owner.id} | "
+                f"Name: {owner.name} | "
+                f"Phone: {owner.phone}"
+            )
 
         name, species, age, owner_id = (
             self.pet_view.get_pet_data()
@@ -33,8 +51,13 @@ class PetController:
         )
 
         try:
-            self.pet_service.create_pet(pet)
-            print("Pet added successfully.")
+            self.pet_service.create_pet(
+                pet
+            )
+
+            print(
+                "Pet added successfully."
+            )
 
         except OwnerNotFoundException as error:
             print(error)

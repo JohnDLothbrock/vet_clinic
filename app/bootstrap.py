@@ -69,7 +69,8 @@ def build_application():
 
         "pet_controller":
             PetController(
-                pet_service
+                pet_service,
+                owner_service
             ),
 
         "owner_controller":
