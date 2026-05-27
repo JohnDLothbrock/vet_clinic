@@ -53,12 +53,19 @@ class OwnerController:
 
 
     def search_owner_by_name(self):
-        name = self.owner_view.get_owner_name()
 
+        name = self.owner_view.get_owner_name()
         owners = (
             self.owner_service
             .search_owners_by_name(name)
         )
+
+        if not owners:
+            print(
+                "No owners found."
+            )
+            return
+
         self.owner_view.display_owners(
             owners
         )

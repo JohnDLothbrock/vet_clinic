@@ -109,21 +109,26 @@ class AppointmentController:
         except AppointmentNotFoundException as error:
             print(error)
 
-
     def search_appointments_by_pet_id(self):
 
         pet_id = (
-            self.appointment_view
-            .get_pet_id()
+            self.appointment_view.get_pet_id()
         )
+
         appointments = (
             self.appointment_service
             .search_appointments_by_pet_id(
                 pet_id
             )
         )
+        if not appointments:
+            print(
+                "No appointments found."
+            )
+
+            return
+
         self.appointment_view.display_appointments(
             appointments
         )
 
-    

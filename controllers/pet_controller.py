@@ -91,14 +91,20 @@ class PetController:
 
             print(error)
 
+
     def search_pet_by_name(self):
 
         name = self.pet_view.get_pet_name()
-
         pets = (
             self.pet_service
             .search_pets_by_name(name)
         )
+
+        if not pets:
+            print(
+                "No pets found."
+            )
+            return
 
         self.pet_view.display_pets(
             pets
