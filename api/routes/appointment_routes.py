@@ -1,9 +1,16 @@
-from fastapi import APIRouter
+from fastapi import (
+    APIRouter,
+    Depends
+)
 
 from models.appointments import Appointment
 
-from app.bootstrap import (
-    build_services
+from services.appointment_service import (
+    AppointmentService
+)
+
+from app.dependencies import (
+    get_appointment_service
 )
 
 from api.schemas.appointment_schema import (
@@ -12,7 +19,7 @@ from api.schemas.appointment_schema import (
     AppointmentResponse
 )
 
-from api.utils.api_response import (
+from utils.api_response import (
     success_response
 )
 
@@ -22,18 +29,16 @@ router = APIRouter(
     tags=["Appointments"]
 )
 
-services = build_services()
-
-appointment_service = (
-    services["appointment_service"]
-)
-
 
 @router.get(
     "",
     response_model=list[AppointmentResponse]
 )
-def get_appointments():
+def get_appointments(
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
+):
 
     return (
         appointment_service
@@ -46,7 +51,10 @@ def get_appointments():
     response_model=AppointmentResponse
 )
 def get_appointment_by_id(
-        appointment_id: int
+        appointment_id: int,
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
 ):
 
     return (
@@ -59,7 +67,10 @@ def get_appointment_by_id(
 
 @router.post("")
 def create_appointment(
-        appointment_data: AppointmentCreate
+        appointment_data: AppointmentCreate,
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
 ):
 
     appointment = Appointment(
@@ -82,7 +93,10 @@ def create_appointment(
 @router.put("/{appointment_id}")
 def update_appointment(
         appointment_id: int,
-        appointment_data: AppointmentUpdate
+        appointment_data: AppointmentUpdate,
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
 ):
 
     appointment_service.update_appointment(
@@ -98,7 +112,10 @@ def update_appointment(
 
 @router.delete("/{appointment_id}")
 def delete_appointment(
-        appointment_id: int
+        appointment_id: int,
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
 ):
 
     appointment_service.delete_appointment(

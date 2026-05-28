@@ -1,9 +1,16 @@
-from fastapi import APIRouter
+from fastapi import (
+    APIRouter,
+    Depends
+)
 
 from models.owner import Owner
 
-from app.bootstrap import (
-    build_services
+from services.owner_service import (
+    OwnerService
+)
+
+from app.dependencies import (
+    get_owner_service
 )
 
 from api.schemas.owner_schema import (
@@ -12,7 +19,7 @@ from api.schemas.owner_schema import (
     OwnerResponse
 )
 
-from api.utils.api_response import (
+from utils.api_response import (
     success_response
 )
 
@@ -22,16 +29,16 @@ router = APIRouter(
     tags=["Owners"]
 )
 
-services = build_services()
-
-owner_service = services["owner_service"]
-
 
 @router.get(
     "",
     response_model=list[OwnerResponse]
 )
-def get_owners():
+def get_owners(
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
+):
 
     return owner_service.get_all_owners()
 
@@ -41,7 +48,10 @@ def get_owners():
     response_model=OwnerResponse
 )
 def get_owner_by_id(
-        owner_id: int
+        owner_id: int,
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
 ):
 
     return owner_service.get_owner_by_id(
@@ -51,7 +61,10 @@ def get_owner_by_id(
 
 @router.post("")
 def create_owner(
-        owner_data: OwnerCreate
+        owner_data: OwnerCreate,
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
 ):
 
     owner = Owner(
@@ -71,7 +84,10 @@ def create_owner(
 @router.put("/{owner_id}")
 def update_owner(
         owner_id: int,
-        owner_data: OwnerUpdate
+        owner_data: OwnerUpdate,
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
 ):
 
     owner_service.update_owner(
@@ -87,7 +103,10 @@ def update_owner(
 
 @router.delete("/{owner_id}")
 def delete_owner(
-        owner_id: int
+        owner_id: int,
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
 ):
 
     owner_service.delete_owner(

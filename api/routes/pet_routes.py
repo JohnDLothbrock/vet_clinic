@@ -1,9 +1,16 @@
-from fastapi import APIRouter
+from fastapi import (
+    APIRouter,
+    Depends
+)
 
 from models.pet import Pet
 
-from app.bootstrap import (
-    build_services
+from services.pet_service import (
+    PetService
+)
+
+from app.dependencies import (
+    get_pet_service
 )
 
 from api.schemas.pet_schema import (
@@ -12,7 +19,7 @@ from api.schemas.pet_schema import (
     PetResponse
 )
 
-from api.utils.api_response import (
+from utils.api_response import (
     success_response
 )
 
@@ -22,16 +29,16 @@ router = APIRouter(
     tags=["Pets"]
 )
 
-services = build_services()
-
-pet_service = services["pet_service"]
-
 
 @router.get(
     "",
     response_model=list[PetResponse]
 )
-def get_pets():
+def get_pets(
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
+):
 
     return pet_service.get_all_pets()
 
@@ -41,7 +48,10 @@ def get_pets():
     response_model=PetResponse
 )
 def get_pet_by_id(
-        pet_id: int
+        pet_id: int,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
 ):
 
     return pet_service.get_pet_by_id(
@@ -51,7 +61,10 @@ def get_pet_by_id(
 
 @router.post("")
 def create_pet(
-        pet_data: PetCreate
+        pet_data: PetCreate,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
 ):
 
     pet = Pet(
@@ -73,7 +86,10 @@ def create_pet(
 @router.put("/{pet_id}")
 def update_pet(
         pet_id: int,
-        pet_data: PetUpdate
+        pet_data: PetUpdate,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
 ):
 
     pet_service.update_pet(
@@ -90,7 +106,10 @@ def update_pet(
 
 @router.delete("/{pet_id}")
 def delete_pet(
-        pet_id: int
+        pet_id: int,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
 ):
 
     pet_service.delete_pet(

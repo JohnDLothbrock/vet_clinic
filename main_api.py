@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 
+from fastapi.middleware.cors import (
+    CORSMiddleware
+)
+
 from api.routes.pet_routes import (
     router as pet_router
 )
@@ -30,22 +34,30 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 register_exception_handlers(app)
 
 app.include_router(
     pet_router,
-    prefix="/api/v1",
-    tags=["Pets"]
+    prefix="/api/v1"
 )
 
 app.include_router(
     owner_router,
-    prefix="/api/v1",
-    tags=["Owners"]
+    prefix="/api/v1"
 )
 
 app.include_router(
     appointment_router,
-    prefix="/api/v1",
-    tags=["Appointments"]
+    prefix="/api/v1"
 )
