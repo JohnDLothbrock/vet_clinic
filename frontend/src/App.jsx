@@ -1,19 +1,51 @@
+import {
+
+  BrowserRouter,
+  Routes,
+  Route
+
+} from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+
+import DashboardPage from "./pages/DashboardPage";
 import PetsPage from "./pages/PetsPage";
+import OwnersPage from "./pages/OwnersPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 
 function App() {
 
   return (
 
-    <div>
+    <BrowserRouter>
 
-      <PetsPage />
+      <Navbar />
 
-      <hr />
+      <Routes>
 
-      <AppointmentsPage />
+        <Route
+          path="/"
+          element={<DashboardPage />}
+        />
 
-    </div>
+        <Route
+          path="/pets"
+          element={<PetsPage />}
+        />
+
+        <Route
+          path="/owners"
+          element={<OwnersPage />}
+        />
+
+        <Route
+          path="/appointments"
+          element={<AppointmentsPage />}
+        />
+
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 
