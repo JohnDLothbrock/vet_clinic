@@ -1,59 +1,57 @@
 import { useEffect, useState } from "react";
 
-import PetForm from "../components/PetForm";
-import PetList from "../components/PetList";
+import OwnerForm from "../components/OwnerForm";
+import OwnerList from "../components/OwnerList";
 
 import {
 
-  getPets,
-  createPet,
-  updatePet,
-  deletePet
+  getOwners,
+  createOwner,
+  updateOwner,
+  deleteOwner
 
-} from "../services/petService";
+} from "../services/ownerService";
 
 import "../styles/app.css";
 
 
-function PetsPage() {
+function OwnersPage() {
 
-  const [pets, setPets] = useState([]);
+  const [owners, setOwners] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
-    species: "",
-    age: "",
-    owner_id: ""
+    phone: ""
   });
 
-  const [editingPetId, setEditingPetId] = useState(null);
+  const [editingOwnerId, setEditingOwnerId] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState("");
 
-  // LOAD PETS
-  const fetchPets = async () => {
+  // LOAD OWNERS
+  const fetchOwners = async () => {
 
     try {
 
       setLoading(true);
 
-      const data = await getPets();
+      const data = await getOwners();
 
-      setPets(data);
+      setOwners(data);
 
       setError("");
 
     } catch (error) {
 
       console.error(
-        "Error fetching pets:",
+        "Error fetching owners:",
         error
       );
 
       setError(
-        "Failed to load pets."
+        "Failed to load owners."
       );
 
     } finally {
@@ -64,7 +62,7 @@ function PetsPage() {
 
   useEffect(() => {
 
-    fetchPets();
+    fetchOwners();
 
   }, []);
 
@@ -82,57 +80,44 @@ function PetsPage() {
 
     event.preventDefault();
 
-    const payload = {
-      name: formData.name,
-      species: formData.species,
-      age: Number(formData.age),
-      owner_id: Number(formData.owner_id)
-    };
-
     try {
 
-      // UPDATE
-      if (editingPetId) {
+      if (editingOwnerId) {
 
-        await updatePet(
-          editingPetId,
-          {
-            name: payload.name,
-            species: payload.species,
-            age: payload.age
-          }
+        await updateOwner(
+          editingOwnerId,
+          formData
         );
 
       } else {
 
-        // CREATE
-        await createPet(payload);
+        await createOwner(formData);
       }
 
       resetForm();
 
-      fetchPets();
+      fetchOwners();
 
     } catch (error) {
 
       console.error(
-        "Error saving pet:",
+        "Error saving owner:",
         error
       );
 
       setError(
-        "Failed to save pet."
+        "Failed to save owner."
       );
     }
   };
 
   // DELETE
-  const handleDeletePet = async (
-    petId
+  const handleDeleteOwner = async (
+    ownerId
   ) => {
 
     const confirmed = window.confirm(
-      "Are you sure you want to delete this pet?"
+      "Are you sure you want to delete this owner?"
     );
 
     if (!confirmed) {
@@ -142,33 +127,31 @@ function PetsPage() {
 
     try {
 
-      await deletePet(petId);
+      await deleteOwner(ownerId);
 
-      fetchPets();
+      fetchOwners();
 
     } catch (error) {
 
       console.error(
-        "Error deleting pet:",
+        "Error deleting owner:",
         error
       );
 
       setError(
-        "Failed to delete pet."
+        "Failed to delete owner."
       );
     }
   };
 
   // EDIT
-  const handleEditPet = (pet) => {
+  const handleEditOwner = (owner) => {
 
-    setEditingPetId(pet.id);
+    setEditingOwnerId(owner.id);
 
     setFormData({
-      name: pet.name,
-      species: pet.species,
-      age: pet.age,
-      owner_id: pet.owner_id
+      name: owner.name,
+      phone: owner.phone
     });
 
     window.scrollTo({
@@ -180,13 +163,11 @@ function PetsPage() {
   // RESET
   const resetForm = () => {
 
-    setEditingPetId(null);
+    setEditingOwnerId(null);
 
     setFormData({
       name: "",
-      species: "",
-      age: "",
-      owner_id: ""
+      phone: ""
     });
   };
 
@@ -195,7 +176,7 @@ function PetsPage() {
     <div className="container">
 
       <h1 className="title">
-        Veterinary Clinic App
+        Owners Management
       </h1>
 
       {error && (
@@ -206,11 +187,11 @@ function PetsPage() {
 
       <div className="card">
 
-        <PetForm
+        <OwnerForm
           formData={formData}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
-          editingPetId={editingPetId}
+          editingOwnerId={editingOwnerId}
           resetForm={resetForm}
         />
 
@@ -218,18 +199,18 @@ function PetsPage() {
 
       <div className="card">
 
-        <h2>Pet List</h2>
+        <h2>Owner List</h2>
 
         {loading ? (
 
-          <p>Loading pets...</p>
+          <p>Loading owners...</p>
 
         ) : (
 
-          <PetList
-            pets={pets}
-            editPet={handleEditPet}
-            deletePet={handleDeletePet}
+          <OwnerList
+            owners={owners}
+            editOwner={handleEditOwner}
+            deleteOwner={handleDeleteOwner}
           />
 
         )}
@@ -240,4 +221,4 @@ function PetsPage() {
   );
 }
 
-export default PetsPage;
+export default OwnersPage;
