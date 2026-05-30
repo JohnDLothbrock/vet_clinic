@@ -125,3 +125,19 @@ def delete_appointment(
     return success_response(
         "Appointment deleted successfully"
     )
+
+@router.get("/search/{pet_id}")
+def search_appointments(
+        pet_id: int,
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
+):
+
+    return (
+        appointment_service
+        .search_appointments_by_pet_id(
+            pet_id
+        )
+    )
+

@@ -262,3 +262,49 @@ class PetRepository(
                 connection,
                 cursor
             )
+
+
+    def get_all_with_owner(self):
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            query = """
+                    SELECT p.id, \
+                           p.name, \
+                           p.species, \
+                           p.age, \
+                           p.owner_id, \
+                           o.name AS owner_name
+                    FROM Pets p
+                             INNER JOIN Owners o
+                                        ON p.owner_id = o.id \
+                    """
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+
+            pets = []
+
+            for row in rows:
+                pets.append({
+                    "id": row.id,
+                    "name": row.name,
+                    "species": row.species,
+                    "age": row.age,
+                    "owner_id": row.owner_id,
+                    "owner_name": row.owner_name
+                })
+
+            return pets
+
+        finally:
+            self._close(
+                connection,
+                cursor
+            )
+
+    

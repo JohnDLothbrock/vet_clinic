@@ -116,3 +116,18 @@ def delete_owner(
     return success_response(
         "Owner deleted successfully"
     )
+
+@router.get("/search/{name}")
+def search_owners(
+        name: str,
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
+):
+
+    return (
+        owner_service.search_owners_by_name(
+            name
+        )
+    )
+

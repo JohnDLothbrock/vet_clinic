@@ -4,20 +4,21 @@ import PetForm from "../components/PetForm";
 import PetList from "../components/PetList";
 
 import {
-
-  getPets,
+  getPetsWithOwner,
   createPet,
   updatePet,
-  deletePet
-
+  deletePet,
+  searchPets
 } from "../services/petService";
 
 import "../styles/app.css";
 
-
 function PetsPage() {
 
   const [pets, setPets] = useState([]);
+
+  const [searchTerm, setSearchTerm] =
+    useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,11 +27,14 @@ function PetsPage() {
     owner_id: ""
   });
 
-  const [editingPetId, setEditingPetId] = useState(null);
+  const [editingPetId, setEditingPetId] =
+    useState(null);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
   // LOAD PETS
   const fetchPets = async () => {
@@ -39,7 +43,13 @@ function PetsPage() {
 
       setLoading(true);
 
-      const data = await getPets();
+      const data =
+          await getPetsWithOwner();
+
+      console.log(
+          "PETS FROM API:",
+          data
+      );
 
       setPets(data);
 
@@ -62,6 +72,44 @@ function PetsPage() {
     }
   };
 
+  // SEARCH PETS
+  const handleSearch = async () => {
+
+    if (!searchTerm.trim()) {
+
+      fetchPets();
+
+      return;
+    }
+
+    try {
+
+      setLoading(true);
+
+      const data =
+        await searchPets(
+          searchTerm
+        );
+
+      setPets(data);
+
+    } catch (error) {
+
+      console.error(
+        "Error searching pets:",
+        error
+      );
+
+      setError(
+        "Failed to search pets."
+      );
+
+    } finally {
+
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
 
     fetchPets();
@@ -73,7 +121,8 @@ function PetsPage() {
 
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value
+      [event.target.name]:
+        event.target.value
     });
   };
 
@@ -91,7 +140,6 @@ function PetsPage() {
 
     try {
 
-      // UPDATE
       if (editingPetId) {
 
         await updatePet(
@@ -105,8 +153,9 @@ function PetsPage() {
 
       } else {
 
-        // CREATE
-        await createPet(payload);
+        await createPet(
+          payload
+        );
       }
 
       resetForm();
@@ -131,9 +180,10 @@ function PetsPage() {
     petId
   ) => {
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this pet?"
-    );
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to delete this pet?"
+      );
 
     if (!confirmed) {
 
@@ -142,7 +192,9 @@ function PetsPage() {
 
     try {
 
-      await deletePet(petId);
+      await deletePet(
+        petId
+      );
 
       fetchPets();
 
@@ -162,7 +214,9 @@ function PetsPage() {
   // EDIT
   const handleEditPet = (pet) => {
 
-    setEditingPetId(pet.id);
+    setEditingPetId(
+      pet.id
+    );
 
     setFormData({
       name: pet.name,
@@ -180,7 +234,9 @@ function PetsPage() {
   // RESET
   const resetForm = () => {
 
-    setEditingPetId(null);
+    setEditingPetId(
+      null
+    );
 
     setFormData({
       name: "",
@@ -199,9 +255,11 @@ function PetsPage() {
       </h1>
 
       {error && (
+
         <p className="error-message">
           {error}
         </p>
+
       )}
 
       <div className="card">
@@ -220,9 +278,49 @@ function PetsPage() {
 
         <h2>Pet List</h2>
 
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginBottom: "20px"
+          }}
+        >
+
+          <input
+            type="text"
+            placeholder="Search pet by name..."
+            value={searchTerm}
+            onChange={(event) =>
+              setSearchTerm(
+                event.target.value
+              )
+            }
+          />
+
+          <button
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+
+          <button
+            onClick={() => {
+
+              setSearchTerm("");
+
+              fetchPets();
+            }}
+          >
+            Clear
+          </button>
+
+        </div>
+
         {loading ? (
 
-          <p>Loading pets...</p>
+          <p>
+            Loading pets...
+          </p>
 
         ) : (
 

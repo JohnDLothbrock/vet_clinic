@@ -32,3 +32,17 @@ class PetResponse(
     species: str
     age: int
     owner_id: int
+
+
+class PetWithOwnerResponse(
+    BaseModel
+):
+
+
+    id: int
+    name: str
+    species: str
+    age: int
+    owner_id: int
+    owner_name: str
+

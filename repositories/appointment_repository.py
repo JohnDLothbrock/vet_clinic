@@ -189,3 +189,44 @@ class AppointmentRepository:
         finally:
             cursor.close()
             connection.close()
+
+    def get_all_with_pet(self):
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            query = """
+                    SELECT a.id, \
+                           a.pet_id, \
+                           p.name AS pet_name, \
+                           a.appointment_date, \
+                           a.reason
+                    FROM Appointments a
+                             INNER JOIN Pets p
+                                        ON a.pet_id = p.id \
+                    """
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+
+            appointments = []
+
+            for row in rows:
+                appointments.append({
+
+                    "id": row.id,
+                    "pet_id": row.pet_id,
+                    "pet_name": row.pet_name,
+                    "appointment_date": row.appointment_date,
+                    "reason": row.reason
+                })
+
+            return appointments
+
+        finally:
+
+            cursor.close()
+            connection.close()

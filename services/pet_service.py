@@ -153,3 +153,11 @@ class PetService:
         return self.pet_repository.get_by_name(
             name
         )
+
+
+    def get_all_pets_with_owner(self):
+
+        return (
+            self.pet_repository
+            .get_all_with_owner()
+        )

@@ -46,3 +46,26 @@ export async function deletePet(
     }
   );
 }
+
+export async function searchPets(
+  name
+) {
+
+  const response =
+    await fetch(
+      `${API_URL}/search/${name}`
+    );
+
+  return await response.json();
+}
+
+export async function getPetsWithOwner() {
+
+  const response =
+    await fetch(
+      `${API_URL}/with-owner`
+    );
+
+  return await response.json();
+}
+

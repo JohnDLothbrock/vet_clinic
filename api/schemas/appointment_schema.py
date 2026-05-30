@@ -26,3 +26,15 @@ class AppointmentResponse(
     pet_id: int
     appointment_date: str
     reason: str
+
+
+class AppointmentWithPetResponse(
+    BaseModel
+):
+
+
+    id: int
+    pet_id: int
+    pet_name: str
+    appointment_date: str
+    reason: str

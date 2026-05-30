@@ -6,6 +6,11 @@ function PetItem({
 
 }) {
 
+  console.log(
+    "PET ITEM:",
+    pet
+  );
+
   return (
 
     <div className="pet-card">
@@ -20,6 +25,10 @@ function PetItem({
 
         <p>
           Age: {pet.age}
+        </p>
+
+        <p>
+          Owner: {pet.owner_name}
         </p>
 
       </div>

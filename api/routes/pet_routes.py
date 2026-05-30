@@ -16,7 +16,8 @@ from app.dependencies import (
 from api.schemas.pet_schema import (
     PetCreate,
     PetUpdate,
-    PetResponse
+    PetResponse,
+    PetWithOwnerResponse
 )
 
 from utils.api_response import (
@@ -42,6 +43,20 @@ def get_pets(
 
     return pet_service.get_all_pets()
 
+@router.get(
+    "/with-owner",
+    response_model=list[PetWithOwnerResponse]
+)
+def get_pets_with_owner(
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
+):
+
+    return (
+        pet_service
+        .get_all_pets_with_owner()
+    )
 
 @router.get(
     "/{pet_id}",
@@ -119,3 +134,18 @@ def delete_pet(
     return success_response(
         "Pet deleted successfully"
     )
+
+@router.get("/search/{name}")
+def search_pets(
+        name: str,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
+):
+
+    return (
+        pet_service.search_pets_by_name(
+            name
+        )
+    )
+
