@@ -1,5 +1,10 @@
+from exceptions.application_exception import (
+    ApplicationException
+)
+
+
 class OwnerHasPetsException(
-    Exception
+    ApplicationException
 ):
 
     def __init__(
@@ -8,6 +13,9 @@ class OwnerHasPetsException(
     ):
 
         super().__init__(
-            f"Owner ID {owner_id} still has pets assigned."
+            message=(
+                f"Owner ID {owner_id} "
+                f"still has pets assigned."
+            ),
+            status_code=400
         )
-

@@ -7,7 +7,17 @@ export async function getAppointments() {
     `${API_URL}/with-pet`
   );
 
-  return await response.json();
+  const data =
+    await response.json();
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error || "Failed to load appointments."
+    );
+  }
+
+  return data;
 }
 
 export async function createAppointment(
@@ -30,15 +40,10 @@ export async function createAppointment(
   const data =
     await response.json();
 
-  console.log(
-    "CREATE RESPONSE:",
-    data
-  );
-
   if (!response.ok) {
 
     throw new Error(
-      JSON.stringify(data)
+      data.error || "Failed to create appointment."
     );
   }
 
@@ -50,29 +55,55 @@ export async function updateAppointment(
   appointmentData
 ) {
 
-  await fetch(
-    `${API_URL}/${appointmentId}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type":
-          "application/json"
-      },
-      body: JSON.stringify(
-        appointmentData
-      )
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/${appointmentId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify(
+          appointmentData
+        )
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error || "Failed to update appointment."
+    );
+  }
+
+  return data;
 }
 
 export async function deleteAppointment(
   appointmentId
 ) {
 
-  await fetch(
-    `${API_URL}/${appointmentId}`,
-    {
-      method: "DELETE"
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/${appointmentId}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error || "Failed to delete appointment."
+    );
+  }
+
+  return data;
 }

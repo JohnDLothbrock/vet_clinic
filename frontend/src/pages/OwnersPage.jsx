@@ -188,6 +188,8 @@ function OwnersPage() {
           ownerId
         );
 
+        setError("");
+
         fetchOwners();
 
       } catch (error) {
@@ -198,7 +200,7 @@ function OwnersPage() {
         );
 
         setError(
-          "Failed to delete owner."
+          error.message
         );
       }
     };

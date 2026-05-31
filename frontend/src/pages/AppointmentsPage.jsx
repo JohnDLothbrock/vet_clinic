@@ -43,16 +43,30 @@ function AppointmentsPage() {
     setEditingAppointmentId
   ] = useState(null);
 
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
+
+  const [
+    error,
+    setError
+  ] = useState("");
+
   // LOAD APPOINTMENTS
   const fetchAppointments =
     async () => {
 
       try {
 
+        setLoading(true);
+
         const data =
           await getAppointments();
 
         setAppointments(data);
+
+        setError("");
 
       } catch (error) {
 
@@ -60,6 +74,14 @@ function AppointmentsPage() {
           "Error fetching appointments:",
           error
         );
+
+        setError(
+          error.message
+        );
+
+      } finally {
+
+        setLoading(false);
       }
     };
 
@@ -112,10 +134,6 @@ function AppointmentsPage() {
         pet_id:
           Number(formData.pet_id),
 
-        // Convert:
-        // 2026-06-15T14:30
-        // into
-        // 2026-06-15 14:30
         appointment_date:
           formData.appointment_date.replace(
             "T",
@@ -150,6 +168,8 @@ function AppointmentsPage() {
           );
         }
 
+        setError("");
+
         resetForm();
 
         fetchAppointments();
@@ -160,6 +180,10 @@ function AppointmentsPage() {
           "Error saving appointment:",
           error
         );
+
+        setError(
+          error.message
+        );
       }
     };
 
@@ -167,11 +191,23 @@ function AppointmentsPage() {
   const handleDeleteAppointment =
     async (appointmentId) => {
 
+      const confirmed =
+        window.confirm(
+          "Are you sure you want to delete this appointment?"
+        );
+
+      if (!confirmed) {
+
+        return;
+      }
+
       try {
 
         await deleteAppointment(
           appointmentId
         );
+
+        setError("");
 
         fetchAppointments();
 
@@ -180,6 +216,10 @@ function AppointmentsPage() {
         console.error(
           "Error deleting appointment:",
           error
+        );
+
+        setError(
+          error.message
         );
       }
     };
@@ -231,6 +271,14 @@ function AppointmentsPage() {
         Appointments
       </h1>
 
+      {error && (
+
+        <p className="error-message">
+          {error}
+        </p>
+
+      )}
+
       <AppointmentForm
         formData={formData}
         handleChange={handleChange}
@@ -242,15 +290,25 @@ function AppointmentsPage() {
         pets={pets}
       />
 
-      <AppointmentList
-        appointments={appointments}
-        editAppointment={
-          handleEditAppointment
-        }
-        deleteAppointment={
-          handleDeleteAppointment
-        }
-      />
+      {loading ? (
+
+        <p>
+          Loading appointments...
+        </p>
+
+      ) : (
+
+        <AppointmentList
+          appointments={appointments}
+          editAppointment={
+            handleEditAppointment
+          }
+          deleteAppointment={
+            handleDeleteAppointment
+          }
+        />
+
+      )}
 
     </div>
   );

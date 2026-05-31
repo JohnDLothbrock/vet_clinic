@@ -8,3 +8,6 @@
 2026-05-31 11:12:40,328 - INFO - Searching owners by name: juan
 2026-05-31 11:13:03,341 - INFO - Searching pets by name: Weasel
 2026-05-31 11:14:58,271 - INFO - Searching owners by name: jua
+2026-05-31 11:42:58,454 - INFO - Owner updated: 3
+2026-05-31 11:43:10,136 - WARNING - Owner 3 still has pets assigned
+2026-05-31 12:05:32,649 - WARNING - Owner 3 still has pets assigned

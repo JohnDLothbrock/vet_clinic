@@ -64,10 +64,23 @@ export async function deleteOwner(
   ownerId
 ) {
 
-  await fetch(
-    `${API_URL}/${ownerId}`,
-    {
-      method: "DELETE"
-    }
-  );
+  const response =
+    await fetch(
+      `${API_URL}/${ownerId}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error
+    );
+  }
+
+  return data;
 }
