@@ -11,10 +11,10 @@ function AppointmentItem({
     <li className="list-item">
 
       <strong>
-        Pet ID:
+        Pet:
       </strong>
       {" "}
-      {appointment.pet_id}
+      {appointment.pet_name}
 
       <br />
 

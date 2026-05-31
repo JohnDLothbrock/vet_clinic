@@ -3,7 +3,9 @@ const API_URL =
 
 export async function getAppointments() {
 
-  const response = await fetch(API_URL);
+  const response = await fetch(
+    `${API_URL}/with-pet`
+  );
 
   return await response.json();
 }
@@ -12,15 +14,35 @@ export async function createAppointment(
   appointmentData
 ) {
 
-  await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(
-      appointmentData
-    )
-  });
+  const response = await fetch(
+    API_URL,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(
+        appointmentData
+      )
+    }
+  );
+
+  const data =
+    await response.json();
+
+  console.log(
+    "CREATE RESPONSE:",
+    data
+  );
+
+  if (!response.ok) {
+
+    throw new Error(
+      JSON.stringify(data)
+    );
+  }
+
+  return data;
 }
 
 export async function updateAppointment(

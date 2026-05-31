@@ -91,16 +91,15 @@ function AppointmentsPage() {
   }, []);
 
   // INPUTS
-  const handleChange = (
-    event
-  ) => {
+  const handleChange =
+    (event) => {
 
-    setFormData({
-      ...formData,
-      [event.target.name]:
-        event.target.value
-    });
-  };
+      setFormData({
+        ...formData,
+        [event.target.name]:
+          event.target.value
+      });
+    };
 
   // CREATE / UPDATE
   const handleSubmit =
@@ -113,8 +112,15 @@ function AppointmentsPage() {
         pet_id:
           Number(formData.pet_id),
 
+        // Convert:
+        // 2026-06-15T14:30
+        // into
+        // 2026-06-15 14:30
         appointment_date:
-          formData.appointment_date,
+          formData.appointment_date.replace(
+            "T",
+            " "
+          ),
 
         reason:
           formData.reason
