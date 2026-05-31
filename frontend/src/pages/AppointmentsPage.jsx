@@ -226,28 +226,32 @@ function AppointmentsPage() {
 
   // EDIT
   const handleEditAppointment =
-    (appointment) => {
+  (appointment) => {
 
-      setEditingAppointmentId(
-        appointment.id
-      );
+    setEditingAppointmentId(
+      appointment.id
+    );
 
-      setFormData({
-        pet_id:
-          appointment.pet_id,
+    const formattedDate =
+      appointment.appointment_date
+        .slice(0, 16);
 
-        appointment_date:
-          appointment.appointment_date,
+    setFormData({
+      pet_id:
+        appointment.pet_id,
 
-        reason:
-          appointment.reason
-      });
+      appointment_date:
+        formattedDate,
 
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    };
+      reason:
+        appointment.reason
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
 
   // RESET
   const resetForm = () => {
