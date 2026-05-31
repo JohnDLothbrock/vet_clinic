@@ -189,7 +189,6 @@ class AppointmentRepository:
         cursor.close()
         connection.close()
 
-
     def get_by_pet_id(
             self,
             pet_id
@@ -200,12 +199,15 @@ class AppointmentRepository:
 
         try:
             query = """
-                    SELECT id, \
-                           pet_id, \
-                           appointment_date, \
-                           reason
-                    FROM Appointments
-                    WHERE pet_id = ? \
+                    SELECT a.id,
+                           a.pet_id,
+                           p.name AS pet_name,
+                           a.appointment_date,
+                           a.reason
+                    FROM Appointments a
+                             INNER JOIN Pets p
+                                        ON a.pet_id = p.id
+                    WHERE a.pet_id = ?
                     """
 
             cursor.execute(
@@ -217,16 +219,16 @@ class AppointmentRepository:
             appointments = []
 
             for row in rows:
-                appointment = Appointment(
-                    pet_id=row.pet_id,
-                    appointment_date=row.appointment_date,
-                    reason=row.reason,
-                    appointment_id=row.id
-                )
+                appointments.append({
 
-                appointments.append(
-                    appointment
-                )
+                    "id": row.id,
+                    "pet_id": row.pet_id,
+                    "pet_name": row.pet_name,
+                    "appointment_date": row.appointment_date,
+                    "reason": row.reason
+
+                })
+
             return appointments
 
         finally:

@@ -64,7 +64,7 @@ function OwnersPage() {
         );
 
         setError(
-          "Failed to load owners."
+          error.message
         );
 
       } finally {
@@ -101,6 +101,8 @@ function OwnersPage() {
 
         setOwners(data);
 
+        setError("");
+
       } catch (error) {
 
         console.error(
@@ -109,7 +111,7 @@ function OwnersPage() {
         );
 
         setError(
-          "Failed to search owners."
+          error.message
         );
 
       } finally {
@@ -151,6 +153,8 @@ function OwnersPage() {
           );
         }
 
+        setError("");
+
         resetForm();
 
         fetchOwners();
@@ -163,7 +167,7 @@ function OwnersPage() {
         );
 
         setError(
-          "Failed to save owner."
+          error.message
         );
       }
     };
