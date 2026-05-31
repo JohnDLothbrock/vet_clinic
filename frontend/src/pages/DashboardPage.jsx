@@ -118,6 +118,50 @@ function DashboardPage() {
 
       </div>
 
+      <div className="card">
+
+        <h2>
+          Recent Appointments
+        </h2>
+
+        {dashboard.recent_appointments
+          ?.length === 0 ? (
+
+          <p>
+            No appointments found.
+          </p>
+
+        ) : (
+
+          <ul>
+
+            {dashboard.recent_appointments.map(
+              (appointment) => (
+
+                <li
+                  key={appointment.id}
+                  className="recent-item"
+                >
+
+                  <strong>
+                    {appointment.pet_name}
+                  </strong>
+
+                  {" - "}
+
+                  {appointment.reason}
+
+                </li>
+
+              )
+            )}
+
+          </ul>
+
+        )}
+
+      </div>
+
     </div>
   );
 }

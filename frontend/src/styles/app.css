@@ -167,3 +167,14 @@ button:hover {
     0 6px 15px
     rgba(0, 0, 0, 0.15);
 }
+
+.recent-item {
+
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.recent-item:last-child {
+
+  border-bottom: none;
+}

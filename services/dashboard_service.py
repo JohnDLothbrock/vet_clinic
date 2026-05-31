@@ -25,7 +25,13 @@ class DashboardService:
 
         appointments = (
             self.appointment_service
-            .get_all_appointments()
+            .get_all_appointments_with_pet()
+        )
+
+        recent_appointments = (
+            appointments[-5:]
+            if len(appointments) > 5
+            else appointments
         )
 
         return {
@@ -37,5 +43,8 @@ class DashboardService:
                 len(pets),
 
             "total_appointments":
-                len(appointments)
+                len(appointments),
+
+            "recent_appointments":
+                recent_appointments
         }
