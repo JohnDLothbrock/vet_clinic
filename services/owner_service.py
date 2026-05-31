@@ -6,6 +6,10 @@ from exceptions.owner_not_found_exception import (
     OwnerNotFoundException
 )
 
+from exceptions.owner_has_pets_exception import (
+    OwnerHasPetsException
+)
+
 from utils.logger import logger
 
 from models.owner import Owner
@@ -25,6 +29,8 @@ class OwnerService:
         self.owner_repository = (
             owner_repository
         )
+
+        self.pet_service = None
 
     def create_owner(
             self,
@@ -50,7 +56,6 @@ class OwnerService:
             self.owner_repository.get_all()
         )
 
-
     def get_owner_by_id(
             self,
             owner_id
@@ -61,6 +66,7 @@ class OwnerService:
         )
 
         if not owner:
+
             logger.warning(
                 f"Owner ID {owner_id} not found"
             )
@@ -68,8 +74,8 @@ class OwnerService:
             raise OwnerNotFoundException(
                 owner_id
             )
-        return owner
 
+        return owner
 
     def update_owner(
             self,
@@ -133,6 +139,24 @@ class OwnerService:
             raise OwnerNotFoundException(
                 owner_id
             )
+
+        if self.pet_service:
+
+            pets = (
+                self.pet_service.get_pets_by_owner_id(
+                    owner_id
+                )
+            )
+
+            if len(pets) > 0:
+
+                logger.warning(
+                    f"Owner {owner_id} still has pets assigned"
+                )
+
+                raise OwnerHasPetsException(
+                    owner_id
+                )
 
         self.owner_repository.delete(
             owner_id

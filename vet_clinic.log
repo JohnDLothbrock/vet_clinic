@@ -3,3 +3,8 @@
 2026-05-30 20:03:46,505 - INFO - Owner created: Peter Sanchez
 2026-05-30 20:04:40,334 - INFO - Pet created: Siri weasel 
 2026-05-30 20:20:07,191 - INFO - Searching pets by name: max
+2026-05-31 11:12:25,435 - INFO - Searching owners by name: peter
+2026-05-31 11:12:35,277 - INFO - Searching owners by name: sanchez
+2026-05-31 11:12:40,328 - INFO - Searching owners by name: juan
+2026-05-31 11:13:03,341 - INFO - Searching pets by name: Weasel
+2026-05-31 11:14:58,271 - INFO - Searching owners by name: jua

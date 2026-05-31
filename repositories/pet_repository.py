@@ -1,15 +1,11 @@
 from models.pet import Pet
-
 from repositories.base_repository import (
     BaseRepository
 )
 
-
-
 class PetRepository(
     BaseRepository
 ):
-
 
 
     def create(
@@ -307,4 +303,52 @@ class PetRepository(
                 cursor
             )
 
-    
+
+    def get_by_owner_id(
+            self,
+            owner_id
+    ) -> list[Pet]:
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            query = """
+                    SELECT id, \
+                           name, \
+                           species, \
+                           age, \
+                           owner_id
+                    FROM Pets
+                    WHERE owner_id = ? \
+                    """
+
+            cursor.execute(
+                query,
+                (owner_id,)
+            )
+
+            rows = cursor.fetchall()
+
+            pets = []
+
+            for row in rows:
+                pets.append(
+                    Pet(
+                        name=row.name,
+                        species=row.species,
+                        age=row.age,
+                        owner_id=row.owner_id,
+                        pet_id=row.id
+                    )
+                )
+
+            return pets
+
+        finally:
+            self._close(
+                connection,
+                cursor
+            )
+
