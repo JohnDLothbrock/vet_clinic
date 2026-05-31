@@ -1,4 +1,15 @@
-from fastapi import APIRouter
+from fastapi import (
+    APIRouter,
+    Depends
+)
+
+from services.dashboard_service import (
+    DashboardService
+)
+
+from app.dependencies import (
+    get_dashboard_service
+)
 
 router = APIRouter(
     prefix="/dashboard",
@@ -7,12 +18,13 @@ router = APIRouter(
 
 
 @router.get("")
-def get_dashboard():
+def get_dashboard(
+        dashboard_service: DashboardService = Depends(
+            get_dashboard_service
+        )
+):
 
-    return {
-
-        "total_owners": 2,
-        "total_pets": 4,
-        "total_appointments": 3
-    }
-
+    return (
+        dashboard_service
+        .get_dashboard_data()
+    )

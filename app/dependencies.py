@@ -16,11 +16,13 @@ from services.pet_service import (
 from services.appointment_service import (
     AppointmentService
 )
+from services.dashboard_service import (
+    DashboardService
+)
 
 
 
 # REPOSITORIES
-
 owner_repository = OwnerRepository()
 
 pet_repository = PetRepository()
@@ -31,7 +33,6 @@ appointment_repository = (
 
 
 # SERVICES
-
 owner_service = OwnerService(
     owner_repository
 )
@@ -46,9 +47,14 @@ appointment_service = AppointmentService(
     pet_service
 )
 
+dashboard_service = DashboardService(
+    owner_service,
+    pet_service,
+    appointment_service
+)
+
 
 # DEPENDENCY FUNCTIONS
-
 def get_owner_service():
 
     return owner_service
@@ -62,4 +68,8 @@ def get_pet_service():
 def get_appointment_service():
 
     return appointment_service
+
+def get_dashboard_service():
+
+    return dashboard_service
 
