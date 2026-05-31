@@ -1,21 +1,43 @@
-const API_URL = "http://127.0.0.1:8000/api/v1/owners";
+const API_URL =
+  "http://127.0.0.1:8000/api/v1/owners";
 
 export async function getOwners() {
 
-  const response = await fetch(API_URL);
+  const response =
+    await fetch(API_URL);
 
   return await response.json();
 }
 
-export async function createOwner(ownerData) {
+export async function searchOwners(
+  name
+) {
 
-  await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(ownerData)
-  });
+  const response =
+    await fetch(
+      `${API_URL}/search/${name}`
+    );
+
+  return await response.json();
+}
+
+export async function createOwner(
+  ownerData
+) {
+
+  await fetch(
+    API_URL,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
+      body: JSON.stringify(
+        ownerData
+      )
+    }
+  );
 }
 
 export async function updateOwner(
@@ -28,9 +50,12 @@ export async function updateOwner(
     {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type":
+          "application/json"
       },
-      body: JSON.stringify(ownerData)
+      body: JSON.stringify(
+        ownerData
+      )
     }
   );
 }

@@ -178,3 +178,29 @@ button:hover {
 
   border-bottom: none;
 }
+
+.recent-appointments-list {
+
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-appointment-card {
+
+  background: #fafafa;
+  padding: 15px;
+  margin-bottom: 10px;
+
+  border-radius: 8px;
+  border-left: 5px solid #2563eb;
+
+  box-shadow:
+    0 1px 4px
+    rgba(0,0,0,0.08);
+}
+
+.recent-appointment-card strong {
+
+  color: #2563eb;
+}

@@ -133,21 +133,21 @@ function DashboardPage() {
 
         ) : (
 
-          <ul>
+          <ul className="recent-appointments-list">
 
             {dashboard.recent_appointments.map(
               (appointment) => (
 
                 <li
                   key={appointment.id}
-                  className="recent-item"
+                  className="recent-appointment-card"
                 >
 
                   <strong>
                     {appointment.pet_name}
                   </strong>
 
-                  {" - "}
+                  <br />
 
                   {appointment.reason}
 

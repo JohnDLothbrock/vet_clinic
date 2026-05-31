@@ -6,6 +6,7 @@ import OwnerList from "../components/OwnerList";
 import {
 
   getOwners,
+  searchOwners,
   createOwner,
   updateOwner,
   deleteOwner
@@ -14,51 +15,63 @@ import {
 
 import "../styles/app.css";
 
-
 function OwnersPage() {
 
-  const [owners, setOwners] = useState([]);
+  const [owners, setOwners] =
+    useState([]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: ""
-  });
+  const [searchTerm, setSearchTerm] =
+    useState("");
 
-  const [editingOwnerId, setEditingOwnerId] = useState(null);
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      phone: ""
+    });
 
-  const [loading, setLoading] = useState(true);
+  const [editingOwnerId,
+    setEditingOwnerId] =
+    useState(null);
 
-  const [error, setError] = useState("");
+  const [loading,
+    setLoading] =
+    useState(true);
+
+  const [error,
+    setError] =
+    useState("");
 
   // LOAD OWNERS
-  const fetchOwners = async () => {
+  const fetchOwners =
+    async () => {
 
-    try {
+      try {
 
-      setLoading(true);
+        setLoading(true);
 
-      const data = await getOwners();
+        const data =
+          await getOwners();
 
-      setOwners(data);
+        setOwners(data);
 
-      setError("");
+        setError("");
 
-    } catch (error) {
+      } catch (error) {
 
-      console.error(
-        "Error fetching owners:",
-        error
-      );
+        console.error(
+          "Error fetching owners:",
+          error
+        );
 
-      setError(
-        "Failed to load owners."
-      );
+        setError(
+          "Failed to load owners."
+        );
 
-    } finally {
+      } finally {
 
-      setLoading(false);
-    }
-  };
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
 
@@ -66,110 +79,162 @@ function OwnersPage() {
 
   }, []);
 
-  // HANDLE INPUTS
-  const handleChange = (event) => {
+  // SEARCH OWNERS
+  const handleSearch =
+    async () => {
 
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    });
-  };
+      if (!searchTerm.trim()) {
 
-  // CREATE / UPDATE
-  const handleSubmit = async (event) => {
+        fetchOwners();
 
-    event.preventDefault();
-
-    try {
-
-      if (editingOwnerId) {
-
-        await updateOwner(
-          editingOwnerId,
-          formData
-        );
-
-      } else {
-
-        await createOwner(formData);
+        return;
       }
 
-      resetForm();
+      try {
 
-      fetchOwners();
+        setLoading(true);
 
-    } catch (error) {
+        const data =
+          await searchOwners(
+            searchTerm
+          );
 
-      console.error(
-        "Error saving owner:",
-        error
-      );
+        setOwners(data);
 
-      setError(
-        "Failed to save owner."
-      );
-    }
-  };
+      } catch (error) {
+
+        console.error(
+          "Error searching owners:",
+          error
+        );
+
+        setError(
+          "Failed to search owners."
+        );
+
+      } finally {
+
+        setLoading(false);
+      }
+    };
+
+  // HANDLE INPUTS
+  const handleChange =
+    (event) => {
+
+      setFormData({
+        ...formData,
+        [event.target.name]:
+          event.target.value
+      });
+    };
+
+  // CREATE / UPDATE
+  const handleSubmit =
+    async (event) => {
+
+      event.preventDefault();
+
+      try {
+
+        if (editingOwnerId) {
+
+          await updateOwner(
+            editingOwnerId,
+            formData
+          );
+
+        } else {
+
+          await createOwner(
+            formData
+          );
+        }
+
+        resetForm();
+
+        fetchOwners();
+
+      } catch (error) {
+
+        console.error(
+          "Error saving owner:",
+          error
+        );
+
+        setError(
+          "Failed to save owner."
+        );
+      }
+    };
 
   // DELETE
-  const handleDeleteOwner = async (
-    ownerId
-  ) => {
+  const handleDeleteOwner =
+    async (ownerId) => {
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this owner?"
-    );
+      const confirmed =
+        window.confirm(
+          "Are you sure you want to delete this owner?"
+        );
 
-    if (!confirmed) {
+      if (!confirmed) {
 
-      return;
-    }
+        return;
+      }
 
-    try {
+      try {
 
-      await deleteOwner(ownerId);
+        await deleteOwner(
+          ownerId
+        );
 
-      fetchOwners();
+        fetchOwners();
 
-    } catch (error) {
+      } catch (error) {
 
-      console.error(
-        "Error deleting owner:",
-        error
-      );
+        console.error(
+          "Error deleting owner:",
+          error
+        );
 
-      setError(
-        "Failed to delete owner."
-      );
-    }
-  };
+        setError(
+          "Failed to delete owner."
+        );
+      }
+    };
 
   // EDIT
-  const handleEditOwner = (owner) => {
+  const handleEditOwner =
+    (owner) => {
 
-    setEditingOwnerId(owner.id);
+      setEditingOwnerId(
+        owner.id
+      );
 
-    setFormData({
-      name: owner.name,
-      phone: owner.phone
-    });
+      setFormData({
+        name: owner.name,
+        phone: owner.phone
+      });
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  };
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
 
   // RESET
-  const resetForm = () => {
+  const resetForm =
+    () => {
 
-    setEditingOwnerId(null);
+      setEditingOwnerId(
+        null
+      );
 
-    setFormData({
-      name: "",
-      phone: ""
-    });
-  };
+      setFormData({
+        name: "",
+        phone: ""
+      });
+    };
 
   return (
 
@@ -180,9 +245,11 @@ function OwnersPage() {
       </h1>
 
       {error && (
+
         <p className="error-message">
           {error}
         </p>
+
       )}
 
       <div className="card">
@@ -199,11 +266,53 @@ function OwnersPage() {
 
       <div className="card">
 
-        <h2>Owner List</h2>
+        <h2>
+          Owner List
+        </h2>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginBottom: "20px"
+          }}
+        >
+
+          <input
+            type="text"
+            placeholder="Search owner by name..."
+            value={searchTerm}
+            onChange={(event) =>
+              setSearchTerm(
+                event.target.value
+              )
+            }
+          />
+
+          <button
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+
+          <button
+            onClick={() => {
+
+              setSearchTerm("");
+
+              fetchOwners();
+            }}
+          >
+            Clear
+          </button>
+
+        </div>
 
         {loading ? (
 
-          <p>Loading owners...</p>
+          <p>
+            Loading owners...
+          </p>
 
         ) : (
 

@@ -5,6 +5,49 @@ from models.appointments import Appointment
 class AppointmentRepository:
 
 
+    def get_recent_appointments(self, limit=5):
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            query = f"""
+                    SELECT TOP {limit}
+                           a.id,
+                           a.pet_id,
+                           p.name AS pet_name,
+                           a.appointment_date,
+                           a.reason
+                    FROM Appointments a
+                    INNER JOIN Pets p
+                        ON a.pet_id = p.id
+                    ORDER BY a.appointment_date DESC
+                    """
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+
+            appointments = []
+
+            for row in rows:
+                appointments.append({
+
+                    "id": row.id,
+                    "pet_id": row.pet_id,
+                    "pet_name": row.pet_name,
+                    "appointment_date": row.appointment_date,
+                    "reason": row.reason
+                })
+
+            return appointments
+
+        finally:
+
+            cursor.close()
+            connection.close()
+
     def create(self, appointment):
 
         connection = get_connection()
