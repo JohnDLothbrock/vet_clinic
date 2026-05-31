@@ -16,7 +16,8 @@ from app.dependencies import (
 from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
-    AppointmentResponse
+    AppointmentResponse,
+    AppointmentWithPetResponse
 )
 
 from utils.api_response import (
@@ -43,6 +44,24 @@ def get_appointments(
     return (
         appointment_service
         .get_all_appointments()
+    )
+
+
+@router.get(
+    "/with-pet",
+    response_model=list[
+        AppointmentWithPetResponse
+    ]
+)
+def get_appointments_with_pet(
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
+):
+
+    return (
+        appointment_service
+        .get_all_appointments_with_pet()
     )
 
 
@@ -126,6 +145,7 @@ def delete_appointment(
         "Appointment deleted successfully"
     )
 
+
 @router.get("/search/{pet_id}")
 def search_appointments(
         pet_id: int,
@@ -140,4 +160,3 @@ def search_appointments(
             pet_id
         )
     )
-

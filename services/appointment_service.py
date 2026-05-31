@@ -181,3 +181,13 @@ class AppointmentService:
                 pet_id
             )
         )
+
+
+    def get_all_appointments_with_pet(self):
+
+        return (
+            self.appointment_repository
+            .get_all_with_pet()
+        )
+
+    

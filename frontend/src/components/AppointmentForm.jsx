@@ -4,7 +4,8 @@ function AppointmentForm({
   handleChange,
   handleSubmit,
   editingAppointmentId,
-  resetForm
+  resetForm,
+  pets
 
 }) {
 
@@ -13,26 +14,42 @@ function AppointmentForm({
     <div className="card">
 
       <h2>
+
         {editingAppointmentId
           ? "Edit Appointment"
           : "Create Appointment"}
+
       </h2>
 
       <form onSubmit={handleSubmit}>
 
-        <input
-          type="number"
+        <select
           name="pet_id"
-          placeholder="Pet ID"
           value={formData.pet_id}
           onChange={handleChange}
           disabled={editingAppointmentId}
-        />
+        >
+
+          <option value="">
+            Select Pet
+          </option>
+
+          {pets.map((pet) => (
+
+            <option
+              key={pet.id}
+              value={pet.id}
+            >
+              {pet.name} ({pet.owner_name})
+            </option>
+
+          ))}
+
+        </select>
 
         <input
-          type="text"
+          type="datetime-local"
           name="appointment_date"
-          placeholder="Appointment Date"
           value={formData.appointment_date}
           onChange={handleChange}
         />
@@ -46,9 +63,11 @@ function AppointmentForm({
         />
 
         <button type="submit">
+
           {editingAppointmentId
             ? "Update Appointment"
             : "Create Appointment"}
+
         </button>
 
         {editingAppointmentId && (

@@ -39,7 +39,8 @@ body {
   gap: 15px;
 }
 
-.pet-form input {
+.pet-form input,
+.pet-form select {
 
   padding: 12px;
   border: 1px solid #ccc;

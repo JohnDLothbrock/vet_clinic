@@ -4,7 +4,8 @@ function PetForm({
   handleChange,
   handleSubmit,
   editingPetId,
-  resetForm
+  resetForm,
+  owners
 
 }) {
 
@@ -49,14 +50,29 @@ function PetForm({
           onChange={handleChange}
         />
 
-        <input
-          type="number"
+        <select
           name="owner_id"
-          placeholder="Owner ID"
           value={formData.owner_id}
           onChange={handleChange}
           disabled={editingPetId}
-        />
+        >
+
+          <option value="">
+            Select Owner
+          </option>
+
+          {owners.map((owner) => (
+
+            <option
+              key={owner.id}
+              value={owner.id}
+            >
+              {owner.name}
+            </option>
+
+          ))}
+
+        </select>
 
         <div className="button-group">
 

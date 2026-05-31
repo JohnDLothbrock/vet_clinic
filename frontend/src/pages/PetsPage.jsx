@@ -11,11 +11,18 @@ import {
   searchPets
 } from "../services/petService";
 
+import {
+  getOwners
+} from "../services/ownerService";
+
 import "../styles/app.css";
 
 function PetsPage() {
 
   const [pets, setPets] = useState([]);
+
+  const [owners, setOwners] =
+    useState([]);
 
   const [searchTerm, setSearchTerm] =
     useState("");
@@ -44,12 +51,7 @@ function PetsPage() {
       setLoading(true);
 
       const data =
-          await getPetsWithOwner();
-
-      console.log(
-          "PETS FROM API:",
-          data
-      );
+        await getPetsWithOwner();
 
       setPets(data);
 
@@ -69,6 +71,25 @@ function PetsPage() {
     } finally {
 
       setLoading(false);
+    }
+  };
+
+  // LOAD OWNERS
+  const fetchOwners = async () => {
+
+    try {
+
+      const data =
+        await getOwners();
+
+      setOwners(data);
+
+    } catch (error) {
+
+      console.error(
+        "Error fetching owners:",
+        error
+      );
     }
   };
 
@@ -113,6 +134,7 @@ function PetsPage() {
   useEffect(() => {
 
     fetchPets();
+    fetchOwners();
 
   }, []);
 
@@ -270,6 +292,7 @@ function PetsPage() {
           handleSubmit={handleSubmit}
           editingPetId={editingPetId}
           resetForm={resetForm}
+          owners={owners}
         />
 
       </div>

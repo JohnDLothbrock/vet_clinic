@@ -4,24 +4,29 @@ import {
 } from "react";
 
 import AppointmentForm from "../components/AppointmentForm";
-
 import AppointmentList from "../components/AppointmentList";
 
 import {
-
   getAppointments,
   createAppointment,
   updateAppointment,
   deleteAppointment
-
 } from "../services/appointmentService";
 
+import {
+  getPetsWithOwner
+} from "../services/petService";
 
 function AppointmentsPage() {
 
   const [
     appointments,
     setAppointments
+  ] = useState([]);
+
+  const [
+    pets,
+    setPets
   ] = useState([]);
 
   const [
@@ -38,7 +43,7 @@ function AppointmentsPage() {
     setEditingAppointmentId
   ] = useState(null);
 
-  // LOAD
+  // LOAD APPOINTMENTS
   const fetchAppointments =
     async () => {
 
@@ -58,9 +63,30 @@ function AppointmentsPage() {
       }
     };
 
+  // LOAD PETS
+  const fetchPets =
+    async () => {
+
+      try {
+
+        const data =
+          await getPetsWithOwner();
+
+        setPets(data);
+
+      } catch (error) {
+
+        console.error(
+          "Error fetching pets:",
+          error
+        );
+      }
+    };
+
   useEffect(() => {
 
     fetchAppointments();
+    fetchPets();
 
   }, []);
 
@@ -83,6 +109,7 @@ function AppointmentsPage() {
       event.preventDefault();
 
       const payload = {
+
         pet_id:
           Number(formData.pet_id),
 
@@ -169,6 +196,11 @@ function AppointmentsPage() {
         reason:
           appointment.reason
       });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     };
 
   // RESET
@@ -201,6 +233,7 @@ function AppointmentsPage() {
           editingAppointmentId
         }
         resetForm={resetForm}
+        pets={pets}
       />
 
       <AppointmentList
