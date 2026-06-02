@@ -40,10 +40,15 @@ function PetsPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [saving, setSaving] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState(null);
+
   const [error, setError] =
     useState("");
 
-  // LOAD PETS
   const fetchPets = async () => {
 
     try {
@@ -65,7 +70,7 @@ function PetsPage() {
       );
 
       setError(
-        "Failed to load pets."
+        error.message
       );
 
     } finally {
@@ -74,7 +79,6 @@ function PetsPage() {
     }
   };
 
-  // LOAD OWNERS
   const fetchOwners = async () => {
 
     try {
@@ -90,11 +94,16 @@ function PetsPage() {
         "Error fetching owners:",
         error
       );
+
+      setError(
+        error.message
+      );
     }
   };
 
-  // SEARCH PETS
   const handleSearch = async () => {
+
+    setError("");
 
     if (!searchTerm.trim()) {
 
@@ -122,7 +131,7 @@ function PetsPage() {
       );
 
       setError(
-        "Failed to search pets."
+        error.message
       );
 
     } finally {
@@ -133,13 +142,22 @@ function PetsPage() {
 
   useEffect(() => {
 
-    fetchPets();
-    fetchOwners();
+    const loadData = async () => {
+
+      await Promise.all([
+        fetchPets(),
+        fetchOwners()
+      ]);
+
+    };
+
+    loadData();
 
   }, []);
 
-  // HANDLE INPUTS
   const handleChange = (event) => {
+
+    setError("");
 
     setFormData({
       ...formData,
@@ -148,10 +166,50 @@ function PetsPage() {
     });
   };
 
-  // CREATE / UPDATE
   const handleSubmit = async (event) => {
 
     event.preventDefault();
+
+    if (saving) {
+
+      return;
+    }
+
+    if (!formData.name.trim()) {
+
+      setError(
+        "Pet name is required."
+      );
+
+      return;
+    }
+
+    if (!formData.species.trim()) {
+
+      setError(
+        "Species is required."
+      );
+
+      return;
+    }
+
+    if (!formData.age) {
+
+      setError(
+        "Age is required."
+      );
+
+      return;
+    }
+
+    if (!formData.owner_id) {
+
+      setError(
+        "Owner is required."
+      );
+
+      return;
+    }
 
     const payload = {
       name: formData.name,
@@ -161,6 +219,8 @@ function PetsPage() {
     };
 
     try {
+
+      setSaving(true);
 
       if (editingPetId) {
 
@@ -180,9 +240,11 @@ function PetsPage() {
         );
       }
 
+      setError("");
+
       resetForm();
 
-      fetchPets();
+      await fetchPets();
 
     } catch (error) {
 
@@ -192,12 +254,15 @@ function PetsPage() {
       );
 
       setError(
-        "Failed to save pet."
+        error.message
       );
+
+    } finally {
+
+      setSaving(false);
     }
   };
 
-  // DELETE
   const handleDeletePet = async (
     petId
   ) => {
@@ -214,11 +279,17 @@ function PetsPage() {
 
     try {
 
+      setDeletingId(
+        petId
+      );
+
       await deletePet(
         petId
       );
 
-      fetchPets();
+      setError("");
+
+      await fetchPets();
 
     } catch (error) {
 
@@ -228,12 +299,17 @@ function PetsPage() {
       );
 
       setError(
-        "Failed to delete pet."
+        error.message
+      );
+
+    } finally {
+
+      setDeletingId(
+        null
       );
     }
   };
 
-  // EDIT
   const handleEditPet = (pet) => {
 
     setEditingPetId(
@@ -253,7 +329,6 @@ function PetsPage() {
     });
   };
 
-  // RESET
   const resetForm = () => {
 
     setEditingPetId(
@@ -293,6 +368,7 @@ function PetsPage() {
           editingPetId={editingPetId}
           resetForm={resetForm}
           owners={owners}
+          saving={saving}
         />
 
       </div>
@@ -313,11 +389,15 @@ function PetsPage() {
             type="text"
             placeholder="Search pet by name..."
             value={searchTerm}
-            onChange={(event) =>
+            onChange={(event) => {
+
+              setError("");
+
               setSearchTerm(
                 event.target.value
-              )
-            }
+              );
+
+            }}
           />
 
           <button
@@ -328,6 +408,8 @@ function PetsPage() {
 
           <button
             onClick={() => {
+
+              setError("");
 
               setSearchTerm("");
 
@@ -351,6 +433,7 @@ function PetsPage() {
             pets={pets}
             editPet={handleEditPet}
             deletePet={handleDeletePet}
+            deletingId={deletingId}
           />
 
         )}

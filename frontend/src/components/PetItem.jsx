@@ -2,14 +2,10 @@ function PetItem({
 
   pet,
   editPet,
-  deletePet
+  deletePet,
+  deletingId
 
 }) {
-
-  console.log(
-    "PET ITEM:",
-    pet
-  );
 
   return (
 
@@ -37,15 +33,19 @@ function PetItem({
 
         <button
           onClick={() => editPet(pet)}
+          disabled={deletingId === pet.id}
         >
           Edit
         </button>
 
         <button
           onClick={() => deletePet(pet.id)}
+          disabled={deletingId === pet.id}
           className="delete-button"
         >
-          Delete
+          {deletingId === pet.id
+            ? "Deleting..."
+            : "Delete"}
         </button>
 
       </div>

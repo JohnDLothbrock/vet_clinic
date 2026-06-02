@@ -5,7 +5,8 @@ function PetForm({
   handleSubmit,
   editingPetId,
   resetForm,
-  owners
+  owners,
+  saving
 
 }) {
 
@@ -54,7 +55,7 @@ function PetForm({
           name="owner_id"
           value={formData.owner_id}
           onChange={handleChange}
-          disabled={editingPetId}
+          disabled={editingPetId || saving}
         >
 
           <option value="">
@@ -76,11 +77,16 @@ function PetForm({
 
         <div className="button-group">
 
-          <button type="submit">
+          <button
+            type="submit"
+            disabled={saving}
+          >
 
-            {editingPetId
-              ? "Update Pet"
-              : "Create Pet"}
+            {saving
+              ? "Saving..."
+              : editingPetId
+                ? "Update Pet"
+                : "Create Pet"}
 
           </button>
 
@@ -90,6 +96,7 @@ function PetForm({
               type="button"
               onClick={resetForm}
               className="secondary-button"
+              disabled={saving}
             >
               Cancel
             </button>

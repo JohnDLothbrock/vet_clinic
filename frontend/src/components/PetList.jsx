@@ -4,7 +4,8 @@ function PetList({
 
   pets,
   editPet,
-  deletePet
+  deletePet,
+  deletingId
 
 }) {
 
@@ -28,6 +29,7 @@ function PetList({
           pet={pet}
           editPet={editPet}
           deletePet={deletePet}
+          deletingId={deletingId}
         />
 
       ))}
