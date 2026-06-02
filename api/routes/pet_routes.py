@@ -24,7 +24,6 @@ from utils.api_response import (
     success_response
 )
 
-
 router = APIRouter(
     prefix="/pets",
     tags=["Pets"]
@@ -41,7 +40,10 @@ def get_pets(
         )
 ):
 
-    return pet_service.get_all_pets()
+    return (
+        pet_service.get_all_pets()
+    )
+
 
 @router.get(
     "/with-owner",
@@ -58,6 +60,25 @@ def get_pets_with_owner(
         .get_all_pets_with_owner()
     )
 
+
+@router.get(
+    "/search/{name}",
+    response_model=list[PetWithOwnerResponse]
+)
+def search_pets(
+        name: str,
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
+):
+
+    return (
+        pet_service.search_pets_by_name(
+            name
+        )
+    )
+
+
 @router.get(
     "/{pet_id}",
     response_model=PetResponse
@@ -69,8 +90,10 @@ def get_pet_by_id(
         )
 ):
 
-    return pet_service.get_pet_by_id(
-        pet_id
+    return (
+        pet_service.get_pet_by_id(
+            pet_id
+        )
     )
 
 
@@ -134,18 +157,3 @@ def delete_pet(
     return success_response(
         "Pet deleted successfully"
     )
-
-@router.get("/search/{name}")
-def search_pets(
-        name: str,
-        pet_service: PetService = Depends(
-            get_pet_service
-        )
-):
-
-    return (
-        pet_service.search_pets_by_name(
-            name
-        )
-    )
-
