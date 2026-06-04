@@ -1,23 +1,13 @@
-const API_URL =
-  "http://127.0.0.1:8000/api/v1/pets";
+import api from "./api";
 
 export async function getPets() {
 
   const response =
-    await fetch(API_URL);
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to load pets."
+    await api.get(
+      "/pets"
     );
-  }
 
-  return data;
+  return response.data;
 }
 
 export async function createPet(
@@ -25,32 +15,12 @@ export async function createPet(
 ) {
 
   const response =
-    await fetch(
-      API_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(
-          petData
-        )
-      }
+    await api.post(
+      "/pets",
+      petData
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to create pet."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function updatePet(
@@ -59,32 +29,12 @@ export async function updatePet(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${petId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(
-          petData
-        )
-      }
+    await api.put(
+      `/pets/${petId}`,
+      petData
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to update pet."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function deletePet(
@@ -92,25 +42,11 @@ export async function deletePet(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${petId}`,
-      {
-        method: "DELETE"
-      }
+    await api.delete(
+      `/pets/${petId}`
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to delete pet."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function searchPets(
@@ -118,41 +54,19 @@ export async function searchPets(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/search/${name}`
+    await api.get(
+      `/pets/search/${name}`
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to search pets."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function getPetsWithOwner() {
 
   const response =
-    await fetch(
-      `${API_URL}/with-owner`
+    await api.get(
+      "/pets/with-owner"
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to load pets."
-    );
-  }
-
-  return data;
+  return response.data;
 }

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 
+import toast from "react-hot-toast";
+
 import OwnerForm from "../components/OwnerForm";
 import OwnerList from "../components/OwnerList";
 
 import {
-
   getOwners,
   searchOwners,
   createOwner,
   updateOwner,
   deleteOwner
-
 } from "../services/ownerService";
 
 import "../styles/app.css";
@@ -37,11 +37,18 @@ function OwnersPage() {
     setLoading] =
     useState(true);
 
+  const [saving,
+    setSaving] =
+    useState(false);
+
+  const [deletingId,
+    setDeletingId] =
+    useState(null);
+
   const [error,
     setError] =
     useState("");
 
-  // LOAD OWNERS
   const fetchOwners =
     async () => {
 
@@ -79,9 +86,10 @@ function OwnersPage() {
 
   }, []);
 
-  // SEARCH OWNERS
   const handleSearch =
     async () => {
+
+      setError("");
 
       if (!searchTerm.trim()) {
 
@@ -101,8 +109,6 @@ function OwnersPage() {
 
         setOwners(data);
 
-        setError("");
-
       } catch (error) {
 
         console.error(
@@ -120,9 +126,10 @@ function OwnersPage() {
       }
     };
 
-  // HANDLE INPUTS
   const handleChange =
     (event) => {
+
+      setError("");
 
       setFormData({
         ...formData,
@@ -131,13 +138,37 @@ function OwnersPage() {
       });
     };
 
-  // CREATE / UPDATE
   const handleSubmit =
     async (event) => {
 
       event.preventDefault();
 
+      if (saving) {
+
+        return;
+      }
+
+      if (!formData.name.trim()) {
+
+        setError(
+          "Owner name is required."
+        );
+
+        return;
+      }
+
+      if (!formData.phone.trim()) {
+
+        setError(
+          "Phone is required."
+        );
+
+        return;
+      }
+
       try {
+
+        setSaving(true);
 
         if (editingOwnerId) {
 
@@ -146,10 +177,18 @@ function OwnersPage() {
             formData
           );
 
+          toast.success(
+            "Owner updated successfully."
+          );
+
         } else {
 
           await createOwner(
             formData
+          );
+
+          toast.success(
+            "Owner created successfully."
           );
         }
 
@@ -157,7 +196,7 @@ function OwnersPage() {
 
         resetForm();
 
-        fetchOwners();
+        await fetchOwners();
 
       } catch (error) {
 
@@ -169,10 +208,13 @@ function OwnersPage() {
         setError(
           error.message
         );
+
+      } finally {
+
+        setSaving(false);
       }
     };
 
-  // DELETE
   const handleDeleteOwner =
     async (ownerId) => {
 
@@ -188,13 +230,21 @@ function OwnersPage() {
 
       try {
 
+        setDeletingId(
+          ownerId
+        );
+
         await deleteOwner(
           ownerId
         );
 
+        toast.success(
+          "Owner deleted successfully."
+        );
+
         setError("");
 
-        fetchOwners();
+        await fetchOwners();
 
       } catch (error) {
 
@@ -206,10 +256,15 @@ function OwnersPage() {
         setError(
           error.message
         );
+
+      } finally {
+
+        setDeletingId(
+          null
+        );
       }
     };
 
-  // EDIT
   const handleEditOwner =
     (owner) => {
 
@@ -228,7 +283,6 @@ function OwnersPage() {
       });
     };
 
-  // RESET
   const resetForm =
     () => {
 
@@ -266,6 +320,7 @@ function OwnersPage() {
           handleSubmit={handleSubmit}
           editingOwnerId={editingOwnerId}
           resetForm={resetForm}
+          saving={saving}
         />
 
       </div>
@@ -288,11 +343,15 @@ function OwnersPage() {
             type="text"
             placeholder="Search owner by name..."
             value={searchTerm}
-            onChange={(event) =>
+            onChange={(event) => {
+
+              setError("");
+
               setSearchTerm(
                 event.target.value
-              )
-            }
+              );
+
+            }}
           />
 
           <button
@@ -326,6 +385,7 @@ function OwnersPage() {
             owners={owners}
             editOwner={handleEditOwner}
             deleteOwner={handleDeleteOwner}
+            deletingId={deletingId}
           />
 
         )}

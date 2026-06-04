@@ -1,11 +1,11 @@
 import AppointmentItem from "./AppointmentItem";
 
-
 function AppointmentList({
 
   appointments,
   editAppointment,
-  deleteAppointment
+  deleteAppointment,
+  deletingId
 
 }) {
 
@@ -36,12 +36,16 @@ function AppointmentList({
             deleteAppointment={
               deleteAppointment
             }
+            deletingId={
+              deletingId
+            }
           />
 
         )
       )}
 
     </ul>
+
   );
 }
 

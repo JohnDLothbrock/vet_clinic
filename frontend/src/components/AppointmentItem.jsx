@@ -2,7 +2,8 @@ function AppointmentItem({
 
   appointment,
   editAppointment,
-  deleteAppointment
+  deleteAppointment,
+  deletingId
 
 }) {
 
@@ -40,6 +41,10 @@ function AppointmentItem({
               appointment
             )
           }
+          disabled={
+            deletingId ===
+            appointment.id
+          }
         >
           Edit
         </button>
@@ -50,8 +55,15 @@ function AppointmentItem({
               appointment.id
             )
           }
+          disabled={
+            deletingId ===
+            appointment.id
+          }
         >
-          Delete
+          {deletingId ===
+          appointment.id
+            ? "Deleting..."
+            : "Delete"}
         </button>
 
       </div>

@@ -5,7 +5,8 @@ function AppointmentForm({
   handleSubmit,
   editingAppointmentId,
   resetForm,
-  pets
+  pets,
+  saving
 
 }) {
 
@@ -27,7 +28,10 @@ function AppointmentForm({
           name="pet_id"
           value={formData.pet_id}
           onChange={handleChange}
-          disabled={editingAppointmentId}
+          disabled={
+            editingAppointmentId ||
+            saving
+          }
         >
 
           <option value="">
@@ -52,6 +56,7 @@ function AppointmentForm({
           name="appointment_date"
           value={formData.appointment_date}
           onChange={handleChange}
+          disabled={saving}
         />
 
         <input
@@ -60,13 +65,21 @@ function AppointmentForm({
           placeholder="Reason"
           value={formData.reason}
           onChange={handleChange}
+          disabled={saving}
         />
 
-        <button type="submit">
+        <button
+          type="submit"
+          disabled={saving}
+        >
 
-          {editingAppointmentId
-            ? "Update Appointment"
-            : "Create Appointment"}
+          {saving
+            ? editingAppointmentId
+              ? "Updating..."
+              : "Creating..."
+            : editingAppointmentId
+              ? "Update Appointment"
+              : "Create Appointment"}
 
         </button>
 
@@ -75,6 +88,7 @@ function AppointmentForm({
           <button
             type="button"
             onClick={resetForm}
+            disabled={saving}
           >
             Cancel
           </button>

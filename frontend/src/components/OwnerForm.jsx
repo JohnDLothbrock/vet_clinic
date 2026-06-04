@@ -4,7 +4,8 @@ function OwnerForm({
   handleChange,
   handleSubmit,
   editingOwnerId,
-  resetForm
+  resetForm,
+  saving
 
 }) {
 
@@ -13,14 +14,17 @@ function OwnerForm({
     <div>
 
       <h2>
+
         {editingOwnerId
           ? "Edit Owner"
           : "Create Owner"}
+
       </h2>
 
       <form onSubmit={handleSubmit}>
 
         <div>
+
           <input
             type="text"
             name="name"
@@ -28,11 +32,13 @@ function OwnerForm({
             value={formData.name}
             onChange={handleChange}
           />
+
         </div>
 
         <br />
 
         <div>
+
           <input
             type="text"
             name="phone"
@@ -40,15 +46,21 @@ function OwnerForm({
             value={formData.phone}
             onChange={handleChange}
           />
+
         </div>
 
         <br />
 
-        <button type="submit">
+        <button
+          type="submit"
+          disabled={saving}
+        >
 
-          {editingOwnerId
-            ? "Update Owner"
-            : "Create Owner"}
+          {saving
+            ? "Saving..."
+            : editingOwnerId
+              ? "Update Owner"
+              : "Create Owner"}
 
         </button>
 
@@ -57,6 +69,7 @@ function OwnerForm({
           <button
             type="button"
             onClick={resetForm}
+            disabled={saving}
             style={{
               marginLeft: "10px"
             }}

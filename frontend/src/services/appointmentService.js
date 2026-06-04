@@ -1,53 +1,26 @@
-const API_URL =
-  "http://127.0.0.1:8000/api/v1/appointments";
+import api from "./api";
 
 export async function getAppointments() {
 
-  const response = await fetch(
-    `${API_URL}/with-pet`
-  );
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error || "Failed to load appointments."
+  const response =
+    await api.get(
+      "/appointments/with-pet"
     );
-  }
 
-  return data;
+  return response.data;
 }
 
 export async function createAppointment(
   appointmentData
 ) {
 
-  const response = await fetch(
-    API_URL,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(
-        appointmentData
-      )
-    }
-  );
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error || "Failed to create appointment."
+  const response =
+    await api.post(
+      "/appointments",
+      appointmentData
     );
-  }
 
-  return data;
+  return response.data;
 }
 
 export async function updateAppointment(
@@ -56,31 +29,12 @@ export async function updateAppointment(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${appointmentId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(
-          appointmentData
-        )
-      }
+    await api.put(
+      `/appointments/${appointmentId}`,
+      appointmentData
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error || "Failed to update appointment."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function deleteAppointment(
@@ -88,22 +42,9 @@ export async function deleteAppointment(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${appointmentId}`,
-      {
-        method: "DELETE"
-      }
+    await api.delete(
+      `/appointments/${appointmentId}`
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error || "Failed to delete appointment."
-    );
-  }
-
-  return data;
+  return response.data;
 }

@@ -1,6 +1,9 @@
-from pydantic import BaseModel
-from datetime import datetime
+from pydantic import (
+    BaseModel,
+    ConfigDict
+)
 
+from datetime import datetime
 
 
 class AppointmentCreate(
@@ -24,6 +27,10 @@ class AppointmentResponse(
     BaseModel
 ):
 
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
     id: int
     pet_id: int
     appointment_date: datetime
@@ -34,9 +41,12 @@ class AppointmentWithPetResponse(
     BaseModel
 ):
 
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
     id: int
     pet_id: int
     pet_name: str
     appointment_date: datetime
     reason: str
-

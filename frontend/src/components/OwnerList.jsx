@@ -4,7 +4,8 @@ function OwnerList({
 
   owners,
   editOwner,
-  deleteOwner
+  deleteOwner,
+  deletingId
 
 }) {
 
@@ -24,6 +25,7 @@ function OwnerList({
           owner={owner}
           editOwner={editOwner}
           deleteOwner={deleteOwner}
+          deletingId={deletingId}
         />
 
       ))}

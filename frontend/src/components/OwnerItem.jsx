@@ -2,7 +2,8 @@ function OwnerItem({
 
   owner,
   editOwner,
-  deleteOwner
+  deleteOwner,
+  deletingId
 
 }) {
 
@@ -18,21 +19,35 @@ function OwnerItem({
       {" - "}
       {owner.phone}
 
-      <div style={{ marginTop: "5px" }}>
+      <div
+        style={{
+          marginTop: "5px"
+        }}
+      >
 
         <button
           onClick={() => editOwner(owner)}
+          disabled={
+            deletingId === owner.id
+          }
         >
           Edit
         </button>
 
         <button
           onClick={() => deleteOwner(owner.id)}
+          disabled={
+            deletingId === owner.id
+          }
           style={{
             marginLeft: "10px"
           }}
         >
-          Delete
+
+          {deletingId === owner.id
+            ? "Deleting..."
+            : "Delete"}
+
         </button>
 
       </div>

@@ -1,23 +1,13 @@
-const API_URL =
-  "http://127.0.0.1:8000/api/v1/owners";
+import api from "./api";
 
 export async function getOwners() {
 
   const response =
-    await fetch(API_URL);
-
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to load owners."
+    await api.get(
+      "/owners"
     );
-  }
 
-  return data;
+  return response.data;
 }
 
 export async function searchOwners(
@@ -25,22 +15,11 @@ export async function searchOwners(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/search/${name}`
+    await api.get(
+      `/owners/search/${name}`
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to search owners."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function createOwner(
@@ -48,32 +27,12 @@ export async function createOwner(
 ) {
 
   const response =
-    await fetch(
-      API_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(
-          ownerData
-        )
-      }
+    await api.post(
+      "/owners",
+      ownerData
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to create owner."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function updateOwner(
@@ -82,32 +41,12 @@ export async function updateOwner(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${ownerId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify(
-          ownerData
-        )
-      }
+    await api.put(
+      `/owners/${ownerId}`,
+      ownerData
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to update owner."
-    );
-  }
-
-  return data;
+  return response.data;
 }
 
 export async function deleteOwner(
@@ -115,23 +54,9 @@ export async function deleteOwner(
 ) {
 
   const response =
-    await fetch(
-      `${API_URL}/${ownerId}`,
-      {
-        method: "DELETE"
-      }
+    await api.delete(
+      `/owners/${ownerId}`
     );
 
-  const data =
-    await response.json();
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "Failed to delete owner."
-    );
-  }
-
-  return data;
+  return response.data;
 }

@@ -49,11 +49,20 @@ function AppointmentsPage() {
   ] = useState(true);
 
   const [
+    saving,
+    setSaving
+  ] = useState(false);
+
+  const [
+    deletingId,
+    setDeletingId
+  ] = useState(null);
+
+  const [
     error,
     setError
   ] = useState("");
 
-  // LOAD APPOINTMENTS
   const fetchAppointments =
     async () => {
 
@@ -85,7 +94,6 @@ function AppointmentsPage() {
       }
     };
 
-  // LOAD PETS
   const fetchPets =
     async () => {
 
@@ -112,9 +120,10 @@ function AppointmentsPage() {
 
   }, []);
 
-  // INPUTS
   const handleChange =
     (event) => {
+
+      setError("");
 
       setFormData({
         ...formData,
@@ -123,11 +132,42 @@ function AppointmentsPage() {
       });
     };
 
-  // CREATE / UPDATE
   const handleSubmit =
     async (event) => {
 
       event.preventDefault();
+
+      if (saving) {
+
+        return;
+      }
+
+      if (!formData.pet_id) {
+
+        setError(
+          "Please select a pet."
+        );
+
+        return;
+      }
+
+      if (!formData.appointment_date) {
+
+        setError(
+          "Appointment date is required."
+        );
+
+        return;
+      }
+
+      if (!formData.reason.trim()) {
+
+        setError(
+          "Reason is required."
+        );
+
+        return;
+      }
 
       const payload = {
 
@@ -141,10 +181,12 @@ function AppointmentsPage() {
           ),
 
         reason:
-          formData.reason
+          formData.reason.trim()
       };
 
       try {
+
+        setSaving(true);
 
         if (
           editingAppointmentId
@@ -172,7 +214,7 @@ function AppointmentsPage() {
 
         resetForm();
 
-        fetchAppointments();
+        await fetchAppointments();
 
       } catch (error) {
 
@@ -184,10 +226,13 @@ function AppointmentsPage() {
         setError(
           error.message
         );
+
+      } finally {
+
+        setSaving(false);
       }
     };
 
-  // DELETE
   const handleDeleteAppointment =
     async (appointmentId) => {
 
@@ -203,13 +248,17 @@ function AppointmentsPage() {
 
       try {
 
+        setDeletingId(
+          appointmentId
+        );
+
         await deleteAppointment(
           appointmentId
         );
 
         setError("");
 
-        fetchAppointments();
+        await fetchAppointments();
 
       } catch (error) {
 
@@ -221,39 +270,45 @@ function AppointmentsPage() {
         setError(
           error.message
         );
+
+      } finally {
+
+        setDeletingId(
+          null
+        );
       }
     };
 
-  // EDIT
   const handleEditAppointment =
-  (appointment) => {
+    (appointment) => {
 
-    setEditingAppointmentId(
-      appointment.id
-    );
+      setEditingAppointmentId(
+        appointment.id
+      );
 
-    const formattedDate =
-      appointment.appointment_date
-        .slice(0, 16);
+      const formattedDate =
+        appointment.appointment_date
+          .replace(" ", "T")
+          .slice(0, 16);
 
-    setFormData({
-      pet_id:
-        appointment.pet_id,
+      setFormData({
 
-      appointment_date:
-        formattedDate,
+        pet_id:
+          appointment.pet_id,
 
-      reason:
-        appointment.reason
-    });
+        appointment_date:
+          formattedDate,
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  };
+        reason:
+          appointment.reason
+      });
 
-  // RESET
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    };
+
   const resetForm = () => {
 
     setEditingAppointmentId(
@@ -292,6 +347,7 @@ function AppointmentsPage() {
         }
         resetForm={resetForm}
         pets={pets}
+        saving={saving}
       />
 
       {loading ? (
@@ -310,6 +366,7 @@ function AppointmentsPage() {
           deleteAppointment={
             handleDeleteAppointment
           }
+          deletingId={deletingId}
         />
 
       )}

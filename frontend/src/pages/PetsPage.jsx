@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 import PetForm from "../components/PetForm";
 import PetList from "../components/PetList";
@@ -222,7 +223,10 @@ function PetsPage() {
 
       setSaving(true);
 
-      if (editingPetId) {
+      const isEditing =
+        editingPetId !== null;
+
+      if (isEditing) {
 
         await updatePet(
           editingPetId,
@@ -233,10 +237,18 @@ function PetsPage() {
           }
         );
 
+        toast.success(
+          "Pet updated successfully!"
+        );
+
       } else {
 
         await createPet(
           payload
+        );
+
+        toast.success(
+          "Pet created successfully!"
         );
       }
 
@@ -285,6 +297,10 @@ function PetsPage() {
 
       await deletePet(
         petId
+      );
+
+      toast.success(
+        "Pet deleted successfully!"
       );
 
       setError("");
