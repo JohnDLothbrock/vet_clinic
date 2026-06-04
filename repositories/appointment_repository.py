@@ -77,20 +77,26 @@ class AppointmentRepository:
         connection.close()
 
     def get_all(self):
+
         connection = get_connection()
         cursor = connection.cursor()
 
         query = """
-                SELECT id, pet_id, appointment_date, reason
-                FROM Appointments \
+                SELECT id,
+                       pet_id,
+                       appointment_date,
+                       reason
+                FROM Appointments
                 """
 
         cursor.execute(query)
+
         rows = cursor.fetchall()
 
         appointments = []
 
         for row in rows:
+
             appointment = Appointment(
                 pet_id=row[1],
                 appointment_date=row[2],
@@ -98,26 +104,32 @@ class AppointmentRepository:
                 appointment_id=row[0]
             )
 
-            appointments.append(appointment)
+            appointments.append(
+                appointment
+            )
 
         cursor.close()
         connection.close()
 
         return appointments
 
-    def get_by_id(self, appointment_id):
+    def get_by_id(
+            self,
+            appointment_id
+    ):
 
         connection = get_connection()
         cursor = connection.cursor()
 
         try:
+
             query = """
-                    SELECT id, \
-                           pet_id, \
-                           appointment_date, \
+                    SELECT id,
+                           pet_id,
+                           appointment_date,
                            reason
                     FROM Appointments
-                    WHERE id = ? \
+                    WHERE id = ?
                     """
 
             cursor.execute(
@@ -128,6 +140,7 @@ class AppointmentRepository:
             row = cursor.fetchone()
 
             if row is None:
+
                 return None
 
             return Appointment(
@@ -138,11 +151,14 @@ class AppointmentRepository:
             )
 
         finally:
+
             cursor.close()
             connection.close()
 
-
-    def update(self, appointment):
+    def update(
+            self,
+            appointment
+    ):
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -150,8 +166,8 @@ class AppointmentRepository:
         query = """
                 UPDATE Appointments
                 SET appointment_date = ?,
-                    reason           = ?
-                WHERE id = ? \
+                    reason = ?
+                WHERE id = ?
                 """
 
         cursor.execute(
@@ -168,15 +184,18 @@ class AppointmentRepository:
         cursor.close()
         connection.close()
 
-    def delete(self, appointment_id):
+    def delete(
+            self,
+            appointment_id
+    ):
 
         connection = get_connection()
         cursor = connection.cursor()
 
         query = """
-                DELETE \
+                DELETE
                 FROM Appointments
-                WHERE id = ? \
+                WHERE id = ?
                 """
 
         cursor.execute(
@@ -198,6 +217,7 @@ class AppointmentRepository:
         cursor = connection.cursor()
 
         try:
+
             query = """
                     SELECT a.id,
                            a.pet_id,
@@ -205,9 +225,10 @@ class AppointmentRepository:
                            a.appointment_date,
                            a.reason
                     FROM Appointments a
-                             INNER JOIN Pets p
-                                        ON a.pet_id = p.id
+                    INNER JOIN Pets p
+                        ON a.pet_id = p.id
                     WHERE a.pet_id = ?
+                    ORDER BY a.appointment_date DESC
                     """
 
             cursor.execute(
@@ -216,9 +237,11 @@ class AppointmentRepository:
             )
 
             rows = cursor.fetchall()
+
             appointments = []
 
             for row in rows:
+
                 appointments.append({
 
                     "id": row.id,
@@ -232,6 +255,7 @@ class AppointmentRepository:
             return appointments
 
         finally:
+
             cursor.close()
             connection.close()
 
@@ -243,14 +267,15 @@ class AppointmentRepository:
         try:
 
             query = """
-                    SELECT a.id, \
-                           a.pet_id, \
-                           p.name AS pet_name, \
-                           a.appointment_date, \
+                    SELECT a.id,
+                           a.pet_id,
+                           p.name AS pet_name,
+                           a.appointment_date,
                            a.reason
                     FROM Appointments a
-                             INNER JOIN Pets p
-                                        ON a.pet_id = p.id \
+                    INNER JOIN Pets p
+                        ON a.pet_id = p.id
+                    ORDER BY a.appointment_date DESC
                     """
 
             cursor.execute(query)
@@ -260,6 +285,7 @@ class AppointmentRepository:
             appointments = []
 
             for row in rows:
+
                 appointments.append({
 
                     "id": row.id,

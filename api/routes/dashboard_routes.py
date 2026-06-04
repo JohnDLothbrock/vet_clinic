@@ -11,13 +11,20 @@ from app.dependencies import (
     get_dashboard_service
 )
 
+from api.schemas.dashboard_schema import (
+    DashboardResponse
+)
+
 router = APIRouter(
     prefix="/dashboard",
     tags=["Dashboard"]
 )
 
 
-@router.get("")
+@router.get(
+    "",
+    response_model=DashboardResponse
+)
 def get_dashboard(
         dashboard_service: DashboardService = Depends(
             get_dashboard_service
