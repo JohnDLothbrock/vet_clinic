@@ -1,6 +1,6 @@
 # Veterinary Clinic Management System
 
-![Tests](https://github.com/<username>/<repo>/actions/workflows/tests.yml/badge.svg)
+![Tests](https://github.com/JohnDLothbrock/vet_clinic/actions/workflows/tests.yml/badge.svg)
 
 Veterinary clinic management application built with:
 
