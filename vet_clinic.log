@@ -97,3 +97,19 @@
 2026-06-05 05:55:25,494 - WARNING - Pet ID 999 not found
 2026-06-05 05:55:25,499 - INFO - Pet deleted: 1
 2026-06-05 05:55:25,503 - WARNING - Pet ID 999 not found
+2026-06-05 06:44:30,888 - WARNING - Pet ID 999 not found
+2026-06-05 06:44:30,897 - INFO - Appointment created for pet 1
+2026-06-05 06:44:30,903 - WARNING - Appointment ID 999 not found
+2026-06-05 06:44:30,917 - INFO - Owner created: Juan
+2026-06-05 06:44:30,922 - WARNING - Owner ID 999 not found
+2026-06-05 06:44:30,926 - INFO - Owner deleted: 1
+2026-06-05 06:44:30,930 - WARNING - Owner 1 still has pets assigned
+2026-06-05 06:44:30,933 - INFO - Owner updated: 1
+2026-06-05 06:44:30,952 - WARNING - Invalid owner ID: 999
+2026-06-05 06:44:30,957 - INFO - Pet created: Max
+2026-06-05 06:44:30,963 - WARNING - Pet ID 999 not found
+2026-06-05 06:44:30,966 - INFO - Pet deleted: 1
+2026-06-05 06:44:30,970 - INFO - Pet updated: 1
+2026-06-05 06:44:30,974 - WARNING - Pet ID 999 not found
+2026-06-05 06:44:30,978 - INFO - Pet deleted: 1
+2026-06-05 06:44:30,981 - WARNING - Pet ID 999 not found
