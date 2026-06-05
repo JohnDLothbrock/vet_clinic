@@ -93,3 +93,98 @@ def test_create_pet_successfully():
         pet_repository.was_called
         is True
     )
+
+def test_get_pet_by_id_success():
+
+    class Repo:
+
+        def get_by_id(
+            self,
+            pet_id
+        ):
+            return Pet(
+                "Max",
+                "Dog",
+                3,
+                1,
+                pet_id
+            )
+
+    service = PetService(
+        Repo(),
+        ValidOwnerService()
+    )
+
+    pet = service.get_pet_by_id(
+        1
+    )
+
+    assert pet.id == 1
+
+
+def test_get_pet_by_id_not_found():
+
+    class Repo:
+
+        def get_by_id(
+            self,
+            pet_id
+        ):
+            return None
+
+    service = PetService(
+        Repo(),
+        ValidOwnerService()
+    )
+
+    from exceptions.pet_not_found_exception import (
+        PetNotFoundException
+    )
+
+    with pytest.raises(
+        PetNotFoundException
+    ):
+        service.get_pet_by_id(
+            999
+        )
+
+
+def test_delete_pet_success():
+
+    class Repo:
+
+        def __init__(self):
+
+            self.deleted = False
+
+        def get_by_id(
+            self,
+            pet_id
+        ):
+            return Pet(
+                "Max",
+                "Dog",
+                3,
+                1,
+                pet_id
+            )
+
+        def delete(
+            self,
+            pet_id
+        ):
+            self.deleted = True
+
+    repo = Repo()
+
+    service = PetService(
+        repo,
+        ValidOwnerService()
+    )
+
+    service.delete_pet(
+        1
+    )
+
+    assert repo.deleted is True
+    
