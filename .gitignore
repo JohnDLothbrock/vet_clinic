@@ -6,3 +6,8 @@ __pycache__/
 vet_clinic.log
 .pytest_cache/
 htmlcov/
+.venv/
+coverage/
+node_modules/
+dist/
+build/
