@@ -23,6 +23,11 @@ from utils.api_response import (
     success_response
 )
 
+from auth.current_user import (
+    require_admin,
+    require_admin_or_receptionist,
+    require_authenticated_user
+)
 
 router = APIRouter(
     prefix="/owners",
@@ -35,6 +40,9 @@ router = APIRouter(
     response_model=list[OwnerResponse]
 )
 def get_owners(
+        current_user=Depends(
+            require_authenticated_user
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -49,6 +57,9 @@ def get_owners(
 )
 def get_owner_by_id(
         owner_id: int,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -62,6 +73,9 @@ def get_owner_by_id(
 @router.post("")
 def create_owner(
         owner_data: OwnerCreate,
+        current_user=Depends(
+            require_admin_or_receptionist
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -85,6 +99,9 @@ def create_owner(
 def update_owner(
         owner_id: int,
         owner_data: OwnerUpdate,
+        current_user=Depends(
+            require_admin_or_receptionist
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -104,6 +121,9 @@ def update_owner(
 @router.delete("/{owner_id}")
 def delete_owner(
         owner_id: int,
+        current_user=Depends(
+            require_admin
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -117,9 +137,13 @@ def delete_owner(
         "Owner deleted successfully"
     )
 
+
 @router.get("/search/{name}")
 def search_owners(
         name: str,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         owner_service: OwnerService = Depends(
             get_owner_service
         )
@@ -130,4 +154,3 @@ def search_owners(
             name
         )
     )
-

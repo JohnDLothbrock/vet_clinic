@@ -10,6 +10,10 @@ from repositories.appointment_repository import (
     AppointmentRepository
 )
 
+from repositories.user_repository import (
+    UserRepository
+)
+
 from services.owner_service import (
     OwnerService
 )
@@ -26,6 +30,14 @@ from services.dashboard_service import (
     DashboardService
 )
 
+from services.user_service import (
+    UserService
+)
+
+from services.auth_service import (
+    AuthService
+)
+
 
 # REPOSITORIES
 
@@ -39,6 +51,10 @@ pet_repository = (
 
 appointment_repository = (
     AppointmentRepository()
+)
+
+user_repository = (
+    UserRepository()
 )
 
 
@@ -77,6 +93,18 @@ dashboard_service = (
     )
 )
 
+user_service = (
+    UserService(
+        user_repository
+    )
+)
+
+auth_service = (
+    AuthService(
+        user_service
+    )
+)
+
 
 # DEPENDENCY FUNCTIONS
 
@@ -99,3 +127,12 @@ def get_dashboard_service():
 
     return dashboard_service
 
+
+def get_user_service():
+
+    return user_service
+
+
+def get_auth_service():
+
+    return auth_service

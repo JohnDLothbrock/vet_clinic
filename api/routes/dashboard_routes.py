@@ -15,6 +15,10 @@ from api.schemas.dashboard_schema import (
     DashboardResponse
 )
 
+from auth.current_user import (
+    require_authenticated_user
+)
+
 router = APIRouter(
     prefix="/dashboard",
     tags=["Dashboard"]
@@ -26,6 +30,9 @@ router = APIRouter(
     response_model=DashboardResponse
 )
 def get_dashboard(
+        current_user=Depends(
+            require_authenticated_user
+        ),
         dashboard_service: DashboardService = Depends(
             get_dashboard_service
         )

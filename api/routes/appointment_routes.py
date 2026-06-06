@@ -2,26 +2,25 @@ from fastapi import (
     APIRouter,
     Depends
 )
-
 from models.appointments import Appointment
-
 from services.appointment_service import (
     AppointmentService
 )
-
 from app.dependencies import (
     get_appointment_service
 )
-
 from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
     AppointmentResponse,
     AppointmentWithPetResponse
 )
-
 from utils.api_response import (
     success_response
+)
+from auth.current_user import (
+    require_authenticated_user,
+    require_admin
 )
 
 
@@ -36,6 +35,9 @@ router = APIRouter(
     response_model=list[AppointmentResponse]
 )
 def get_appointments(
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -54,6 +56,9 @@ def get_appointments(
     ]
 )
 def get_appointments_with_pet(
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -71,6 +76,9 @@ def get_appointments_with_pet(
 )
 def get_appointment_by_id(
         appointment_id: int,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -87,6 +95,9 @@ def get_appointment_by_id(
 @router.post("")
 def create_appointment(
         appointment_data: AppointmentCreate,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -113,6 +124,9 @@ def create_appointment(
 def update_appointment(
         appointment_id: int,
         appointment_data: AppointmentUpdate,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -132,6 +146,9 @@ def update_appointment(
 @router.delete("/{appointment_id}")
 def delete_appointment(
         appointment_id: int,
+        current_user=Depends(
+            require_admin
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )
@@ -149,6 +166,9 @@ def delete_appointment(
 @router.get("/search/{pet_id}")
 def search_appointments(
         pet_id: int,
+        current_user=Depends(
+            require_authenticated_user
+        ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
         )

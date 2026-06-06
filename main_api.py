@@ -16,12 +16,16 @@ from api.routes.appointment_routes import (
     router as appointment_router
 )
 
-from api.handlers.exception_handlers import (
-    register_exception_handlers
-)
-
 from api.routes.dashboard_routes import (
     router as dashboard_router
+)
+
+from api.routes.auth_routes import (
+    router as auth_router
+)
+
+from api.handlers.exception_handlers import (
+    register_exception_handlers
 )
 
 app = FastAPI(
@@ -32,6 +36,7 @@ app = FastAPI(
     - Pets
     - Owners
     - Appointments
+    - Authentication
 
     Built with FastAPI and SQL Server.
     """,
@@ -39,6 +44,7 @@ app = FastAPI(
 )
 
 # CORS
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -49,7 +55,14 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-register_exception_handlers(app)
+register_exception_handlers(
+    app
+)
+
+app.include_router(
+    auth_router,
+    prefix="/api/v1"
+)
 
 app.include_router(
     pet_router,
