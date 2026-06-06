@@ -145,3 +145,6 @@
 2026-06-05 09:33:29,309 - WARNING - Pet ID 999 not found
 2026-06-05 09:33:29,313 - INFO - Pet deleted: 1
 2026-06-05 09:33:29,317 - WARNING - Pet ID 999 not found
+2026-06-06 10:41:15,892 - WARNING - Owner ID 0 not found
+2026-06-06 10:42:07,307 - WARNING - Pet ID 0 not found
+2026-06-06 10:42:08,908 - WARNING - Pet ID 0 not found

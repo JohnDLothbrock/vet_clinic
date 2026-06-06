@@ -1,15 +1,11 @@
 from models.pet import Pet
-
 from exceptions.owner_not_found_exception import (
     OwnerNotFoundException
 )
-
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
-
 from utils.logger import logger
-
 from validators.pet_validator import (
     PetValidator
 )
