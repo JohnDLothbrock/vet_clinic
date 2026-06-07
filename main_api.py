@@ -28,6 +28,11 @@ from api.handlers.exception_handlers import (
     register_exception_handlers
 )
 
+from api.routes.medical_record_routes import (
+    router as medical_record_router
+)
+
+
 app = FastAPI(
     title="Veterinary Clinic API",
     description="""
@@ -76,6 +81,11 @@ app.include_router(
 
 app.include_router(
     appointment_router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    medical_record_router,
     prefix="/api/v1"
 )
 

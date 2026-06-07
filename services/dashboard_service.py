@@ -1,5 +1,6 @@
 class DashboardService:
 
+
     def __init__(
             self,
             owner_service,
