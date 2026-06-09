@@ -11,8 +11,13 @@ from services.medical_record_service import (
     MedicalRecordService
 )
 
+from services.audit_log_service import (
+    AuditLogService
+)
+
 from app.dependencies import (
-    get_medical_record_service
+    get_medical_record_service,
+    get_audit_log_service
 )
 
 from api.schemas.medical_record_schema import (
@@ -108,6 +113,9 @@ def create_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -125,6 +133,13 @@ def create_medical_record(
         medical_record
     )
 
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="CREATE",
+        entity="MedicalRecord",
+        entity_id=0
+    )
+
     return success_response(
         "Medical record created successfully"
     )
@@ -139,6 +154,9 @@ def update_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -157,6 +175,13 @@ def update_medical_record(
         medical_record
     )
 
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="UPDATE",
+        entity="MedicalRecord",
+        entity_id=medical_record_id
+    )
+
     return success_response(
         "Medical record updated successfully"
     )
@@ -170,11 +195,21 @@ def delete_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
     medical_record_service.delete_medical_record(
         medical_record_id
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="DELETE",
+        entity="MedicalRecord",
+        entity_id=medical_record_id
     )
 
     return success_response(

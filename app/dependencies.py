@@ -1,39 +1,57 @@
 from repositories.owner_repository import (
     OwnerRepository
 )
+
 from repositories.pet_repository import (
     PetRepository
 )
+
 from repositories.appointment_repository import (
     AppointmentRepository
 )
+
 from repositories.user_repository import (
     UserRepository
 )
-from services.owner_service import (
-    OwnerService
-)
-from services.pet_service import (
-    PetService
-)
-from services.appointment_service import (
-    AppointmentService
-)
-from services.dashboard_service import (
-    DashboardService
-)
-from services.user_service import (
-    UserService
-)
-from services.auth_service import (
-    AuthService
-)
+
 from repositories.medical_record_repository import (
     MedicalRecordRepository
 )
 
+from repositories.audit_log_repository import (
+    AuditLogRepository
+)
+
+from services.owner_service import (
+    OwnerService
+)
+
+from services.pet_service import (
+    PetService
+)
+
+from services.appointment_service import (
+    AppointmentService
+)
+
+from services.dashboard_service import (
+    DashboardService
+)
+
+from services.user_service import (
+    UserService
+)
+
+from services.auth_service import (
+    AuthService
+)
+
 from services.medical_record_service import (
     MedicalRecordService
+)
+
+from services.audit_log_service import (
+    AuditLogService
 )
 
 
@@ -57,6 +75,10 @@ user_repository = (
 
 medical_record_repository = (
     MedicalRecordRepository()
+)
+
+audit_log_repository = (
+    AuditLogRepository()
 )
 
 
@@ -114,6 +136,12 @@ medical_record_service = (
     )
 )
 
+audit_log_service = (
+    AuditLogService(
+        audit_log_repository
+    )
+)
+
 
 # DEPENDENCY FUNCTIONS
 
@@ -146,6 +174,12 @@ def get_auth_service():
 
     return auth_service
 
+
 def get_medical_record_service():
 
     return medical_record_service
+
+
+def get_audit_log_service():
+
+    return audit_log_service

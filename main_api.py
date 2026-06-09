@@ -24,14 +24,17 @@ from api.routes.auth_routes import (
     router as auth_router
 )
 
-from api.handlers.exception_handlers import (
-    register_exception_handlers
-)
-
 from api.routes.medical_record_routes import (
     router as medical_record_router
 )
 
+from api.routes.audit_log_routes import (
+    router as audit_log_router
+)
+
+from api.handlers.exception_handlers import (
+    register_exception_handlers
+)
 
 app = FastAPI(
     title="Veterinary Clinic API",
@@ -41,6 +44,8 @@ app = FastAPI(
     - Pets
     - Owners
     - Appointments
+    - Medical Records
+    - Audit Logs
     - Authentication
 
     Built with FastAPI and SQL Server.
@@ -86,6 +91,11 @@ app.include_router(
 
 app.include_router(
     medical_record_router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    audit_log_router,
     prefix="/api/v1"
 )
 

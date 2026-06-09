@@ -9,8 +9,13 @@ from services.owner_service import (
     OwnerService
 )
 
+from services.audit_log_service import (
+    AuditLogService
+)
+
 from app.dependencies import (
-    get_owner_service
+    get_owner_service,
+    get_audit_log_service
 )
 
 from api.schemas.owner_schema import (
@@ -78,6 +83,9 @@ def create_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -88,6 +96,13 @@ def create_owner(
 
     owner_service.create_owner(
         owner
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="CREATE",
+        entity="Owner",
+        entity_id=0
     )
 
     return success_response(
@@ -104,6 +119,9 @@ def update_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -111,6 +129,13 @@ def update_owner(
         owner_id,
         owner_data.name,
         owner_data.phone
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="UPDATE",
+        entity="Owner",
+        entity_id=owner_id
     )
 
     return success_response(
@@ -126,11 +151,21 @@ def delete_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
     owner_service.delete_owner(
         owner_id
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="DELETE",
+        entity="Owner",
+        entity_id=owner_id
     )
 
     return success_response(

@@ -2,22 +2,33 @@ from fastapi import (
     APIRouter,
     Depends
 )
+
 from models.appointments import Appointment
+
 from services.appointment_service import (
     AppointmentService
 )
-from app.dependencies import (
-    get_appointment_service
+
+from services.audit_log_service import (
+    AuditLogService
 )
+
+from app.dependencies import (
+    get_appointment_service,
+    get_audit_log_service
+)
+
 from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
     AppointmentResponse,
     AppointmentWithPetResponse
 )
+
 from utils.api_response import (
     success_response
 )
+
 from auth.current_user import (
     require_authenticated_user,
     require_admin
@@ -100,6 +111,9 @@ def create_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -113,6 +127,13 @@ def create_appointment(
 
     appointment_service.create_appointment(
         appointment
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="CREATE",
+        entity="Appointment",
+        entity_id=0
     )
 
     return success_response(
@@ -129,6 +150,9 @@ def update_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -136,6 +160,13 @@ def update_appointment(
         appointment_id,
         appointment_data.appointment_date,
         appointment_data.reason
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="UPDATE",
+        entity="Appointment",
+        entity_id=appointment_id
     )
 
     return success_response(
@@ -151,11 +182,21 @@ def delete_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
     appointment_service.delete_appointment(
         appointment_id
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="DELETE",
+        entity="Appointment",
+        entity_id=appointment_id
     )
 
     return success_response(

@@ -9,8 +9,13 @@ from services.pet_service import (
     PetService
 )
 
+from services.audit_log_service import (
+    AuditLogService
+)
+
 from app.dependencies import (
-    get_pet_service
+    get_pet_service,
+    get_audit_log_service
 )
 
 from api.schemas.pet_schema import (
@@ -123,6 +128,9 @@ def create_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -135,6 +143,13 @@ def create_pet(
 
     pet_service.create_pet(
         pet
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="CREATE",
+        entity="Pet",
+        entity_id=0
     )
 
     return success_response(
@@ -151,6 +166,9 @@ def update_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
@@ -159,6 +177,13 @@ def update_pet(
         pet_data.name,
         pet_data.species,
         pet_data.age
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="UPDATE",
+        entity="Pet",
+        entity_id=pet_id
     )
 
     return success_response(
@@ -174,11 +199,21 @@ def delete_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
         )
 ):
 
     pet_service.delete_pet(
         pet_id
+    )
+
+    audit_log_service.create_audit_log(
+        user_id=current_user["user_id"],
+        action="DELETE",
+        entity="Pet",
+        entity_id=pet_id
     )
 
     return success_response(
