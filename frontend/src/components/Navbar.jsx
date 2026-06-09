@@ -15,7 +15,8 @@ import {
 } from "../services/tokenService";
 
 import {
-  canViewAuditLogs
+  canViewAuditLogs,
+  canViewUsers
 } from "../services/permissionService";
 
 function Navbar() {
@@ -89,6 +90,14 @@ function Navbar() {
           Appointments
         </Link>
 
+        {canViewUsers() && (
+
+          <Link to="/users">
+            Users
+          </Link>
+
+        )}
+
         {canViewAuditLogs() && (
 
           <Link to="/audit-logs">
@@ -104,6 +113,10 @@ function Navbar() {
         <span>
           {username} ({getRoleName()})
         </span>
+
+        <Link to="/change-password">
+          Change Password
+        </Link>
 
         <button
           type="button"

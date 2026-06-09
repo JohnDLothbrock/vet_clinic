@@ -105,6 +105,26 @@ export function canViewAuditLogs() {
   return isAdmin();
 }
 
+export function canViewUsers() {
+
+  return isAdmin();
+}
+
+export function canCreateUser() {
+
+  return isAdmin();
+}
+
+export function canUpdateUserRole() {
+
+  return isAdmin();
+}
+
+export function canUpdateUserActive() {
+
+  return isAdmin();
+}
+
 export function canViewMedicalRecords() {
 
   return true;

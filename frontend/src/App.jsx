@@ -16,13 +16,16 @@ import PetsPage from "./pages/PetsPage";
 import OwnersPage from "./pages/OwnersPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
+import UsersPage from "./pages/UsersPage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 import {
   isAuthenticated
 } from "./services/tokenService";
 
 import {
-  canViewAuditLogs
+  canViewAuditLogs,
+  canViewUsers
 } from "./services/permissionService";
 
 function ProtectedLayout({
@@ -55,7 +58,10 @@ function AdminRoute({
     );
   }
 
-  if (!canViewAuditLogs()) {
+  if (
+    !canViewAuditLogs() &&
+    !canViewUsers()
+  ) {
 
     return (
       <Navigate
@@ -166,6 +172,24 @@ function App() {
             <ProtectedLayout>
               <AppointmentsPage />
             </ProtectedLayout>
+          }
+        />
+
+        <Route
+          path="/change-password"
+          element={
+            <ProtectedLayout>
+              <ChangePasswordPage />
+            </ProtectedLayout>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <AdminRoute>
+              <UsersPage />
+            </AdminRoute>
           }
         />
 
