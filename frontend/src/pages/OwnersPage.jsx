@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState
+} from "react";
 
 import toast from "react-hot-toast";
 
@@ -12,6 +15,12 @@ import {
   updateOwner,
   deleteOwner
 } from "../services/ownerService";
+
+import {
+  canCreateOwner,
+  canEditOwner,
+  canDeleteOwner
+} from "../services/permissionService";
 
 import "../styles/app.css";
 
@@ -29,25 +38,34 @@ function OwnersPage() {
       phone: ""
     });
 
-  const [editingOwnerId,
-    setEditingOwnerId] =
-    useState(null);
+  const [
+    editingOwnerId,
+    setEditingOwnerId
+  ] = useState(null);
 
-  const [loading,
-    setLoading] =
-    useState(true);
+  const [
+    loading,
+    setLoading
+  ] = useState(true);
 
-  const [saving,
-    setSaving] =
-    useState(false);
+  const [
+    saving,
+    setSaving
+  ] = useState(false);
 
-  const [deletingId,
-    setDeletingId] =
-    useState(null);
+  const [
+    deletingId,
+    setDeletingId
+  ] = useState(null);
 
-  const [error,
-    setError] =
-    useState("");
+  const [
+    error,
+    setError
+  ] = useState("");
+
+  const canShowOwnerForm =
+    canCreateOwner() ||
+    canEditOwner();
 
   const fetchOwners =
     async () => {
@@ -148,6 +166,30 @@ function OwnersPage() {
         return;
       }
 
+      if (
+        editingOwnerId &&
+        !canEditOwner()
+      ) {
+
+        setError(
+          "You do not have permission to update owners."
+        );
+
+        return;
+      }
+
+      if (
+        !editingOwnerId &&
+        !canCreateOwner()
+      ) {
+
+        setError(
+          "You do not have permission to create owners."
+        );
+
+        return;
+      }
+
       if (!formData.name.trim()) {
 
         setError(
@@ -218,6 +260,15 @@ function OwnersPage() {
   const handleDeleteOwner =
     async (ownerId) => {
 
+      if (!canDeleteOwner()) {
+
+        setError(
+          "You do not have permission to delete owners."
+        );
+
+        return;
+      }
+
       const confirmed =
         window.confirm(
           "Are you sure you want to delete this owner?"
@@ -268,6 +319,15 @@ function OwnersPage() {
   const handleEditOwner =
     (owner) => {
 
+      if (!canEditOwner()) {
+
+        setError(
+          "You do not have permission to edit owners."
+        );
+
+        return;
+      }
+
       setEditingOwnerId(
         owner.id
       );
@@ -312,18 +372,32 @@ function OwnersPage() {
 
       )}
 
-      <div className="card">
+      {canShowOwnerForm ? (
 
-        <OwnerForm
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          editingOwnerId={editingOwnerId}
-          resetForm={resetForm}
-          saving={saving}
-        />
+        <div className="card">
 
-      </div>
+          <OwnerForm
+            formData={formData}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            editingOwnerId={editingOwnerId}
+            resetForm={resetForm}
+            saving={saving}
+          />
+
+        </div>
+
+      ) : (
+
+        <div className="card">
+
+          <p>
+            You have read-only access to owners.
+          </p>
+
+        </div>
+
+      )}
 
       <div className="card">
 

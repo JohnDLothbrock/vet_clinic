@@ -44,6 +44,13 @@ class AuthService:
                 401
             )
 
+        if not user.active:
+
+            raise ApplicationException(
+                "User account is inactive",
+                403
+            )
+
         if not verify_password(
                 password,
                 user.password_hash

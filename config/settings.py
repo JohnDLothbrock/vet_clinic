@@ -47,6 +47,18 @@ JWT_ALGORITHM = os.getenv(
     "HS256"
 )
 
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:5173"
+)
+
+PASSWORD_RESET_EXPIRE_MINUTES = int(
+    os.getenv(
+        "PASSWORD_RESET_EXPIRE_MINUTES",
+        "30"
+    )
+)
+
 OPENAI_API_KEY = os.getenv(
     "OPENAI_API_KEY"
 )

@@ -14,6 +14,10 @@ import {
   getUserRoleId
 } from "../services/tokenService";
 
+import {
+  canViewAuditLogs
+} from "../services/permissionService";
+
 function Navbar() {
 
   const navigate =
@@ -84,6 +88,14 @@ function Navbar() {
         <Link to="/appointments">
           Appointments
         </Link>
+
+        {canViewAuditLogs() && (
+
+          <Link to="/audit-logs">
+            Audit Logs
+          </Link>
+
+        )}
 
       </div>
 

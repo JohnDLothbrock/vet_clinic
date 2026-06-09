@@ -1,3 +1,8 @@
+import {
+  canEditAppointment,
+  canDeleteAppointment
+} from "../services/permissionService";
+
 function AppointmentItem({
 
   appointment,
@@ -6,6 +11,10 @@ function AppointmentItem({
   deletingId
 
 }) {
+
+  const showActions =
+    canEditAppointment() ||
+    canDeleteAppointment();
 
   return (
 
@@ -33,40 +42,52 @@ function AppointmentItem({
       {" "}
       {appointment.reason}
 
-      <div>
+      {showActions && (
 
-        <button
-          onClick={() =>
-            editAppointment(
-              appointment
-            )
-          }
-          disabled={
-            deletingId ===
-            appointment.id
-          }
-        >
-          Edit
-        </button>
+        <div>
 
-        <button
-          onClick={() =>
-            deleteAppointment(
+          {canEditAppointment() && (
+
+            <button
+              onClick={() =>
+                editAppointment(
+                  appointment
+                )
+              }
+              disabled={
+                deletingId ===
+                appointment.id
+              }
+            >
+              Edit
+            </button>
+
+          )}
+
+          {canDeleteAppointment() && (
+
+            <button
+              onClick={() =>
+                deleteAppointment(
+                  appointment.id
+                )
+              }
+              disabled={
+                deletingId ===
+                appointment.id
+              }
+            >
+              {deletingId ===
               appointment.id
-            )
-          }
-          disabled={
-            deletingId ===
-            appointment.id
-          }
-        >
-          {deletingId ===
-          appointment.id
-            ? "Deleting..."
-            : "Delete"}
-        </button>
+                ? "Deleting..."
+                : "Delete"}
+            </button>
 
-      </div>
+          )}
+
+        </div>
+
+      )}
 
     </li>
   );

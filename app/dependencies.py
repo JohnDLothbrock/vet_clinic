@@ -22,6 +22,10 @@ from repositories.audit_log_repository import (
     AuditLogRepository
 )
 
+from repositories.password_reset_token_repository import (
+    PasswordResetTokenRepository
+)
+
 from services.owner_service import (
     OwnerService
 )
@@ -54,6 +58,14 @@ from services.audit_log_service import (
     AuditLogService
 )
 
+from services.email_service import (
+    EmailService
+)
+
+from services.password_reset_service import (
+    PasswordResetService
+)
+
 
 # REPOSITORIES
 
@@ -81,6 +93,10 @@ audit_log_repository = (
     AuditLogRepository()
 )
 
+password_reset_token_repository = (
+    PasswordResetTokenRepository()
+)
+
 
 # SERVICES
 
@@ -105,7 +121,6 @@ pet_service = (
     )
 )
 
-# Link services after creation
 owner_service.pet_service = (
     pet_service
 )
@@ -143,6 +158,18 @@ medical_record_service = (
         medical_record_repository,
         pet_service,
         audit_log_service
+    )
+)
+
+email_service = (
+    EmailService()
+)
+
+password_reset_service = (
+    PasswordResetService(
+        user_service,
+        password_reset_token_repository,
+        email_service
     )
 )
 
@@ -187,3 +214,8 @@ def get_medical_record_service():
 def get_audit_log_service():
 
     return audit_log_service
+
+
+def get_password_reset_service():
+
+    return password_reset_service

@@ -21,3 +21,26 @@ class UserService:
                 username
             )
         )
+
+    def get_user_by_email(
+            self,
+            email
+    ):
+
+        return (
+            self.user_repository
+            .get_by_email(
+                email
+            )
+        )
+
+    def update_password(
+            self,
+            user_id,
+            password_hash
+    ):
+
+        self.user_repository.update_password(
+            user_id,
+            password_hash
+        )

@@ -3,6 +3,8 @@ import {
   useState
 } from "react";
 
+import toast from "react-hot-toast";
+
 import AppointmentForm from "../components/AppointmentForm";
 import AppointmentList from "../components/AppointmentList";
 
@@ -16,6 +18,12 @@ import {
 import {
   getPetsWithOwner
 } from "../services/petService";
+
+import {
+  canCreateAppointment,
+  canEditAppointment,
+  canDeleteAppointment
+} from "../services/permissionService";
 
 function AppointmentsPage() {
 
@@ -62,6 +70,10 @@ function AppointmentsPage() {
     error,
     setError
   ] = useState("");
+
+  const canShowAppointmentForm =
+    canCreateAppointment() ||
+    canEditAppointment();
 
   const fetchAppointments =
     async () => {
@@ -142,6 +154,30 @@ function AppointmentsPage() {
         return;
       }
 
+      if (
+        editingAppointmentId &&
+        !canEditAppointment()
+      ) {
+
+        setError(
+          "You do not have permission to update appointments."
+        );
+
+        return;
+      }
+
+      if (
+        !editingAppointmentId &&
+        !canCreateAppointment()
+      ) {
+
+        setError(
+          "You do not have permission to create appointments."
+        );
+
+        return;
+      }
+
       if (!formData.pet_id) {
 
         setError(
@@ -203,10 +239,18 @@ function AppointmentsPage() {
             }
           );
 
+          toast.success(
+            "Appointment updated successfully."
+          );
+
         } else {
 
           await createAppointment(
             payload
+          );
+
+          toast.success(
+            "Appointment created successfully."
           );
         }
 
@@ -236,6 +280,15 @@ function AppointmentsPage() {
   const handleDeleteAppointment =
     async (appointmentId) => {
 
+      if (!canDeleteAppointment()) {
+
+        setError(
+          "You do not have permission to delete appointments."
+        );
+
+        return;
+      }
+
       const confirmed =
         window.confirm(
           "Are you sure you want to delete this appointment?"
@@ -254,6 +307,10 @@ function AppointmentsPage() {
 
         await deleteAppointment(
           appointmentId
+        );
+
+        toast.success(
+          "Appointment deleted successfully."
         );
 
         setError("");
@@ -281,6 +338,15 @@ function AppointmentsPage() {
 
   const handleEditAppointment =
     (appointment) => {
+
+      if (!canEditAppointment()) {
+
+        setError(
+          "You do not have permission to edit appointments."
+        );
+
+        return;
+      }
 
       setEditingAppointmentId(
         appointment.id
@@ -338,17 +404,31 @@ function AppointmentsPage() {
 
       )}
 
-      <AppointmentForm
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        editingAppointmentId={
-          editingAppointmentId
-        }
-        resetForm={resetForm}
-        pets={pets}
-        saving={saving}
-      />
+      {canShowAppointmentForm ? (
+
+        <AppointmentForm
+          formData={formData}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          editingAppointmentId={
+            editingAppointmentId
+          }
+          resetForm={resetForm}
+          pets={pets}
+          saving={saving}
+        />
+
+      ) : (
+
+        <div className="card">
+
+          <p>
+            You have read-only access to appointments.
+          </p>
+
+        </div>
+
+      )}
 
       {loading ? (
 

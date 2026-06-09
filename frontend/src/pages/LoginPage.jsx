@@ -3,6 +3,7 @@ import {
 } from "react";
 
 import {
+  Link,
   useNavigate
 } from "react-router-dom";
 
@@ -166,7 +167,11 @@ function LoginPage() {
         </form>
 
         <p className="login-help-text">
-          Forgot password will be added in Phase 2.
+
+          <Link to="/forgot-password">
+            Forgot your password?
+          </Link>
+
         </p>
 
       </div>

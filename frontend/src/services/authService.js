@@ -30,6 +30,38 @@ export async function login(
   return getUserFromToken();
 }
 
+export async function requestPasswordReset(
+  email
+) {
+
+  const response =
+    await api.post(
+      "/auth/forgot-password",
+      {
+        email
+      }
+    );
+
+  return response.data;
+}
+
+export async function resetPassword(
+  token,
+  newPassword
+) {
+
+  const response =
+    await api.post(
+      "/auth/reset-password",
+      {
+        token,
+        new_password: newPassword
+      }
+    );
+
+  return response.data;
+}
+
 export function logout() {
 
   removeToken();

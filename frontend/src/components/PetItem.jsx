@@ -1,3 +1,8 @@
+import {
+  canEditPet,
+  canDeletePet
+} from "../services/permissionService";
+
 function PetItem({
 
   pet,
@@ -6,6 +11,10 @@ function PetItem({
   deletingId
 
 }) {
+
+  const showActions =
+    canEditPet() ||
+    canDeletePet();
 
   return (
 
@@ -29,26 +38,38 @@ function PetItem({
 
       </div>
 
-      <div className="button-group">
+      {showActions && (
 
-        <button
-          onClick={() => editPet(pet)}
-          disabled={deletingId === pet.id}
-        >
-          Edit
-        </button>
+        <div className="button-group">
 
-        <button
-          onClick={() => deletePet(pet.id)}
-          disabled={deletingId === pet.id}
-          className="delete-button"
-        >
-          {deletingId === pet.id
-            ? "Deleting..."
-            : "Delete"}
-        </button>
+          {canEditPet() && (
 
-      </div>
+            <button
+              onClick={() => editPet(pet)}
+              disabled={deletingId === pet.id}
+            >
+              Edit
+            </button>
+
+          )}
+
+          {canDeletePet() && (
+
+            <button
+              onClick={() => deletePet(pet.id)}
+              disabled={deletingId === pet.id}
+              className="delete-button"
+            >
+              {deletingId === pet.id
+                ? "Deleting..."
+                : "Delete"}
+            </button>
+
+          )}
+
+        </div>
+
+      )}
 
     </div>
   );

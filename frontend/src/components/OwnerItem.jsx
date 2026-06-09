@@ -1,3 +1,8 @@
+import {
+  canEditOwner,
+  canDeleteOwner
+} from "../services/permissionService";
+
 function OwnerItem({
 
   owner,
@@ -6,6 +11,10 @@ function OwnerItem({
   deletingId
 
 }) {
+
+  const showActions =
+    canEditOwner() ||
+    canDeleteOwner();
 
   return (
 
@@ -19,38 +28,50 @@ function OwnerItem({
       {" - "}
       {owner.phone}
 
-      <div
-        style={{
-          marginTop: "5px"
-        }}
-      >
+      {showActions && (
 
-        <button
-          onClick={() => editOwner(owner)}
-          disabled={
-            deletingId === owner.id
-          }
-        >
-          Edit
-        </button>
-
-        <button
-          onClick={() => deleteOwner(owner.id)}
-          disabled={
-            deletingId === owner.id
-          }
+        <div
           style={{
-            marginLeft: "10px"
+            marginTop: "5px"
           }}
         >
 
-          {deletingId === owner.id
-            ? "Deleting..."
-            : "Delete"}
+          {canEditOwner() && (
 
-        </button>
+            <button
+              onClick={() => editOwner(owner)}
+              disabled={
+                deletingId === owner.id
+              }
+            >
+              Edit
+            </button>
 
-      </div>
+          )}
+
+          {canDeleteOwner() && (
+
+            <button
+              onClick={() => deleteOwner(owner.id)}
+              disabled={
+                deletingId === owner.id
+              }
+              style={{
+                marginLeft: "10px"
+              }}
+            >
+
+              {deletingId === owner.id
+                ? "Deleting..."
+                : "Delete"}
+
+            </button>
+
+          )}
+
+        </div>
+
+      )}
 
     </li>
   );
