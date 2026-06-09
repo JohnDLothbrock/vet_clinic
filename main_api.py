@@ -40,6 +40,10 @@ from api.handlers.exception_handlers import (
     register_exception_handlers
 )
 
+from config.settings import (
+    CORS_ORIGINS
+)
+
 app = FastAPI(
     title="Veterinary Clinic API",
     description="""
@@ -58,13 +62,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173"
-    ],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]

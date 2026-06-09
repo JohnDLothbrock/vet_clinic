@@ -3,62 +3,109 @@ import os
 
 load_dotenv()
 
-DB_SERVER = os.getenv(
+
+def get_env_value(
+        key,
+        default=None
+):
+
+    value = os.getenv(
+        key,
+        default
+    )
+
+    return value
+
+
+def get_env_list(
+        key,
+        default_value
+):
+
+    raw_value = os.getenv(
+        key,
+        default_value
+    )
+
+    return [
+        item.strip()
+        for item in raw_value.split(",")
+        if item.strip()
+    ]
+
+
+DB_SERVER = get_env_value(
     "DB_SERVER"
 )
 
-DB_DATABASE = os.getenv(
+DB_DATABASE = get_env_value(
     "DB_DATABASE"
 )
 
-DB_DRIVER = os.getenv(
+DB_DRIVER = get_env_value(
     "DB_DRIVER"
 )
 
-DB_USERNAME = os.getenv(
+DB_USERNAME = get_env_value(
     "DB_USERNAME"
 )
 
-DB_PASSWORD = os.getenv(
+DB_PASSWORD = get_env_value(
     "DB_PASSWORD"
 )
 
-LOG_FILE = os.getenv(
+LOG_FILE = get_env_value(
     "LOG_FILE",
     "vet_clinic.log"
 )
 
-APP_NAME = os.getenv(
+APP_NAME = get_env_value(
     "APP_NAME",
     "Veterinary Clinic"
 )
 
-APP_ENV = os.getenv(
+APP_ENV = get_env_value(
     "APP_ENV",
     "development"
 )
 
-JWT_SECRET = os.getenv(
-    "JWT_SECRET"
+JWT_SECRET = get_env_value(
+    "JWT_SECRET",
+    "development-secret-key-change-this"
 )
 
-JWT_ALGORITHM = os.getenv(
+JWT_ALGORITHM = get_env_value(
     "JWT_ALGORITHM",
     "HS256"
 )
 
-FRONTEND_URL = os.getenv(
+FRONTEND_URL = get_env_value(
     "FRONTEND_URL",
     "http://localhost:5173"
 )
 
+CORS_ORIGINS = get_env_list(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173"
+)
+
 PASSWORD_RESET_EXPIRE_MINUTES = int(
-    os.getenv(
+    get_env_value(
         "PASSWORD_RESET_EXPIRE_MINUTES",
         "30"
     )
 )
 
-OPENAI_API_KEY = os.getenv(
+OPENAI_API_KEY = get_env_value(
     "OPENAI_API_KEY"
 )
+
+
+if (
+    APP_ENV == "production" and
+    JWT_SECRET == "development-secret-key-change-this"
+):
+
+    raise ValueError(
+        "JWT_SECRET must be configured in production."
+    )

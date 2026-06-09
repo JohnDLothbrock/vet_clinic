@@ -479,3 +479,23 @@
 2026-06-09 12:55:58,257 - WARNING - Pet ID 999 not found
 2026-06-09 12:55:58,260 - INFO - Pet deleted: 1
 2026-06-09 12:55:58,264 - WARNING - Pet ID 999 not found
+2026-06-09 13:23:24,700 - WARNING - Pet ID 999 not found
+2026-06-09 13:23:24,708 - INFO - Appointment created: None for pet 1
+2026-06-09 13:23:24,715 - WARNING - Appointment ID 999 not found
+2026-06-09 13:23:25,859 - INFO - Owner created: Juan
+2026-06-09 13:23:25,865 - WARNING - Owner ID 999 not found
+2026-06-09 13:23:25,868 - INFO - Owner deleted: 1
+2026-06-09 13:23:25,871 - WARNING - Owner 1 still has pets assigned
+2026-06-09 13:23:25,874 - INFO - Owner updated: 1
+2026-06-09 13:23:25,891 - INFO - Password reset requested for user ID 1
+2026-06-09 13:23:25,894 - WARNING - Password reset requested for non-existing email: missing@vetclinic.com
+2026-06-09 13:23:25,897 - WARNING - Password reset requested for inactive user: admin@vetclinic.com
+2026-06-09 13:23:26,121 - INFO - Password reset completed for user ID 10
+2026-06-09 13:23:26,129 - WARNING - Invalid owner ID: 999
+2026-06-09 13:23:26,132 - INFO - Pet created: Max
+2026-06-09 13:23:26,138 - WARNING - Pet ID 999 not found
+2026-06-09 13:23:26,141 - INFO - Pet deleted: 1
+2026-06-09 13:23:26,145 - INFO - Pet updated: 1
+2026-06-09 13:23:26,148 - WARNING - Pet ID 999 not found
+2026-06-09 13:23:26,150 - INFO - Pet deleted: 1
+2026-06-09 13:23:26,154 - WARNING - Pet ID 999 not found
