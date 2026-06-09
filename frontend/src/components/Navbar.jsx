@@ -1,26 +1,107 @@
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useNavigate
+} from "react-router-dom";
+
+import toast from "react-hot-toast";
+
+import {
+  logout
+} from "../services/authService";
+
+import {
+  getUsername,
+  getUserRoleId
+} from "../services/tokenService";
 
 function Navbar() {
+
+  const navigate =
+    useNavigate();
+
+  const username =
+    getUsername();
+
+  const roleId =
+    getUserRoleId();
+
+  const handleLogout =
+    () => {
+
+      logout();
+
+      toast.success(
+        "Logged out successfully."
+      );
+
+      navigate(
+        "/login",
+        {
+          replace: true
+        }
+      );
+    };
+
+  const getRoleName =
+    () => {
+
+      if (roleId === 1) {
+
+        return "Admin";
+      }
+
+      if (roleId === 2) {
+
+        return "Veterinarian";
+      }
+
+      if (roleId === 3) {
+
+        return "Receptionist";
+      }
+
+      return "User";
+    };
 
   return (
 
     <nav className="navbar">
 
-      <Link to="/">
-        Dashboard
-      </Link>
+      <div className="navbar-links">
 
-      <Link to="/pets">
-        Pets
-      </Link>
+        <Link to="/">
+          Dashboard
+        </Link>
 
-      <Link to="/owners">
-        Owners
-      </Link>
+        <Link to="/pets">
+          Pets
+        </Link>
 
-      <Link to="/appointments">
-        Appointments
-      </Link>
+        <Link to="/owners">
+          Owners
+        </Link>
+
+        <Link to="/appointments">
+          Appointments
+        </Link>
+
+      </div>
+
+      <div className="navbar-user">
+
+        <span>
+          {username} ({getRoleName()})
+        </span>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="logout-button"
+        >
+          Logout
+        </button>
+
+      </div>
 
     </nav>
   );

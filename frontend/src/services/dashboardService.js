@@ -1,10 +1,11 @@
-const API_URL =
-  "http://127.0.0.1:8000/api/v1/dashboard";
+import api from "./api";
 
 export async function getDashboardData() {
 
   const response =
-    await fetch(API_URL);
+    await api.get(
+      "/dashboard"
+    );
 
-  return await response.json();
+  return response.data;
 }
