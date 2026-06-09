@@ -57,28 +57,6 @@ def get_medical_records(
 
 
 @router.get(
-    "/{medical_record_id}",
-    response_model=MedicalRecordResponse
-)
-def get_medical_record_by_id(
-        medical_record_id: int,
-        current_user=Depends(
-            require_authenticated_user
-        ),
-        medical_record_service: MedicalRecordService = Depends(
-            get_medical_record_service
-        )
-):
-
-    return (
-        medical_record_service
-        .get_medical_record_by_id(
-            medical_record_id
-        )
-    )
-
-
-@router.get(
     "/pet/{pet_id}",
     response_model=list[MedicalRecordResponse]
 )
@@ -96,6 +74,28 @@ def get_medical_records_by_pet(
         medical_record_service
         .get_medical_records_by_pet(
             pet_id
+        )
+    )
+
+
+@router.get(
+    "/{medical_record_id}",
+    response_model=MedicalRecordResponse
+)
+def get_medical_record_by_id(
+        medical_record_id: int,
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        medical_record_service: MedicalRecordService = Depends(
+            get_medical_record_service
+        )
+):
+
+    return (
+        medical_record_service
+        .get_medical_record_by_id(
+            medical_record_id
         )
     )
 
@@ -118,7 +118,7 @@ def create_medical_record(
         diagnosis=medical_record_data.diagnosis,
         treatment=medical_record_data.treatment,
         notes=medical_record_data.notes,
-        created_by=medical_record_data.created_by
+        created_by=current_user["user_id"]
     )
 
     medical_record_service.create_medical_record(
@@ -149,7 +149,7 @@ def update_medical_record(
         diagnosis=medical_record_data.diagnosis,
         treatment=medical_record_data.treatment,
         notes=medical_record_data.notes,
-        created_by=0,
+        created_by=current_user["user_id"],
         medical_record_id=medical_record_id
     )
 

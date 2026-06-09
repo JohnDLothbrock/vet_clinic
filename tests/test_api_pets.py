@@ -2,32 +2,33 @@ from fastapi.testclient import TestClient
 
 from main_api import app
 
-from app.dependencies import get_pet_service
-
-
-class MockPetService:
-
-    def get_all_pets(self):
-        return []
-
-    def get_all_pets_with_owner(self):
-        return []
-
-    def search_pets_by_name(self, name):
-        return []
-
-
-app.dependency_overrides[
-    get_pet_service
-] = lambda: MockPetService()
-
 client = TestClient(app)
+
+
+def get_auth_headers():
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "username": "admin",
+            "password": "admin123"
+        }
+    )
+
+    assert response.status_code == 200
+
+    token = response.json()["access_token"]
+
+    return {
+        "Authorization": f"Bearer {token}"
+    }
 
 
 def test_get_pets():
 
     response = client.get(
-        "/api/v1/pets"
+        "/api/v1/pets",
+        headers=get_auth_headers()
     )
 
     assert response.status_code == 200
@@ -36,7 +37,8 @@ def test_get_pets():
 def test_get_pets_with_owner():
 
     response = client.get(
-        "/api/v1/pets/with-owner"
+        "/api/v1/pets/with-owner",
+        headers=get_auth_headers()
     )
 
     assert response.status_code == 200
@@ -45,7 +47,8 @@ def test_get_pets_with_owner():
 def test_search_pet():
 
     response = client.get(
-        "/api/v1/pets/search/max"
+        "/api/v1/pets/search/max",
+        headers=get_auth_headers()
     )
 
     assert response.status_code == 200

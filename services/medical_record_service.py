@@ -2,6 +2,10 @@ from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
 
+from exceptions.medical_record_not_found_exception import (
+    MedicalRecordNotFoundException
+)
+
 from utils.logger import logger
 
 from validators.medical_record_validator import (
@@ -38,6 +42,10 @@ class MedicalRecordService:
 
         if not pet:
 
+            logger.warning(
+                f"Pet ID {medical_record.pet_id} not found"
+            )
+
             raise PetNotFoundException(
                 medical_record.pet_id
             )
@@ -69,17 +77,46 @@ class MedicalRecordService:
             medical_record_id
     ):
 
-        return (
+        medical_record = (
             self.medical_record_repository
             .get_by_id(
                 medical_record_id
             )
         )
 
+        if not medical_record:
+
+            logger.warning(
+                f"Medical record ID {medical_record_id} not found"
+            )
+
+            raise MedicalRecordNotFoundException(
+                medical_record_id
+            )
+
+        return medical_record
+
     def update_medical_record(
             self,
             medical_record
     ):
+
+        existing_medical_record = (
+            self.medical_record_repository
+            .get_by_id(
+                medical_record.id
+            )
+        )
+
+        if not existing_medical_record:
+
+            logger.warning(
+                f"Medical record ID {medical_record.id} not found"
+            )
+
+            raise MedicalRecordNotFoundException(
+                medical_record.id
+            )
 
         MedicalRecordValidator.validate(
             medical_record.visit_date,
@@ -92,19 +129,60 @@ class MedicalRecordService:
             medical_record
         )
 
+        logger.info(
+            f"Medical record updated: {medical_record.id}"
+        )
+
     def delete_medical_record(
             self,
             medical_record_id
     ):
 
+        existing_medical_record = (
+            self.medical_record_repository
+            .get_by_id(
+                medical_record_id
+            )
+        )
+
+        if not existing_medical_record:
+
+            logger.warning(
+                f"Medical record ID {medical_record_id} not found"
+            )
+
+            raise MedicalRecordNotFoundException(
+                medical_record_id
+            )
+
         self.medical_record_repository.delete(
             medical_record_id
+        )
+
+        logger.info(
+            f"Medical record deleted: {medical_record_id}"
         )
 
     def get_medical_records_by_pet(
             self,
             pet_id
     ):
+
+        pet = (
+            self.pet_service.get_pet_by_id(
+                pet_id
+            )
+        )
+
+        if not pet:
+
+            logger.warning(
+                f"Pet ID {pet_id} not found"
+            )
+
+            raise PetNotFoundException(
+                pet_id
+            )
 
         return (
             self.medical_record_repository

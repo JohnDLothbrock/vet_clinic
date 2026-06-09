@@ -30,30 +30,12 @@ class AuthService:
             password: str
     ):
 
-        print("=" * 50)
-        print("LOGIN ATTEMPT")
-        print("USERNAME RECEIVED:", username)
-
         user = (
             self.user_service
             .get_user_by_username(
                 username
             )
         )
-
-        print("USER FOUND:", user)
-
-        if user:
-
-            print("DB USERNAME:", user.username)
-            print("DB HASH:", user.password_hash)
-            print(
-                "PASSWORD MATCH:",
-                verify_password(
-                    password,
-                    user.password_hash
-                )
-            )
 
         if not user:
 
@@ -74,6 +56,7 @@ class AuthService:
 
         token = create_access_token(
             {
+                "user_id": user.id,
                 "sub": user.username,
                 "role_id": user.role_id
             }

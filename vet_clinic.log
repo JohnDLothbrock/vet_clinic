@@ -148,3 +148,40 @@
 2026-06-06 10:41:15,892 - WARNING - Owner ID 0 not found
 2026-06-06 10:42:07,307 - WARNING - Pet ID 0 not found
 2026-06-06 10:42:08,908 - WARNING - Pet ID 0 not found
+2026-06-06 22:12:04,230 - WARNING - Pet ID 0 not found
+2026-06-08 19:33:42,951 - INFO - Medical record created for pet 1
+2026-06-08 19:48:47,333 - INFO - Medical record created for pet 1
+2026-06-08 19:50:25,929 - WARNING - Pet ID 999 not found
+2026-06-08 19:50:25,940 - INFO - Appointment created for pet 1
+2026-06-08 19:50:25,951 - WARNING - Appointment ID 999 not found
+2026-06-08 19:50:25,971 - INFO - Owner created: Juan
+2026-06-08 19:50:25,980 - WARNING - Owner ID 999 not found
+2026-06-08 19:50:25,984 - INFO - Owner deleted: 1
+2026-06-08 19:50:25,993 - WARNING - Owner 1 still has pets assigned
+2026-06-08 19:50:26,000 - INFO - Owner updated: 1
+2026-06-08 19:50:26,031 - WARNING - Invalid owner ID: 999
+2026-06-08 19:50:26,037 - INFO - Pet created: Max
+2026-06-08 19:50:26,045 - WARNING - Pet ID 999 not found
+2026-06-08 19:50:26,052 - INFO - Pet deleted: 1
+2026-06-08 19:50:26,058 - INFO - Pet updated: 1
+2026-06-08 19:50:26,065 - WARNING - Pet ID 999 not found
+2026-06-08 19:50:26,073 - INFO - Pet deleted: 1
+2026-06-08 19:50:26,077 - WARNING - Pet ID 999 not found
+2026-06-08 20:13:11,731 - INFO - Searching owners by name: juan
+2026-06-08 20:13:12,506 - INFO - Searching pets by name: max
+2026-06-08 20:13:12,526 - WARNING - Pet ID 999 not found
+2026-06-08 20:13:12,533 - INFO - Appointment created for pet 1
+2026-06-08 20:13:12,540 - WARNING - Appointment ID 999 not found
+2026-06-08 20:13:12,553 - INFO - Owner created: Juan
+2026-06-08 20:13:12,559 - WARNING - Owner ID 999 not found
+2026-06-08 20:13:12,563 - INFO - Owner deleted: 1
+2026-06-08 20:13:12,567 - WARNING - Owner 1 still has pets assigned
+2026-06-08 20:13:12,571 - INFO - Owner updated: 1
+2026-06-08 20:13:12,592 - WARNING - Invalid owner ID: 999
+2026-06-08 20:13:12,596 - INFO - Pet created: Max
+2026-06-08 20:13:12,603 - WARNING - Pet ID 999 not found
+2026-06-08 20:13:12,608 - INFO - Pet deleted: 1
+2026-06-08 20:13:12,612 - INFO - Pet updated: 1
+2026-06-08 20:13:12,616 - WARNING - Pet ID 999 not found
+2026-06-08 20:13:12,620 - INFO - Pet deleted: 1
+2026-06-08 20:13:12,623 - WARNING - Pet ID 999 not found

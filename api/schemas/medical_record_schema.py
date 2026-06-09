@@ -11,7 +11,6 @@ class MedicalRecordCreate(
     diagnosis: str
     treatment: str
     notes: str
-    created_by: int
 
 
 class MedicalRecordUpdate(

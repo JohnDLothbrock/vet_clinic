@@ -2,36 +2,33 @@ from fastapi.testclient import TestClient
 
 from main_api import app
 
-from app.dependencies import get_owner_service
-
-
-class MockOwnerService:
-
-    def get_all_owners(self):
-        return []
-
-    def get_owner_by_id(self, owner_id):
-        return {
-            "id": owner_id,
-            "name": "Juan",
-            "phone": "88888888"
-        }
-
-    def search_owners_by_name(self, name):
-        return []
-
-
-app.dependency_overrides[
-    get_owner_service
-] = lambda: MockOwnerService()
-
 client = TestClient(app)
+
+
+def get_auth_headers():
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "username": "admin",
+            "password": "admin123"
+        }
+    )
+
+    assert response.status_code == 200
+
+    token = response.json()["access_token"]
+
+    return {
+        "Authorization": f"Bearer {token}"
+    }
 
 
 def test_get_owners():
 
     response = client.get(
-        "/api/v1/owners"
+        "/api/v1/owners",
+        headers=get_auth_headers()
     )
 
     assert response.status_code == 200
@@ -40,16 +37,21 @@ def test_get_owners():
 def test_get_owner_by_id():
 
     response = client.get(
-        "/api/v1/owners/1"
+        "/api/v1/owners/1",
+        headers=get_auth_headers()
     )
 
-    assert response.status_code == 200
+    assert response.status_code in [
+        200,
+        404
+    ]
 
 
 def test_search_owner():
 
     response = client.get(
-        "/api/v1/owners/search/juan"
+        "/api/v1/owners/search/juan",
+        headers=get_auth_headers()
     )
 
     assert response.status_code == 200

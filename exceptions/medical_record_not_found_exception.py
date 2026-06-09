@@ -13,9 +13,6 @@ class MedicalRecordNotFoundException(
     ):
 
         super().__init__(
-            (
-                f"Medical record with ID "
-                f"{medical_record_id} not found"
-            ),
+            f"Medical record with ID {medical_record_id} not found",
             404
         )
