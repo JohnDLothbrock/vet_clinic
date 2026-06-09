@@ -16,7 +16,8 @@ import {
 
 import {
   canViewAuditLogs,
-  canViewUsers
+  canViewUsers,
+  canViewMedicalRecords
 } from "../services/permissionService";
 
 function Navbar() {
@@ -89,6 +90,14 @@ function Navbar() {
         <Link to="/appointments">
           Appointments
         </Link>
+
+        {canViewMedicalRecords() && (
+
+          <Link to="/medical-records">
+            Medical Records
+          </Link>
+
+        )}
 
         {canViewUsers() && (
 

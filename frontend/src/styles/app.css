@@ -488,3 +488,64 @@ button:hover {
   border-radius: 6px;
   font-size: 14px;
 }
+
+.medical-record-form {
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.medical-record-form input,
+.medical-record-form select,
+.medical-record-form textarea {
+
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.medical-record-form textarea {
+
+  min-height: 80px;
+  resize: vertical;
+}
+
+.medical-record-list {
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.medical-record-card {
+
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.medical-record-card h3 {
+
+  margin-top: 0;
+  color: #1e3a8a;
+}
+
+.filter-row {
+
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-row select {
+
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}

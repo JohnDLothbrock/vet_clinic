@@ -18,6 +18,7 @@ import AppointmentsPage from "./pages/AppointmentsPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
 import UsersPage from "./pages/UsersPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import MedicalRecordsPage from "./pages/MedicalRecordsPage";
 
 import {
   isAuthenticated
@@ -171,6 +172,15 @@ function App() {
           element={
             <ProtectedLayout>
               <AppointmentsPage />
+            </ProtectedLayout>
+          }
+        />
+
+        <Route
+          path="/medical-records"
+          element={
+            <ProtectedLayout>
+              <MedicalRecordsPage />
             </ProtectedLayout>
           }
         />
