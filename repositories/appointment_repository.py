@@ -1,11 +1,14 @@
 from database.connection import get_connection
+
 from models.appointments import Appointment
 
 
 class AppointmentRepository:
 
-
-    def get_recent_appointments(self, limit=5):
+    def get_recent_appointments(
+            self,
+            limit=5
+    ):
 
         connection = get_connection()
         cursor = connection.cursor()
@@ -13,17 +16,17 @@ class AppointmentRepository:
         try:
 
             query = f"""
-                    SELECT TOP {limit}
-                           a.id,
-                           a.pet_id,
-                           p.name AS pet_name,
-                           a.appointment_date,
-                           a.reason
-                    FROM Appointments a
-                    INNER JOIN Pets p
-                        ON a.pet_id = p.id
-                    ORDER BY a.appointment_date DESC
-                    """
+            SELECT TOP {limit}
+                a.id,
+                a.pet_id,
+                p.name AS pet_name,
+                a.appointment_date,
+                a.reason
+            FROM Appointments a
+            INNER JOIN Pets p
+                ON a.pet_id = p.id
+            ORDER BY a.appointment_date DESC
+            """
 
             cursor.execute(query)
 
@@ -32,14 +35,16 @@ class AppointmentRepository:
             appointments = []
 
             for row in rows:
-                appointments.append({
 
-                    "id": row.id,
-                    "pet_id": row.pet_id,
-                    "pet_name": row.pet_name,
-                    "appointment_date": row.appointment_date,
-                    "reason": row.reason
-                })
+                appointments.append(
+                    {
+                        "id": row.id,
+                        "pet_id": row.pet_id,
+                        "pet_name": row.pet_name,
+                        "appointment_date": row.appointment_date,
+                        "reason": row.reason
+                    }
+                )
 
             return appointments
 
@@ -48,70 +53,87 @@ class AppointmentRepository:
             cursor.close()
             connection.close()
 
-    def create(self, appointment):
+    def create(
+            self,
+            appointment
+    ) -> int:
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-        INSERT INTO Appointments (
-            pet_id,
-            appointment_date,
-            reason
-        )
-        VALUES (?, ?, ?)
-        """
+        try:
 
-        cursor.execute(
-            query,
-            (
-                appointment.pet_id,
-                appointment.appointment_date,
-                appointment.reason
+            query = """
+            INSERT INTO Appointments (
+                pet_id,
+                appointment_date,
+                reason
             )
-        )
+            OUTPUT INSERTED.id
+            VALUES (?, ?, ?)
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    appointment.pet_id,
+                    appointment.appointment_date,
+                    appointment.reason
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            row = cursor.fetchone()
+
+            connection.commit()
+
+            return row[0]
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_all(self):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                SELECT id,
-                       pet_id,
-                       appointment_date,
-                       reason
-                FROM Appointments
-                """
+        try:
 
-        cursor.execute(query)
+            query = """
+            SELECT
+                id,
+                pet_id,
+                appointment_date,
+                reason
+            FROM Appointments
+            """
 
-        rows = cursor.fetchall()
+            cursor.execute(query)
 
-        appointments = []
+            rows = cursor.fetchall()
 
-        for row in rows:
+            appointments = []
 
-            appointment = Appointment(
-                pet_id=row[1],
-                appointment_date=row[2],
-                reason=row[3],
-                appointment_id=row[0]
-            )
+            for row in rows:
 
-            appointments.append(
-                appointment
-            )
+                appointment = Appointment(
+                    pet_id=row.pet_id,
+                    appointment_date=row.appointment_date,
+                    reason=row.reason,
+                    appointment_id=row.id
+                )
 
-        cursor.close()
-        connection.close()
+                appointments.append(
+                    appointment
+                )
 
-        return appointments
+            return appointments
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_by_id(
             self,
@@ -124,17 +146,20 @@ class AppointmentRepository:
         try:
 
             query = """
-                    SELECT id,
-                           pet_id,
-                           appointment_date,
-                           reason
-                    FROM Appointments
-                    WHERE id = ?
-                    """
+            SELECT
+                id,
+                pet_id,
+                appointment_date,
+                reason
+            FROM Appointments
+            WHERE id = ?
+            """
 
             cursor.execute(
                 query,
-                (appointment_id,)
+                (
+                    appointment_id,
+                )
             )
 
             row = cursor.fetchone()
@@ -163,26 +188,31 @@ class AppointmentRepository:
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                UPDATE Appointments
-                SET appointment_date = ?,
-                    reason = ?
-                WHERE id = ?
-                """
+        try:
 
-        cursor.execute(
-            query,
-            (
-                appointment.appointment_date,
-                appointment.reason,
-                appointment.id
+            query = """
+            UPDATE Appointments
+            SET
+                appointment_date = ?,
+                reason = ?
+            WHERE id = ?
+            """
+
+            cursor.execute(
+                query,
+                (
+                    appointment.appointment_date,
+                    appointment.reason,
+                    appointment.id
+                )
             )
-        )
 
-        connection.commit()
+            connection.commit()
 
-        cursor.close()
-        connection.close()
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def delete(
             self,
@@ -192,21 +222,26 @@ class AppointmentRepository:
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                DELETE
-                FROM Appointments
-                WHERE id = ?
-                """
+        try:
 
-        cursor.execute(
-            query,
-            (appointment_id,)
-        )
+            query = """
+            DELETE FROM Appointments
+            WHERE id = ?
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    appointment_id,
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            connection.commit()
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_by_pet_id(
             self,
@@ -219,21 +254,24 @@ class AppointmentRepository:
         try:
 
             query = """
-                    SELECT a.id,
-                           a.pet_id,
-                           p.name AS pet_name,
-                           a.appointment_date,
-                           a.reason
-                    FROM Appointments a
-                    INNER JOIN Pets p
-                        ON a.pet_id = p.id
-                    WHERE a.pet_id = ?
-                    ORDER BY a.appointment_date DESC
-                    """
+            SELECT
+                a.id,
+                a.pet_id,
+                p.name AS pet_name,
+                a.appointment_date,
+                a.reason
+            FROM Appointments a
+            INNER JOIN Pets p
+                ON a.pet_id = p.id
+            WHERE a.pet_id = ?
+            ORDER BY a.appointment_date DESC
+            """
 
             cursor.execute(
                 query,
-                (pet_id,)
+                (
+                    pet_id,
+                )
             )
 
             rows = cursor.fetchall()
@@ -242,15 +280,15 @@ class AppointmentRepository:
 
             for row in rows:
 
-                appointments.append({
-
-                    "id": row.id,
-                    "pet_id": row.pet_id,
-                    "pet_name": row.pet_name,
-                    "appointment_date": row.appointment_date,
-                    "reason": row.reason
-
-                })
+                appointments.append(
+                    {
+                        "id": row.id,
+                        "pet_id": row.pet_id,
+                        "pet_name": row.pet_name,
+                        "appointment_date": row.appointment_date,
+                        "reason": row.reason
+                    }
+                )
 
             return appointments
 
@@ -267,16 +305,17 @@ class AppointmentRepository:
         try:
 
             query = """
-                    SELECT a.id,
-                           a.pet_id,
-                           p.name AS pet_name,
-                           a.appointment_date,
-                           a.reason
-                    FROM Appointments a
-                    INNER JOIN Pets p
-                        ON a.pet_id = p.id
-                    ORDER BY a.appointment_date DESC
-                    """
+            SELECT
+                a.id,
+                a.pet_id,
+                p.name AS pet_name,
+                a.appointment_date,
+                a.reason
+            FROM Appointments a
+            INNER JOIN Pets p
+                ON a.pet_id = p.id
+            ORDER BY a.appointment_date DESC
+            """
 
             cursor.execute(query)
 
@@ -286,14 +325,15 @@ class AppointmentRepository:
 
             for row in rows:
 
-                appointments.append({
-
-                    "id": row.id,
-                    "pet_id": row.pet_id,
-                    "pet_name": row.pet_name,
-                    "appointment_date": row.appointment_date,
-                    "reason": row.reason
-                })
+                appointments.append(
+                    {
+                        "id": row.id,
+                        "pet_id": row.pet_id,
+                        "pet_name": row.pet_name,
+                        "appointment_date": row.appointment_date,
+                        "reason": row.reason
+                    }
+                )
 
             return appointments
 

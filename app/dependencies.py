@@ -84,16 +84,24 @@ audit_log_repository = (
 
 # SERVICES
 
+audit_log_service = (
+    AuditLogService(
+        audit_log_repository
+    )
+)
+
 owner_service = (
     OwnerService(
-        owner_repository
+        owner_repository,
+        audit_log_service
     )
 )
 
 pet_service = (
     PetService(
         pet_repository,
-        owner_service
+        owner_service,
+        audit_log_service
     )
 )
 
@@ -105,7 +113,8 @@ owner_service.pet_service = (
 appointment_service = (
     AppointmentService(
         appointment_repository,
-        pet_service
+        pet_service,
+        audit_log_service
     )
 )
 
@@ -132,13 +141,8 @@ auth_service = (
 medical_record_service = (
     MedicalRecordService(
         medical_record_repository,
-        pet_service
-    )
-)
-
-audit_log_service = (
-    AuditLogService(
-        audit_log_repository
+        pet_service,
+        audit_log_service
     )
 )
 

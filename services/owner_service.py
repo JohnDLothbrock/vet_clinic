@@ -23,32 +23,51 @@ class OwnerService:
 
     def __init__(
             self,
-            owner_repository: OwnerRepository
+            owner_repository: OwnerRepository,
+            audit_log_service=None
     ):
 
         self.owner_repository = (
             owner_repository
         )
 
+        self.audit_log_service = (
+            audit_log_service
+        )
+
         self.pet_service = None
 
     def create_owner(
             self,
-            owner
-    ) -> None:
+            owner,
+            user_id=None
+    ) -> int:
 
         OwnerValidator.validate(
             owner.name,
             owner.phone
         )
 
-        self.owner_repository.create(
-            owner
+        owner_id = (
+            self.owner_repository.create(
+                owner
+            )
         )
+
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="CREATE",
+                entity="Owner",
+                entity_id=owner_id
+            )
 
         logger.info(
             f"Owner created: {owner.name}"
         )
+
+        return owner_id
 
     def get_all_owners(self):
 
@@ -81,7 +100,8 @@ class OwnerService:
             self,
             owner_id,
             name,
-            phone
+            phone,
+            user_id=None
     ):
 
         existing_owner = (
@@ -115,13 +135,25 @@ class OwnerService:
             updated_owner
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="UPDATE",
+                entity="Owner",
+                entity_id=owner_id
+            )
+
         logger.info(
             f"Owner updated: {owner_id}"
         )
 
+        return owner_id
+
     def delete_owner(
             self,
-            owner_id
+            owner_id,
+            user_id=None
     ):
 
         existing_owner = (
@@ -162,9 +194,20 @@ class OwnerService:
             owner_id
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="DELETE",
+                entity="Owner",
+                entity_id=owner_id
+            )
+
         logger.info(
             f"Owner deleted: {owner_id}"
         )
+
+        return owner_id
 
     def search_owners_by_name(
             self,

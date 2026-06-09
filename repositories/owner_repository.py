@@ -4,141 +4,175 @@ from models.owner import Owner
 
 class OwnerRepository:
 
-
     def create(self, owner):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-        INSERT INTO Owners (
-            name,
-            phone
-        )
-        VALUES (?, ?)
-        """
+        try:
 
-        cursor.execute(
-            query,
-            (
-                owner.name,
-                owner.phone
+            query = """
+            INSERT INTO Owners (
+                name,
+                phone
             )
-        )
+            OUTPUT INSERTED.id
+            VALUES (?, ?)
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    owner.name,
+                    owner.phone
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            row = cursor.fetchone()
 
+            connection.commit()
+
+            return row[0]
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_all(self):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-        SELECT
-            id,
-            name,
-            phone
-        FROM Owners
-        """
+        try:
 
-        cursor.execute(query)
+            query = """
+            SELECT
+                id,
+                name,
+                phone
+            FROM Owners
+            """
 
-        rows = cursor.fetchall()
+            cursor.execute(query)
 
-        owners = []
+            rows = cursor.fetchall()
 
-        for row in rows:
-            owner = Owner(
-                name=row[1],
-                phone=row[2],
-                owner_id=row[0]
-            )
-            owners.append(owner)
+            owners = []
 
-        cursor.close()
-        connection.close()
+            for row in rows:
 
-        return owners
+                owner = Owner(
+                    name=row.name,
+                    phone=row.phone,
+                    owner_id=row.id
+                )
 
+                owners.append(owner)
+
+            return owners
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_by_id(self, owner_id):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                SELECT id, \
-                       name, \
-                       phone
-                FROM Owners
-                WHERE id = ? \
-                """
+        try:
 
-        cursor.execute(query, (owner_id,))
+            query = """
+            SELECT
+                id,
+                name,
+                phone
+            FROM Owners
+            WHERE id = ?
+            """
 
-        row = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        if row:
-            return Owner(
-                name=row.name,
-                phone=row.phone,
-                owner_id=row.id
+            cursor.execute(
+                query,
+                (
+                    owner_id,
+                )
             )
-        return None
 
+            row = cursor.fetchone()
+
+            if row:
+
+                return Owner(
+                    name=row.name,
+                    phone=row.phone,
+                    owner_id=row.id
+                )
+
+            return None
+
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def update(self, owner):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                UPDATE Owners
-                SET name  = ?, \
-                    phone = ?
-                WHERE id = ? \
-                """
+        try:
 
-        cursor.execute(
-            query,
-            (
-                owner.name,
-                owner.phone,
-                owner.id
+            query = """
+            UPDATE Owners
+            SET
+                name = ?,
+                phone = ?
+            WHERE id = ?
+            """
+
+            cursor.execute(
+                query,
+                (
+                    owner.name,
+                    owner.phone,
+                    owner.id
+                )
             )
-        )
 
-        connection.commit()
+            connection.commit()
 
-        cursor.close()
-        connection.close()
+        finally:
 
+            cursor.close()
+            connection.close()
 
     def delete(self, owner_id):
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        query = """
-                DELETE \
-                FROM Owners
-                WHERE id = ? \
-                """
+        try:
 
-        cursor.execute(query, (owner_id,))
+            query = """
+            DELETE FROM Owners
+            WHERE id = ?
+            """
 
-        connection.commit()
+            cursor.execute(
+                query,
+                (
+                    owner_id,
+                )
+            )
 
-        cursor.close()
-        connection.close()
+            connection.commit()
 
+        finally:
+
+            cursor.close()
+            connection.close()
 
     def get_by_name(
             self,
@@ -149,23 +183,29 @@ class OwnerRepository:
         cursor = connection.cursor()
 
         try:
+
             query = """
-                    SELECT id, \
-                           name, \
-                           phone
-                    FROM Owners
-                    WHERE name LIKE ? \
-                    """
+            SELECT
+                id,
+                name,
+                phone
+            FROM Owners
+            WHERE name LIKE ?
+            """
 
             cursor.execute(
                 query,
-                (f"%{name}%",)
+                (
+                    f"%{name}%",
+                )
             )
 
             rows = cursor.fetchall()
+
             owners = []
 
             for row in rows:
+
                 owner = Owner(
                     name=row.name,
                     phone=row.phone,
@@ -173,8 +213,10 @@ class OwnerRepository:
                 )
 
                 owners.append(owner)
+
             return owners
 
         finally:
+
             cursor.close()
             connection.close()

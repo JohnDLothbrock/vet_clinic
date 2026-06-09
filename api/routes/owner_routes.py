@@ -9,13 +9,8 @@ from services.owner_service import (
     OwnerService
 )
 
-from services.audit_log_service import (
-    AuditLogService
-)
-
 from app.dependencies import (
-    get_owner_service,
-    get_audit_log_service
+    get_owner_service
 )
 
 from api.schemas.owner_schema import (
@@ -83,9 +78,6 @@ def create_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
@@ -94,19 +86,18 @@ def create_owner(
         phone=owner_data.phone
     )
 
-    owner_service.create_owner(
-        owner
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="CREATE",
-        entity="Owner",
-        entity_id=0
+    owner_id = (
+        owner_service.create_owner(
+            owner,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Owner created successfully"
+        "Owner created successfully",
+        {
+            "id": owner_id
+        }
     )
 
 
@@ -119,27 +110,23 @@ def update_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    owner_service.update_owner(
-        owner_id,
-        owner_data.name,
-        owner_data.phone
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="UPDATE",
-        entity="Owner",
-        entity_id=owner_id
+    updated_owner_id = (
+        owner_service.update_owner(
+            owner_id,
+            owner_data.name,
+            owner_data.phone,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Owner updated successfully"
+        "Owner updated successfully",
+        {
+            "id": updated_owner_id
+        }
     )
 
 
@@ -151,25 +138,21 @@ def delete_owner(
         ),
         owner_service: OwnerService = Depends(
             get_owner_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    owner_service.delete_owner(
-        owner_id
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="DELETE",
-        entity="Owner",
-        entity_id=owner_id
+    deleted_owner_id = (
+        owner_service.delete_owner(
+            owner_id,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Owner deleted successfully"
+        "Owner deleted successfully",
+        {
+            "id": deleted_owner_id
+        }
     )
 
 

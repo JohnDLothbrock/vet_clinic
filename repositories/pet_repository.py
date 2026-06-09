@@ -1,17 +1,18 @@
 from models.pet import Pet
+
 from repositories.base_repository import (
     BaseRepository
 )
+
 
 class PetRepository(
     BaseRepository
 ):
 
-
     def create(
             self,
             pet: Pet
-    ) -> None:
+    ) -> int:
 
         connection = self._get_connection()
         cursor = connection.cursor()
@@ -25,6 +26,7 @@ class PetRepository(
                 age,
                 owner_id
             )
+            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?)
             """
 
@@ -38,7 +40,11 @@ class PetRepository(
                 )
             )
 
+            row = cursor.fetchone()
+
             connection.commit()
+
+            return row[0]
 
         finally:
 
@@ -46,7 +52,6 @@ class PetRepository(
                 connection,
                 cursor
             )
-
 
     def get_all(
             self
@@ -94,7 +99,6 @@ class PetRepository(
                 cursor
             )
 
-
     def get_by_id(
             self,
             pet_id: int
@@ -104,6 +108,7 @@ class PetRepository(
         cursor = connection.cursor()
 
         try:
+
             query = """
             SELECT
                 id,
@@ -117,12 +122,15 @@ class PetRepository(
 
             cursor.execute(
                 query,
-                (pet_id,)
+                (
+                    pet_id,
+                )
             )
 
             row = cursor.fetchone()
 
             if row is None:
+
                 return None
 
             return Pet(
@@ -139,7 +147,6 @@ class PetRepository(
                 connection,
                 cursor
             )
-
 
     def update(
             self,
@@ -182,7 +189,6 @@ class PetRepository(
                 cursor
             )
 
-
     def delete(
             self,
             pet_id
@@ -200,17 +206,19 @@ class PetRepository(
 
             cursor.execute(
                 query,
-                (pet_id,)
+                (
+                    pet_id,
+                )
             )
 
             connection.commit()
 
         finally:
+
             self._close(
                 connection,
                 cursor
             )
-
 
     def get_by_name(
             self,
@@ -221,6 +229,7 @@ class PetRepository(
         cursor = connection.cursor()
 
         try:
+
             query = """
             SELECT
                 id,
@@ -234,10 +243,13 @@ class PetRepository(
 
             cursor.execute(
                 query,
-                (f"%{name}%",)
+                (
+                    f"%{name}%",
+                )
             )
 
             rows = cursor.fetchall()
+
             pets = []
 
             for row in rows:
@@ -251,9 +263,11 @@ class PetRepository(
                         pet_id=row.id
                     )
                 )
+
             return pets
 
         finally:
+
             self._close(
                 connection,
                 cursor
@@ -270,21 +284,24 @@ class PetRepository(
         try:
 
             query = """
-                    SELECT p.id,
-                           p.name,
-                           p.species,
-                           p.age,
-                           p.owner_id,
-                           o.name AS owner_name
-                    FROM Pets p
-                             INNER JOIN Owners o
-                                        ON p.owner_id = o.id
-                    WHERE p.name LIKE ?
-                    """
+            SELECT
+                p.id,
+                p.name,
+                p.species,
+                p.age,
+                p.owner_id,
+                o.name AS owner_name
+            FROM Pets p
+            INNER JOIN Owners o
+                ON p.owner_id = o.id
+            WHERE p.name LIKE ?
+            """
 
             cursor.execute(
                 query,
-                (f"%{name}%",)
+                (
+                    f"%{name}%",
+                )
             )
 
             rows = cursor.fetchall()
@@ -292,15 +309,17 @@ class PetRepository(
             pets = []
 
             for row in rows:
-                pets.append({
 
-                    "id": row.id,
-                    "name": row.name,
-                    "species": row.species,
-                    "age": row.age,
-                    "owner_id": row.owner_id,
-                    "owner_name": row.owner_name
-                })
+                pets.append(
+                    {
+                        "id": row.id,
+                        "name": row.name,
+                        "species": row.species,
+                        "age": row.age,
+                        "owner_id": row.owner_id,
+                        "owner_name": row.owner_name
+                    }
+                )
 
             return pets
 
@@ -319,16 +338,17 @@ class PetRepository(
         try:
 
             query = """
-                    SELECT p.id, \
-                           p.name, \
-                           p.species, \
-                           p.age, \
-                           p.owner_id, \
-                           o.name AS owner_name
-                    FROM Pets p
-                             INNER JOIN Owners o
-                                        ON p.owner_id = o.id \
-                    """
+            SELECT
+                p.id,
+                p.name,
+                p.species,
+                p.age,
+                p.owner_id,
+                o.name AS owner_name
+            FROM Pets p
+            INNER JOIN Owners o
+                ON p.owner_id = o.id
+            """
 
             cursor.execute(query)
 
@@ -337,23 +357,26 @@ class PetRepository(
             pets = []
 
             for row in rows:
-                pets.append({
-                    "id": row.id,
-                    "name": row.name,
-                    "species": row.species,
-                    "age": row.age,
-                    "owner_id": row.owner_id,
-                    "owner_name": row.owner_name
-                })
+
+                pets.append(
+                    {
+                        "id": row.id,
+                        "name": row.name,
+                        "species": row.species,
+                        "age": row.age,
+                        "owner_id": row.owner_id,
+                        "owner_name": row.owner_name
+                    }
+                )
 
             return pets
 
         finally:
+
             self._close(
                 connection,
                 cursor
             )
-
 
     def get_by_owner_id(
             self,
@@ -366,18 +389,21 @@ class PetRepository(
         try:
 
             query = """
-                    SELECT id, \
-                           name, \
-                           species, \
-                           age, \
-                           owner_id
-                    FROM Pets
-                    WHERE owner_id = ? \
-                    """
+            SELECT
+                id,
+                name,
+                species,
+                age,
+                owner_id
+            FROM Pets
+            WHERE owner_id = ?
+            """
 
             cursor.execute(
                 query,
-                (owner_id,)
+                (
+                    owner_id,
+                )
             )
 
             rows = cursor.fetchall()
@@ -385,6 +411,7 @@ class PetRepository(
             pets = []
 
             for row in rows:
+
                 pets.append(
                     Pet(
                         name=row.name,
@@ -398,8 +425,8 @@ class PetRepository(
             return pets
 
         finally:
+
             self._close(
                 connection,
                 cursor
             )
-

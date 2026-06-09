@@ -12,7 +12,7 @@ class MedicalRecordRepository(
     def create(
             self,
             medical_record: MedicalRecord
-    ) -> None:
+    ) -> int:
 
         connection = self._get_connection()
         cursor = connection.cursor()
@@ -29,6 +29,7 @@ class MedicalRecordRepository(
                 notes,
                 created_by
             )
+            OUTPUT INSERTED.id
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """
 
@@ -45,7 +46,11 @@ class MedicalRecordRepository(
                 )
             )
 
+            row = cursor.fetchone()
+
             connection.commit()
+
+            return row[0]
 
         finally:
 
@@ -89,9 +94,11 @@ class MedicalRecordRepository(
                     MedicalRecord(
                         pet_id=row.pet_id,
                         visit_date=str(row.visit_date),
-                        weight=float(row.weight)
-                        if row.weight is not None
-                        else 0,
+                        weight=(
+                            float(row.weight)
+                            if row.weight is not None
+                            else 0
+                        ),
                         diagnosis=row.diagnosis,
                         treatment=row.treatment,
                         notes=row.notes,
@@ -135,7 +142,9 @@ class MedicalRecordRepository(
 
             cursor.execute(
                 query,
-                (medical_record_id,)
+                (
+                    medical_record_id,
+                )
             )
 
             row = cursor.fetchone()
@@ -147,9 +156,11 @@ class MedicalRecordRepository(
             return MedicalRecord(
                 pet_id=row.pet_id,
                 visit_date=str(row.visit_date),
-                weight=float(row.weight)
-                if row.weight is not None
-                else 0,
+                weight=(
+                    float(row.weight)
+                    if row.weight is not None
+                    else 0
+                ),
                 diagnosis=row.diagnosis,
                 treatment=row.treatment,
                 notes=row.notes,
@@ -223,7 +234,9 @@ class MedicalRecordRepository(
 
             cursor.execute(
                 query,
-                (medical_record_id,)
+                (
+                    medical_record_id,
+                )
             )
 
             connection.commit()
@@ -238,7 +251,7 @@ class MedicalRecordRepository(
     def get_by_pet_id(
             self,
             pet_id: int
-    ):
+    ) -> list[MedicalRecord]:
 
         connection = self._get_connection()
         cursor = connection.cursor()
@@ -247,25 +260,24 @@ class MedicalRecordRepository(
 
             query = """
             SELECT
-                mr.id,
-                mr.pet_id,
-                p.name AS pet_name,
-                mr.visit_date,
-                mr.weight,
-                mr.diagnosis,
-                mr.treatment,
-                mr.notes,
-                mr.created_by
-            FROM MedicalRecords mr
-            INNER JOIN Pets p
-                ON mr.pet_id = p.id
-            WHERE mr.pet_id = ?
-            ORDER BY mr.visit_date DESC
+                id,
+                pet_id,
+                visit_date,
+                weight,
+                diagnosis,
+                treatment,
+                notes,
+                created_by
+            FROM MedicalRecords
+            WHERE pet_id = ?
+            ORDER BY visit_date DESC
             """
 
             cursor.execute(
                 query,
-                (pet_id,)
+                (
+                    pet_id,
+                )
             )
 
             rows = cursor.fetchall()
@@ -274,20 +286,22 @@ class MedicalRecordRepository(
 
             for row in rows:
 
-                records.append({
-
-                    "id": row.id,
-                    "pet_id": row.pet_id,
-                    "pet_name": row.pet_name,
-                    "visit_date": row.visit_date,
-                    "weight": float(row.weight)
-                    if row.weight is not None
-                    else 0,
-                    "diagnosis": row.diagnosis,
-                    "treatment": row.treatment,
-                    "notes": row.notes,
-                    "created_by": row.created_by
-                })
+                records.append(
+                    MedicalRecord(
+                        pet_id=row.pet_id,
+                        visit_date=str(row.visit_date),
+                        weight=(
+                            float(row.weight)
+                            if row.weight is not None
+                            else 0
+                        ),
+                        diagnosis=row.diagnosis,
+                        treatment=row.treatment,
+                        notes=row.notes,
+                        created_by=row.created_by,
+                        medical_record_id=row.id
+                    )
+                )
 
             return records
 

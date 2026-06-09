@@ -1,11 +1,15 @@
 from models.pet import Pet
+
 from exceptions.owner_not_found_exception import (
     OwnerNotFoundException
 )
+
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
+
 from utils.logger import logger
+
 from validators.pet_validator import (
     PetValidator
 )
@@ -16,17 +20,19 @@ class PetService:
     def __init__(
             self,
             pet_repository,
-            owner_service
+            owner_service,
+            audit_log_service=None
     ):
 
         self.pet_repository = pet_repository
         self.owner_service = owner_service
+        self.audit_log_service = audit_log_service
 
-    # CREATE
     def create_pet(
             self,
-            pet: Pet
-    ) -> None:
+            pet: Pet,
+            user_id=None
+    ) -> int:
 
         owner = (
             self.owner_service.get_owner_by_id(
@@ -50,15 +56,27 @@ class PetService:
                 pet.owner_id
             )
 
-        self.pet_repository.create(
-            pet
+        pet_id = (
+            self.pet_repository.create(
+                pet
+            )
         )
+
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="CREATE",
+                entity="Pet",
+                entity_id=pet_id
+            )
 
         logger.info(
             f"Pet created: {pet.name}"
         )
 
-    # READ
+        return pet_id
+
     def get_all_pets(
             self
     ) -> list[Pet]:
@@ -67,7 +85,6 @@ class PetService:
             self.pet_repository.get_all()
         )
 
-    # READ BY ID
     def get_pet_by_id(
             self,
             pet_id
@@ -91,14 +108,14 @@ class PetService:
 
         return pet
 
-    # UPDATE
     def update_pet(
             self,
             pet_id: int,
             name: str,
             species: str,
-            age: int
-    ) -> None:
+            age: int,
+            user_id=None
+    ) -> int:
 
         pet = (
             self.pet_repository.get_by_id(
@@ -129,15 +146,26 @@ class PetService:
             age
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="UPDATE",
+                entity="Pet",
+                entity_id=pet_id
+            )
+
         logger.info(
             f"Pet updated: {pet_id}"
         )
 
-    # DELETE
+        return pet_id
+
     def delete_pet(
             self,
-            pet_id: int
-    ) -> None:
+            pet_id: int,
+            user_id=None
+    ) -> int:
 
         pet = (
             self.pet_repository.get_by_id(
@@ -159,11 +187,21 @@ class PetService:
             pet_id
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="DELETE",
+                entity="Pet",
+                entity_id=pet_id
+            )
+
         logger.info(
             f"Pet deleted: {pet_id}"
         )
 
-    # SEARCH
+        return pet_id
+
     def search_pets_by_name(
             self,
             name
@@ -180,7 +218,6 @@ class PetService:
             )
         )
 
-    # PETS WITH OWNER
     def get_all_pets_with_owner(
             self
     ):
@@ -190,7 +227,6 @@ class PetService:
             .get_all_with_owner()
         )
 
-    # PETS BY OWNER
     def get_pets_by_owner_id(
             self,
             owner_id

@@ -1,10 +1,13 @@
 from exceptions.pet_not_found_exception import (
     PetNotFoundException
 )
+
 from exceptions.appointment_not_found_exception import (
     AppointmentNotFoundException
 )
+
 from utils.logger import logger
+
 from validators.appointment_validator import (
     AppointmentValidator
 )
@@ -12,11 +15,11 @@ from validators.appointment_validator import (
 
 class AppointmentService:
 
-
     def __init__(
             self,
             appointment_repository,
-            pet_service
+            pet_service,
+            audit_log_service=None
     ):
 
         self.appointment_repository = (
@@ -27,11 +30,15 @@ class AppointmentService:
             pet_service
         )
 
+        self.audit_log_service = (
+            audit_log_service
+        )
 
     def create_appointment(
             self,
-            appointment
-    ):
+            appointment,
+            user_id=None
+    ) -> int:
 
         pet = (
             self.pet_service.get_pet_by_id(
@@ -54,14 +61,30 @@ class AppointmentService:
             appointment.reason
         )
 
-        self.appointment_repository.create(
-            appointment
+        appointment_id = (
+            self.appointment_repository.create(
+                appointment
+            )
         )
+
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="CREATE",
+                entity="Appointment",
+                entity_id=appointment_id
+            )
 
         logger.info(
-            f"Appointment created for pet {appointment.pet_id}"
+            (
+                f"Appointment created: "
+                f"{appointment_id} "
+                f"for pet {appointment.pet_id}"
+            )
         )
 
+        return appointment_id
 
     def get_all_appointments(
             self
@@ -70,7 +93,6 @@ class AppointmentService:
         return (
             self.appointment_repository.get_all()
         )
-
 
     def get_appointment_by_id(
             self,
@@ -84,6 +106,7 @@ class AppointmentService:
         )
 
         if not appointment:
+
             logger.warning(
                 f"Appointment ID {appointment_id} not found"
             )
@@ -91,15 +114,16 @@ class AppointmentService:
             raise AppointmentNotFoundException(
                 appointment_id
             )
-        return appointment
 
+        return appointment
 
     def update_appointment(
             self,
             appointment_id,
             appointment_date,
-            reason
-    ):
+            reason,
+            user_id=None
+    ) -> int:
 
         appointment = (
             self.appointment_repository.get_by_id(
@@ -132,15 +156,26 @@ class AppointmentService:
             appointment
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="UPDATE",
+                entity="Appointment",
+                entity_id=appointment_id
+            )
+
         logger.info(
             f"Appointment updated: {appointment_id}"
         )
 
+        return appointment_id
 
     def delete_appointment(
             self,
-            appointment_id
-    ):
+            appointment_id,
+            user_id=None
+    ) -> int:
 
         appointment = (
             self.appointment_repository.get_by_id(
@@ -162,10 +197,20 @@ class AppointmentService:
             appointment_id
         )
 
+        if self.audit_log_service and user_id:
+
+            self.audit_log_service.create_audit_log(
+                user_id=user_id,
+                action="DELETE",
+                entity="Appointment",
+                entity_id=appointment_id
+            )
+
         logger.info(
             f"Appointment deleted: {appointment_id}"
         )
 
+        return appointment_id
 
     def search_appointments_by_pet_id(
             self,
@@ -182,12 +227,9 @@ class AppointmentService:
             )
         )
 
-
     def get_all_appointments_with_pet(self):
 
         return (
             self.appointment_repository
             .get_all_with_pet()
         )
-
-    

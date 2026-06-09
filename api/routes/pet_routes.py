@@ -9,13 +9,8 @@ from services.pet_service import (
     PetService
 )
 
-from services.audit_log_service import (
-    AuditLogService
-)
-
 from app.dependencies import (
-    get_pet_service,
-    get_audit_log_service
+    get_pet_service
 )
 
 from api.schemas.pet_schema import (
@@ -128,9 +123,6 @@ def create_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
@@ -141,19 +133,18 @@ def create_pet(
         owner_id=pet_data.owner_id
     )
 
-    pet_service.create_pet(
-        pet
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="CREATE",
-        entity="Pet",
-        entity_id=0
+    pet_id = (
+        pet_service.create_pet(
+            pet,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Pet created successfully"
+        "Pet created successfully",
+        {
+            "id": pet_id
+        }
     )
 
 
@@ -166,28 +157,24 @@ def update_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    pet_service.update_pet(
-        pet_id,
-        pet_data.name,
-        pet_data.species,
-        pet_data.age
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="UPDATE",
-        entity="Pet",
-        entity_id=pet_id
+    updated_pet_id = (
+        pet_service.update_pet(
+            pet_id,
+            pet_data.name,
+            pet_data.species,
+            pet_data.age,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Pet updated successfully"
+        "Pet updated successfully",
+        {
+            "id": updated_pet_id
+        }
     )
 
 
@@ -199,23 +186,19 @@ def delete_pet(
         ),
         pet_service: PetService = Depends(
             get_pet_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    pet_service.delete_pet(
-        pet_id
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="DELETE",
-        entity="Pet",
-        entity_id=pet_id
+    deleted_pet_id = (
+        pet_service.delete_pet(
+            pet_id,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Pet deleted successfully"
+        "Pet deleted successfully",
+        {
+            "id": deleted_pet_id
+        }
     )

@@ -11,13 +11,8 @@ from services.medical_record_service import (
     MedicalRecordService
 )
 
-from services.audit_log_service import (
-    AuditLogService
-)
-
 from app.dependencies import (
-    get_medical_record_service,
-    get_audit_log_service
+    get_medical_record_service
 )
 
 from api.schemas.medical_record_schema import (
@@ -113,9 +108,6 @@ def create_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
@@ -129,19 +121,19 @@ def create_medical_record(
         created_by=current_user["user_id"]
     )
 
-    medical_record_service.create_medical_record(
-        medical_record
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="CREATE",
-        entity="MedicalRecord",
-        entity_id=0
+    medical_record_id = (
+        medical_record_service
+        .create_medical_record(
+            medical_record,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Medical record created successfully"
+        "Medical record created successfully",
+        {
+            "id": medical_record_id
+        }
     )
 
 
@@ -154,9 +146,6 @@ def update_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
@@ -171,19 +160,19 @@ def update_medical_record(
         medical_record_id=medical_record_id
     )
 
-    medical_record_service.update_medical_record(
-        medical_record
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="UPDATE",
-        entity="MedicalRecord",
-        entity_id=medical_record_id
+    updated_medical_record_id = (
+        medical_record_service
+        .update_medical_record(
+            medical_record,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Medical record updated successfully"
+        "Medical record updated successfully",
+        {
+            "id": updated_medical_record_id
+        }
     )
 
 
@@ -195,23 +184,20 @@ def delete_medical_record(
         ),
         medical_record_service: MedicalRecordService = Depends(
             get_medical_record_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    medical_record_service.delete_medical_record(
-        medical_record_id
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="DELETE",
-        entity="MedicalRecord",
-        entity_id=medical_record_id
+    deleted_medical_record_id = (
+        medical_record_service
+        .delete_medical_record(
+            medical_record_id,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Medical record deleted successfully"
+        "Medical record deleted successfully",
+        {
+            "id": deleted_medical_record_id
+        }
     )

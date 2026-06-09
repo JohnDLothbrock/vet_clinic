@@ -9,13 +9,8 @@ from services.appointment_service import (
     AppointmentService
 )
 
-from services.audit_log_service import (
-    AuditLogService
-)
-
 from app.dependencies import (
-    get_appointment_service,
-    get_audit_log_service
+    get_appointment_service
 )
 
 from api.schemas.appointment_schema import (
@@ -111,9 +106,6 @@ def create_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
@@ -125,19 +117,18 @@ def create_appointment(
         reason=appointment_data.reason
     )
 
-    appointment_service.create_appointment(
-        appointment
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="CREATE",
-        entity="Appointment",
-        entity_id=0
+    appointment_id = (
+        appointment_service.create_appointment(
+            appointment,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Appointment created successfully"
+        "Appointment created successfully",
+        {
+            "id": appointment_id
+        }
     )
 
 
@@ -150,27 +141,23 @@ def update_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    appointment_service.update_appointment(
-        appointment_id,
-        appointment_data.appointment_date,
-        appointment_data.reason
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="UPDATE",
-        entity="Appointment",
-        entity_id=appointment_id
+    updated_appointment_id = (
+        appointment_service.update_appointment(
+            appointment_id,
+            appointment_data.appointment_date,
+            appointment_data.reason,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Appointment updated successfully"
+        "Appointment updated successfully",
+        {
+            "id": updated_appointment_id
+        }
     )
 
 
@@ -182,25 +169,21 @@ def delete_appointment(
         ),
         appointment_service: AppointmentService = Depends(
             get_appointment_service
-        ),
-        audit_log_service: AuditLogService = Depends(
-            get_audit_log_service
         )
 ):
 
-    appointment_service.delete_appointment(
-        appointment_id
-    )
-
-    audit_log_service.create_audit_log(
-        user_id=current_user["user_id"],
-        action="DELETE",
-        entity="Appointment",
-        entity_id=appointment_id
+    deleted_appointment_id = (
+        appointment_service.delete_appointment(
+            appointment_id,
+            current_user["user_id"]
+        )
     )
 
     return success_response(
-        "Appointment deleted successfully"
+        "Appointment deleted successfully",
+        {
+            "id": deleted_appointment_id
+        }
     )
 
 
