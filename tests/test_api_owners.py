@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from fastapi.testclient import TestClient
 
 from main_api import app
@@ -9,10 +7,10 @@ from app.dependencies import (
 )
 
 from auth.current_user import (
-    require_authenticated_user,
-    require_admin,
-    require_admin_or_receptionist
+    require_authenticated_user
 )
+
+from models.owner import Owner
 
 
 client = TestClient(app)
@@ -23,10 +21,15 @@ class FakeOwnerService:
     def get_all_owners(self):
 
         return [
-            SimpleNamespace(
-                id=1,
+            Owner(
+                owner_id=1,
                 name="Juan",
                 phone="88888888"
+            ),
+            Owner(
+                owner_id=2,
+                name="Maria",
+                phone="77777777"
             )
         ]
 
@@ -35,8 +38,8 @@ class FakeOwnerService:
             owner_id
     ):
 
-        return SimpleNamespace(
-            id=owner_id,
+        return Owner(
+            owner_id=owner_id,
             name="Juan",
             phone="88888888"
         )
@@ -47,15 +50,15 @@ class FakeOwnerService:
     ):
 
         return [
-            SimpleNamespace(
-                id=1,
+            Owner(
+                owner_id=1,
                 name="Juan",
                 phone="88888888"
             )
         ]
 
 
-def fake_current_user():
+def fake_authenticated_user():
 
     return {
         "user_id": 1,
@@ -64,21 +67,22 @@ def fake_current_user():
     }
 
 
-app.dependency_overrides[
-    get_owner_service
-] = lambda: FakeOwnerService()
+def setup_function():
 
-app.dependency_overrides[
-    require_authenticated_user
-] = fake_current_user
+    app.dependency_overrides.clear()
 
-app.dependency_overrides[
-    require_admin
-] = fake_current_user
+    app.dependency_overrides[
+        get_owner_service
+    ] = lambda: FakeOwnerService()
 
-app.dependency_overrides[
-    require_admin_or_receptionist
-] = fake_current_user
+    app.dependency_overrides[
+        require_authenticated_user
+    ] = fake_authenticated_user
+
+
+def teardown_function():
+
+    app.dependency_overrides.clear()
 
 
 def test_get_owners():
@@ -89,6 +93,12 @@ def test_get_owners():
 
     assert response.status_code == 200
 
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["id"] == 1
+    assert data[0]["name"] == "Juan"
+
 
 def test_get_owner_by_id():
 
@@ -98,6 +108,11 @@ def test_get_owner_by_id():
 
     assert response.status_code == 200
 
+    data = response.json()
+
+    assert data["id"] == 1
+    assert data["name"] == "Juan"
+
 
 def test_search_owner():
 
@@ -106,3 +121,8 @@ def test_search_owner():
     )
 
     assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["name"] == "Juan"

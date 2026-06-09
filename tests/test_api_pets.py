@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from fastapi.testclient import TestClient
 
 from main_api import app
@@ -9,10 +7,10 @@ from app.dependencies import (
 )
 
 from auth.current_user import (
-    require_authenticated_user,
-    require_admin,
-    require_admin_or_receptionist
+    require_authenticated_user
 )
+
+from models.pet import Pet
 
 
 client = TestClient(app)
@@ -23,12 +21,19 @@ class FakePetService:
     def get_all_pets(self):
 
         return [
-            SimpleNamespace(
-                id=1,
+            Pet(
+                pet_id=1,
                 name="Max",
                 species="Dog",
                 age=5,
                 owner_id=1
+            ),
+            Pet(
+                pet_id=2,
+                name="Luna",
+                species="Cat",
+                age=3,
+                owner_id=2
             )
         ]
 
@@ -42,6 +47,14 @@ class FakePetService:
                 "age": 5,
                 "owner_id": 1,
                 "owner_name": "Juan"
+            },
+            {
+                "id": 2,
+                "name": "Luna",
+                "species": "Cat",
+                "age": 3,
+                "owner_id": 2,
+                "owner_name": "Maria"
             }
         ]
 
@@ -62,7 +75,7 @@ class FakePetService:
         ]
 
 
-def fake_current_user():
+def fake_authenticated_user():
 
     return {
         "user_id": 1,
@@ -71,21 +84,22 @@ def fake_current_user():
     }
 
 
-app.dependency_overrides[
-    get_pet_service
-] = lambda: FakePetService()
+def setup_function():
 
-app.dependency_overrides[
-    require_authenticated_user
-] = fake_current_user
+    app.dependency_overrides.clear()
 
-app.dependency_overrides[
-    require_admin
-] = fake_current_user
+    app.dependency_overrides[
+        get_pet_service
+    ] = lambda: FakePetService()
 
-app.dependency_overrides[
-    require_admin_or_receptionist
-] = fake_current_user
+    app.dependency_overrides[
+        require_authenticated_user
+    ] = fake_authenticated_user
+
+
+def teardown_function():
+
+    app.dependency_overrides.clear()
 
 
 def test_get_pets():
@@ -96,6 +110,12 @@ def test_get_pets():
 
     assert response.status_code == 200
 
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["id"] == 1
+    assert data[0]["name"] == "Max"
+
 
 def test_get_pets_with_owner():
 
@@ -105,6 +125,11 @@ def test_get_pets_with_owner():
 
     assert response.status_code == 200
 
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["owner_name"] == "Juan"
+
 
 def test_search_pet():
 
@@ -113,3 +138,8 @@ def test_search_pet():
     )
 
     assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["name"] == "Max"
