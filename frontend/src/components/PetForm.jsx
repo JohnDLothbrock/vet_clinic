@@ -14,68 +14,121 @@ function PetForm({
 
     <div>
 
-      <h2 className="section-title">
+      <div className="form-header">
 
-        {editingPetId
-          ? "Edit Pet"
-          : "Create Pet"}
+        <div>
 
-      </h2>
+          <h2 className="section-title">
+
+            {editingPetId
+              ? "Edit Pet"
+              : "Create Pet"}
+
+          </h2>
+
+          <p>
+            {editingPetId
+              ? "Update the selected pet record."
+              : "Register a new pet and assign it to an owner."}
+          </p>
+
+        </div>
+
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="pet-form"
+        className="pet-form form-grid"
       >
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Pet Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
+        <div className="form-field">
 
-        <input
-          type="text"
-          name="species"
-          placeholder="Species"
-          value={formData.species}
-          onChange={handleChange}
-        />
+          <label>
+            Pet Name
+          </label>
 
-        <input
-          type="number"
-          name="age"
-          placeholder="Age"
-          value={formData.age}
-          onChange={handleChange}
-        />
+          <input
+            type="text"
+            name="name"
+            placeholder="Example: Luna"
+            value={formData.name}
+            onChange={handleChange}
+            disabled={saving}
+          />
 
-        <select
-          name="owner_id"
-          value={formData.owner_id}
-          onChange={handleChange}
-          disabled={editingPetId || saving}
-        >
+        </div>
 
-          <option value="">
-            Select Owner
-          </option>
+        <div className="form-field">
 
-          {owners.map((owner) => (
+          <label>
+            Species
+          </label>
 
-            <option
-              key={owner.id}
-              value={owner.id}
-            >
-              {owner.name}
+          <input
+            type="text"
+            name="species"
+            placeholder="Example: Dog, Cat, Rabbit"
+            value={formData.species}
+            onChange={handleChange}
+            disabled={saving}
+          />
+
+        </div>
+
+        <div className="form-field">
+
+          <label>
+            Age
+          </label>
+
+          <input
+            type="number"
+            name="age"
+            placeholder="Example: 4"
+            value={formData.age}
+            onChange={handleChange}
+            disabled={saving}
+            min="0"
+          />
+
+        </div>
+
+        <div className="form-field">
+
+          <label>
+            Owner
+          </label>
+
+          <select
+            name="owner_id"
+            value={formData.owner_id}
+            onChange={handleChange}
+            disabled={
+              editingPetId ||
+              saving
+            }
+          >
+
+            <option value="">
+              Select Owner
             </option>
 
-          ))}
+            {owners.map((owner) => (
 
-        </select>
+              <option
+                key={owner.id}
+                value={owner.id}
+              >
+                {owner.name}
+              </option>
 
-        <div className="button-group">
+            ))}
+
+          </select>
+
+        </div>
+
+        <div className="form-actions">
 
           <button
             type="submit"

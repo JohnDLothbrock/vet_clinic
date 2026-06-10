@@ -35,7 +35,9 @@ function DashboardPage() {
         const data =
           await getDashboardData();
 
-        setDashboard(data);
+        setDashboard(
+          data
+        );
 
       } catch (error) {
 
@@ -49,9 +51,18 @@ function DashboardPage() {
   if (!dashboard) {
 
     return (
-      <p>
-        Loading dashboard...
-      </p>
+
+      <div className="container">
+
+        <div className="card">
+
+          <p>
+            Loading dashboard...
+          </p>
+
+        </div>
+
+      </div>
     );
   }
 
@@ -59,9 +70,21 @@ function DashboardPage() {
 
     <div className="container">
 
-      <h1>
-        Dashboard
-      </h1>
+      <div className="dashboard-header">
+
+        <div>
+
+          <h1>
+            Dashboard
+          </h1>
+
+          <p>
+            Quick overview of clinic activity and recent appointments.
+          </p>
+
+        </div>
+
+      </div>
 
       <div className="dashboard-grid">
 
@@ -80,6 +103,10 @@ function DashboardPage() {
             {dashboard.total_owners}
           </h1>
 
+          <p>
+            View and manage client records.
+          </p>
+
         </div>
 
         <div
@@ -96,6 +123,10 @@ function DashboardPage() {
           <h1>
             {dashboard.total_pets}
           </h1>
+
+          <p>
+            Track registered pets and owners.
+          </p>
 
         </div>
 
@@ -114,6 +145,10 @@ function DashboardPage() {
             {dashboard.total_appointments}
           </h1>
 
+          <p>
+            Review scheduled clinic visits.
+          </p>
+
         </div>
 
       </div>
@@ -127,7 +162,7 @@ function DashboardPage() {
         {dashboard.recent_appointments
           ?.length === 0 ? (
 
-          <p>
+          <p className="empty-message">
             No appointments found.
           </p>
 

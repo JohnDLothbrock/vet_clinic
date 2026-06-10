@@ -1,4 +1,5 @@
 import {
+  NavLink,
   Link,
   useNavigate
 } from "react-router-dom";
@@ -75,43 +76,43 @@ function Navbar() {
 
       <div className="navbar-links">
 
-        <Link to="/">
+        <NavLink to="/">
           Dashboard
-        </Link>
+        </NavLink>
 
-        <Link to="/pets">
+        <NavLink to="/pets">
           Pets
-        </Link>
+        </NavLink>
 
-        <Link to="/owners">
+        <NavLink to="/owners">
           Owners
-        </Link>
+        </NavLink>
 
-        <Link to="/appointments">
+        <NavLink to="/appointments">
           Appointments
-        </Link>
+        </NavLink>
 
         {canViewMedicalRecords() && (
 
-          <Link to="/medical-records">
+          <NavLink to="/medical-records">
             Medical Records
-          </Link>
+          </NavLink>
 
         )}
 
         {canViewUsers() && (
 
-          <Link to="/users">
+          <NavLink to="/users">
             Users
-          </Link>
+          </NavLink>
 
         )}
 
         {canViewAuditLogs() && (
 
-          <Link to="/audit-logs">
+          <NavLink to="/audit-logs">
             Audit Logs
-          </Link>
+          </NavLink>
 
         )}
 
@@ -120,7 +121,7 @@ function Navbar() {
       <div className="navbar-user">
 
         <span>
-          {username} ({getRoleName()})
+          {username} · {getRoleName()}
         </span>
 
         <Link to="/change-password">

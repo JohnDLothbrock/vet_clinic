@@ -11,12 +11,29 @@ function OwnerList({
 
   if (owners.length === 0) {
 
-    return <p>No owners found.</p>;
+    return (
+
+      <div className="empty-state">
+
+        <div className="empty-state-icon">
+          👤
+        </div>
+
+        <h3>
+          No owners found
+        </h3>
+
+        <p>
+          Try clearing the search or create a new owner record.
+        </p>
+
+      </div>
+    );
   }
 
   return (
 
-    <ul>
+    <div className="owner-list">
 
       {owners.map((owner) => (
 
@@ -30,7 +47,7 @@ function OwnerList({
 
       ))}
 
-    </ul>
+    </div>
   );
 }
 

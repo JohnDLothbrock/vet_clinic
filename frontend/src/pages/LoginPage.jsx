@@ -55,6 +55,11 @@ function LoginPage() {
 
       event.preventDefault();
 
+      if (loading) {
+
+        return;
+      }
+
       if (!formData.username.trim()) {
 
         setError(
@@ -110,18 +115,37 @@ function LoginPage() {
       }
     };
 
+  const handleKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSubmit(
+          event
+        );
+      }
+    };
+
   return (
 
     <div className="login-page">
 
       <div className="login-card">
 
+        <div className="login-brand">
+
+          <div className="login-logo">
+            🐾
+          </div>
+
+        </div>
+
         <h1>
           Veterinary Clinic
         </h1>
 
         <p className="login-subtitle">
-          Sign in to continue
+          Manage pets, owners, appointments, users, and medical records.
         </p>
 
         {error && (
@@ -132,7 +156,10 @@ function LoginPage() {
 
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          onKeyDown={handleKeyDown}
+        >
 
           <input
             type="text"
@@ -160,7 +187,7 @@ function LoginPage() {
 
             {loading
               ? "Signing in..."
-              : "Login"}
+              : "Sign In"}
 
           </button>
 

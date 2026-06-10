@@ -170,6 +170,15 @@ function PetsPage() {
       }
     };
 
+  const handleSearchKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSearch();
+      }
+    };
+
   useEffect(() => {
 
     const loadData =
@@ -269,8 +278,8 @@ function PetsPage() {
       }
 
       const payload = {
-        name: formData.name,
-        species: formData.species,
+        name: formData.name.trim(),
+        species: formData.species.trim(),
         age: Number(formData.age),
         owner_id: Number(formData.owner_id)
       };
@@ -438,9 +447,33 @@ function PetsPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Pets Management
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Pets
+          </h1>
+
+          <p className="page-subtitle">
+            Manage registered pets and connect them with their owners.
+          </p>
+
+        </div>
+
+        <div className="page-summary-card">
+
+          <span className="page-summary-number">
+            {pets.length}
+          </span>
+
+          <span className="page-summary-label">
+            pets shown
+          </span>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -468,10 +501,14 @@ function PetsPage() {
 
       ) : (
 
-        <div className="card">
+        <div className="card read-only-card">
+
+          <h2>
+            Read-only access
+          </h2>
 
           <p>
-            You have read-only access to pets.
+            You can view pet records, but your role cannot create or update pets.
           </p>
 
         </div>
@@ -480,17 +517,23 @@ function PetsPage() {
 
       <div className="card">
 
-        <h2>
-          Pet List
-        </h2>
+        <div className="list-header">
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px"
-          }}
-        >
+          <div>
+
+            <h2>
+              Pet List
+            </h2>
+
+            <p>
+              Search by pet name or browse all registered pets.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="search-bar">
 
           <input
             type="text"
@@ -505,15 +548,18 @@ function PetsPage() {
               );
 
             }}
+            onKeyDown={handleSearchKeyDown}
           />
 
           <button
+            type="button"
             onClick={handleSearch}
           >
             Search
           </button>
 
           <button
+            type="button"
             onClick={() => {
 
               setError("");
@@ -522,6 +568,7 @@ function PetsPage() {
 
               fetchPets();
             }}
+            className="secondary-button"
           >
             Clear
           </button>
@@ -530,9 +577,9 @@ function PetsPage() {
 
         {loading ? (
 
-          <p>
+          <div className="loading-card">
             Loading pets...
-          </p>
+          </div>
 
         ) : (
 

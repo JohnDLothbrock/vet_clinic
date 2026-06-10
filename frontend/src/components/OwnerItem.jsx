@@ -18,31 +18,52 @@ function OwnerItem({
 
   return (
 
-    <li
-      style={{
-        marginBottom: "15px"
-      }}
-    >
+    <div className="owner-card">
 
-      <strong>{owner.name}</strong>
-      {" - "}
-      {owner.phone}
+      <div className="record-main">
+
+        <div className="record-avatar owner-avatar">
+          👤
+        </div>
+
+        <div>
+
+          <h3>
+            {owner.name}
+          </h3>
+
+          <div className="record-details">
+
+            <span>
+              <strong>
+                Phone:
+              </strong>
+              {" "}
+              {owner.phone}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
 
       {showActions && (
 
-        <div
-          style={{
-            marginTop: "5px"
-          }}
-        >
+        <div className="button-group record-actions">
 
           {canEditOwner() && (
 
             <button
-              onClick={() => editOwner(owner)}
+              onClick={() =>
+                editOwner(
+                  owner
+                )
+              }
               disabled={
                 deletingId === owner.id
               }
+              className="small-button"
             >
               Edit
             </button>
@@ -52,13 +73,15 @@ function OwnerItem({
           {canDeleteOwner() && (
 
             <button
-              onClick={() => deleteOwner(owner.id)}
+              onClick={() =>
+                deleteOwner(
+                  owner.id
+                )
+              }
               disabled={
                 deletingId === owner.id
               }
-              style={{
-                marginLeft: "10px"
-              }}
+              className="delete-button small-button"
             >
 
               {deletingId === owner.id
@@ -73,7 +96,7 @@ function OwnerItem({
 
       )}
 
-    </li>
+    </div>
   );
 }
 

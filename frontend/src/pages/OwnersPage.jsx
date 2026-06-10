@@ -144,6 +144,15 @@ function OwnersPage() {
       }
     };
 
+  const handleSearchKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSearch();
+      }
+    };
+
   const handleChange =
     (event) => {
 
@@ -208,6 +217,11 @@ function OwnersPage() {
         return;
       }
 
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim()
+      };
+
       try {
 
         setSaving(true);
@@ -216,7 +230,7 @@ function OwnersPage() {
 
           await updateOwner(
             editingOwnerId,
-            formData
+            payload
           );
 
           toast.success(
@@ -226,7 +240,7 @@ function OwnersPage() {
         } else {
 
           await createOwner(
-            formData
+            payload
           );
 
           toast.success(
@@ -360,9 +374,33 @@ function OwnersPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Owners Management
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Owners
+          </h1>
+
+          <p className="page-subtitle">
+            Manage client contact information and owner records.
+          </p>
+
+        </div>
+
+        <div className="page-summary-card">
+
+          <span className="page-summary-number">
+            {owners.length}
+          </span>
+
+          <span className="page-summary-label">
+            owners shown
+          </span>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -389,10 +427,14 @@ function OwnersPage() {
 
       ) : (
 
-        <div className="card">
+        <div className="card read-only-card">
+
+          <h2>
+            Read-only access
+          </h2>
 
           <p>
-            You have read-only access to owners.
+            You can view owner records, but your role cannot create or update owners.
           </p>
 
         </div>
@@ -401,17 +443,23 @@ function OwnersPage() {
 
       <div className="card">
 
-        <h2>
-          Owner List
-        </h2>
+        <div className="list-header">
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            marginBottom: "20px"
-          }}
-        >
+          <div>
+
+            <h2>
+              Owner List
+            </h2>
+
+            <p>
+              Search by owner name or browse all registered clients.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="search-bar">
 
           <input
             type="text"
@@ -426,21 +474,27 @@ function OwnersPage() {
               );
 
             }}
+            onKeyDown={handleSearchKeyDown}
           />
 
           <button
+            type="button"
             onClick={handleSearch}
           >
             Search
           </button>
 
           <button
+            type="button"
             onClick={() => {
+
+              setError("");
 
               setSearchTerm("");
 
               fetchOwners();
             }}
+            className="secondary-button"
           >
             Clear
           </button>
@@ -449,9 +503,9 @@ function OwnersPage() {
 
         {loading ? (
 
-          <p>
+          <div className="loading-card">
             Loading owners...
-          </p>
+          </div>
 
         ) : (
 

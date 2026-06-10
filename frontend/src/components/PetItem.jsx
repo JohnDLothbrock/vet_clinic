@@ -20,33 +20,60 @@ function PetItem({
 
     <div className="pet-card">
 
-      <div>
+      <div className="record-main">
 
-        <h3>{pet.name}</h3>
+        <div className="record-avatar">
+          🐾
+        </div>
 
-        <p>
-          Species: {pet.species}
-        </p>
+        <div>
 
-        <p>
-          Age: {pet.age}
-        </p>
+          <h3>
+            {pet.name}
+          </h3>
 
-        <p>
-          Owner: {pet.owner_name}
-        </p>
+          <div className="record-details">
+
+            <span>
+              <strong>
+                Species:
+              </strong>
+              {" "}
+              {pet.species}
+            </span>
+
+            <span>
+              <strong>
+                Age:
+              </strong>
+              {" "}
+              {pet.age}
+            </span>
+
+            <span>
+              <strong>
+                Owner:
+              </strong>
+              {" "}
+              {pet.owner_name}
+            </span>
+
+          </div>
+
+        </div>
 
       </div>
 
       {showActions && (
 
-        <div className="button-group">
+        <div className="button-group record-actions">
 
           {canEditPet() && (
 
             <button
               onClick={() => editPet(pet)}
               disabled={deletingId === pet.id}
+              className="small-button"
             >
               Edit
             </button>
@@ -58,7 +85,7 @@ function PetItem({
             <button
               onClick={() => deletePet(pet.id)}
               disabled={deletingId === pet.id}
-              className="delete-button"
+              className="delete-button small-button"
             >
               {deletingId === pet.id
                 ? "Deleting..."
