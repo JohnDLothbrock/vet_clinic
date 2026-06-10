@@ -18,33 +18,47 @@ function AppointmentItem({
 
   return (
 
-    <li className="list-item">
+    <div className="appointment-card">
 
-      <strong>
-        Pet:
-      </strong>
-      {" "}
-      {appointment.pet_name}
+      <div className="record-main">
 
-      <br />
+        <div className="record-avatar appointment-avatar">
+          📅
+        </div>
 
-      <strong>
-        Date:
-      </strong>
-      {" "}
-      {appointment.appointment_date}
+        <div>
 
-      <br />
+          <h3>
+            {appointment.pet_name}
+          </h3>
 
-      <strong>
-        Reason:
-      </strong>
-      {" "}
-      {appointment.reason}
+          <div className="record-details">
+
+            <span>
+              <strong>
+                Date:
+              </strong>
+              {" "}
+              {appointment.appointment_date}
+            </span>
+
+            <span>
+              <strong>
+                Reason:
+              </strong>
+              {" "}
+              {appointment.reason}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
 
       {showActions && (
 
-        <div>
+        <div className="button-group record-actions">
 
           {canEditAppointment() && (
 
@@ -58,6 +72,7 @@ function AppointmentItem({
                 deletingId ===
                 appointment.id
               }
+              className="small-button"
             >
               Edit
             </button>
@@ -76,6 +91,7 @@ function AppointmentItem({
                 deletingId ===
                 appointment.id
               }
+              className="delete-button small-button"
             >
               {deletingId ===
               appointment.id
@@ -89,7 +105,7 @@ function AppointmentItem({
 
       )}
 
-    </li>
+    </div>
   );
 }
 

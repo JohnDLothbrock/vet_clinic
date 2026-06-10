@@ -54,6 +54,11 @@ function UsersPage() {
     setError
   ] = useState("");
 
+  const activeUsers =
+    users.filter(
+      (user) => user.active
+    ).length;
+
   const fetchUsers =
     async () => {
 
@@ -64,7 +69,9 @@ function UsersPage() {
         const data =
           await getUsers();
 
-        setUsers(data);
+        setUsers(
+          data
+        );
 
         setError("");
 
@@ -317,9 +324,49 @@ function UsersPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Users Management
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Users
+          </h1>
+
+          <p className="page-subtitle">
+            Manage staff accounts, access roles, and active user status.
+          </p>
+
+        </div>
+
+        <div className="users-summary-grid">
+
+          <div className="page-summary-card">
+
+            <span className="page-summary-number">
+              {users.length}
+            </span>
+
+            <span className="page-summary-label">
+              total users
+            </span>
+
+          </div>
+
+          <div className="page-summary-card">
+
+            <span className="page-summary-number">
+              {activeUsers}
+            </span>
+
+            <span className="page-summary-label">
+              active users
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -342,15 +389,27 @@ function UsersPage() {
 
       <div className="card">
 
-        <h2>
-          User List
-        </h2>
+        <div className="list-header">
+
+          <div>
+
+            <h2>
+              User List
+            </h2>
+
+            <p>
+              Review users, update roles, and activate or deactivate accounts.
+            </p>
+
+          </div>
+
+        </div>
 
         {loading ? (
 
-          <p>
+          <div className="loading-card">
             Loading users...
-          </p>
+          </div>
 
         ) : (
 

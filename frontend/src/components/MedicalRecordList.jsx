@@ -13,9 +13,22 @@ function MedicalRecordList({
   if (medicalRecords.length === 0) {
 
     return (
-      <p>
-        No medical records found.
-      </p>
+
+      <div className="empty-state">
+
+        <div className="empty-state-icon medical-empty-icon">
+          🩺
+        </div>
+
+        <h3>
+          No medical records found
+        </h3>
+
+        <p>
+          Create a new medical record or clear the pet filter.
+        </p>
+
+      </div>
     );
   }
 

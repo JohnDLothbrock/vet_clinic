@@ -25,6 +25,8 @@ import {
   canDeleteAppointment
 } from "../services/permissionService";
 
+import "../styles/app.css";
+
 function AppointmentsPage() {
 
   const [
@@ -85,7 +87,9 @@ function AppointmentsPage() {
         const data =
           await getAppointments();
 
-        setAppointments(data);
+        setAppointments(
+          data
+        );
 
         setError("");
 
@@ -114,7 +118,9 @@ function AppointmentsPage() {
         const data =
           await getPetsWithOwner();
 
-        setPets(data);
+        setPets(
+          data
+        );
 
       } catch (error) {
 
@@ -206,7 +212,6 @@ function AppointmentsPage() {
       }
 
       const payload = {
-
         pet_id:
           Number(formData.pet_id),
 
@@ -358,7 +363,6 @@ function AppointmentsPage() {
           .slice(0, 16);
 
       setFormData({
-
         pet_id:
           appointment.pet_id,
 
@@ -375,26 +379,51 @@ function AppointmentsPage() {
       });
     };
 
-  const resetForm = () => {
+  const resetForm =
+    () => {
 
-    setEditingAppointmentId(
-      null
-    );
+      setEditingAppointmentId(
+        null
+      );
 
-    setFormData({
-      pet_id: "",
-      appointment_date: "",
-      reason: ""
-    });
-  };
+      setFormData({
+        pet_id: "",
+        appointment_date: "",
+        reason: ""
+      });
+    };
 
   return (
 
     <div className="container">
 
-      <h1>
-        Appointments
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Appointments
+          </h1>
+
+          <p className="page-subtitle">
+            Schedule, update, and review upcoming clinic visits.
+          </p>
+
+        </div>
+
+        <div className="page-summary-card">
+
+          <span className="page-summary-number">
+            {appointments.length}
+          </span>
+
+          <span className="page-summary-label">
+            appointments shown
+          </span>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -420,36 +449,60 @@ function AppointmentsPage() {
 
       ) : (
 
-        <div className="card">
+        <div className="card read-only-card">
+
+          <h2>
+            Read-only access
+          </h2>
 
           <p>
-            You have read-only access to appointments.
+            You can view appointments, but your role cannot create or update them.
           </p>
 
         </div>
 
       )}
 
-      {loading ? (
+      <div className="card">
 
-        <p>
-          Loading appointments...
-        </p>
+        <div className="list-header">
 
-      ) : (
+          <div>
 
-        <AppointmentList
-          appointments={appointments}
-          editAppointment={
-            handleEditAppointment
-          }
-          deleteAppointment={
-            handleDeleteAppointment
-          }
-          deletingId={deletingId}
-        />
+            <h2>
+              Appointment List
+            </h2>
 
-      )}
+            <p>
+              Review scheduled appointments and visit reasons.
+            </p>
+
+          </div>
+
+        </div>
+
+        {loading ? (
+
+          <div className="loading-card">
+            Loading appointments...
+          </div>
+
+        ) : (
+
+          <AppointmentList
+            appointments={appointments}
+            editAppointment={
+              handleEditAppointment
+            }
+            deleteAppointment={
+              handleDeleteAppointment
+            }
+            deletingId={deletingId}
+          />
+
+        )}
+
+      </div>
 
     </div>
   );

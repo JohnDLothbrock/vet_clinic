@@ -14,90 +14,153 @@ function MedicalRecordForm({
 
     <div>
 
-      <h2>
-        {editingMedicalRecordId
-          ? "Edit Medical Record"
-          : "Create Medical Record"}
-      </h2>
+      <div className="form-header">
+
+        <div>
+
+          <h2 className="section-title">
+            {editingMedicalRecordId
+              ? "Edit Medical Record"
+              : "Create Medical Record"}
+          </h2>
+
+          <p>
+            {editingMedicalRecordId
+              ? "Update clinical details for the selected visit."
+              : "Add diagnosis, treatment, and visit notes for a pet."}
+          </p>
+
+        </div>
+
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="medical-record-form"
+        className="medical-record-form form-grid"
       >
 
-        <select
-          name="pet_id"
-          value={formData.pet_id}
-          onChange={handleChange}
-          disabled={
-            editingMedicalRecordId ||
-            saving
-          }
-        >
+        <div className="form-field">
 
-          <option value="">
-            Select Pet
-          </option>
+          <label>
+            Pet
+          </label>
 
-          {pets.map(
-            (pet) => (
+          <select
+            name="pet_id"
+            value={formData.pet_id}
+            onChange={handleChange}
+            disabled={
+              editingMedicalRecordId ||
+              saving
+            }
+          >
 
-              <option
-                key={pet.id}
-                value={pet.id}
-              >
-                {pet.name} ({pet.owner_name})
-              </option>
+            <option value="">
+              Select Pet
+            </option>
 
-            )
-          )}
+            {pets.map(
+              (pet) => (
 
-        </select>
+                <option
+                  key={pet.id}
+                  value={pet.id}
+                >
+                  {pet.name} ({pet.owner_name})
+                </option>
 
-        <input
-          type="datetime-local"
-          name="visit_date"
-          value={formData.visit_date}
-          onChange={handleChange}
-          disabled={saving}
-        />
+              )
+            )}
 
-        <input
-          type="number"
-          step="0.01"
-          name="weight"
-          placeholder="Weight"
-          value={formData.weight}
-          onChange={handleChange}
-          disabled={saving}
-        />
+          </select>
 
-        <input
-          type="text"
-          name="diagnosis"
-          placeholder="Diagnosis"
-          value={formData.diagnosis}
-          onChange={handleChange}
-          disabled={saving}
-        />
+        </div>
 
-        <textarea
-          name="treatment"
-          placeholder="Treatment"
-          value={formData.treatment}
-          onChange={handleChange}
-          disabled={saving}
-        />
+        <div className="form-field">
 
-        <textarea
-          name="notes"
-          placeholder="Notes"
-          value={formData.notes}
-          onChange={handleChange}
-          disabled={saving}
-        />
+          <label>
+            Visit Date
+          </label>
 
-        <div className="button-group">
+          <input
+            type="datetime-local"
+            name="visit_date"
+            value={formData.visit_date}
+            onChange={handleChange}
+            disabled={saving}
+          />
+
+        </div>
+
+        <div className="form-field">
+
+          <label>
+            Weight
+          </label>
+
+          <input
+            type="number"
+            step="0.01"
+            name="weight"
+            placeholder="Example: 12.5"
+            value={formData.weight}
+            onChange={handleChange}
+            disabled={saving}
+            min="0"
+          />
+
+        </div>
+
+        <div className="form-field">
+
+          <label>
+            Diagnosis
+          </label>
+
+          <input
+            type="text"
+            name="diagnosis"
+            placeholder="Example: Ear infection"
+            value={formData.diagnosis}
+            onChange={handleChange}
+            disabled={saving}
+          />
+
+        </div>
+
+        <div className="form-field form-field-full">
+
+          <label>
+            Treatment
+          </label>
+
+          <textarea
+            name="treatment"
+            placeholder="Describe treatment, medication, or recommended care..."
+            value={formData.treatment}
+            onChange={handleChange}
+            disabled={saving}
+          />
+
+        </div>
+
+        <div className="form-field form-field-full">
+
+          <label>
+            Notes
+          </label>
+
+          <textarea
+            name="notes"
+            placeholder="Optional additional clinical notes..."
+            value={formData.notes}
+            onChange={handleChange}
+            disabled={saving}
+          />
+
+        </div>
+
+        <div className="form-actions">
 
           <button
             type="submit"

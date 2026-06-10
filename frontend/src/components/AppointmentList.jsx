@@ -14,15 +14,28 @@ function AppointmentList({
   ) {
 
     return (
-      <p>
-        No appointments found.
-      </p>
+
+      <div className="empty-state">
+
+        <div className="empty-state-icon appointment-empty-icon">
+          📅
+        </div>
+
+        <h3>
+          No appointments found
+        </h3>
+
+        <p>
+          Create a new appointment to schedule a clinic visit.
+        </p>
+
+      </div>
     );
   }
 
   return (
 
-    <ul>
+    <div className="appointment-list">
 
       {appointments.map(
         (appointment) => (
@@ -44,8 +57,7 @@ function AppointmentList({
         )
       )}
 
-    </ul>
-
+    </div>
   );
 }
 

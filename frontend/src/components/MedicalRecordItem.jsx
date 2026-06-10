@@ -25,69 +25,105 @@ function MedicalRecordItem({
 
   return (
 
-    <div className="medical-record-card">
+    <div className="medical-record-card clinical-record-card">
 
-      <div>
+      <div className="record-main clinical-record-main">
 
-        <h3>
-          {pet
-            ? `${pet.name} (${pet.owner_name})`
-            : `Pet ID: ${medicalRecord.pet_id}`}
-        </h3>
+        <div className="record-avatar medical-record-avatar">
+          🩺
+        </div>
 
-        <p>
-          <strong>
-            Visit Date:
-          </strong>
-          {" "}
-          {medicalRecord.visit_date}
-        </p>
+        <div className="clinical-record-content">
 
-        <p>
-          <strong>
-            Weight:
-          </strong>
-          {" "}
-          {medicalRecord.weight}
-        </p>
+          <div className="clinical-record-header">
 
-        <p>
-          <strong>
-            Diagnosis:
-          </strong>
-          {" "}
-          {medicalRecord.diagnosis}
-        </p>
+            <div>
 
-        <p>
-          <strong>
-            Treatment:
-          </strong>
-          {" "}
-          {medicalRecord.treatment}
-        </p>
+              <h3>
+                {pet
+                  ? `${pet.name} (${pet.owner_name})`
+                  : `Pet ID: ${medicalRecord.pet_id}`}
+              </h3>
 
-        <p>
-          <strong>
-            Notes:
-          </strong>
-          {" "}
-          {medicalRecord.notes}
-        </p>
+              <p className="clinical-record-date">
+                {medicalRecord.visit_date}
+              </p>
 
-        <p>
-          <strong>
-            Created By User ID:
-          </strong>
-          {" "}
-          {medicalRecord.created_by}
-        </p>
+            </div>
+
+            <span className="medical-record-badge">
+              Clinical Record
+            </span>
+
+          </div>
+
+          <div className="medical-record-meta">
+
+            <span>
+              <strong>
+                Weight:
+              </strong>
+              {" "}
+              {medicalRecord.weight}
+            </span>
+
+            <span>
+              <strong>
+                Created By:
+              </strong>
+              {" "}
+              User {medicalRecord.created_by}
+            </span>
+
+          </div>
+
+          <div className="clinical-section">
+
+            <h4>
+              Diagnosis
+            </h4>
+
+            <p>
+              {medicalRecord.diagnosis}
+            </p>
+
+          </div>
+
+          <div className="clinical-section">
+
+            <h4>
+              Treatment
+            </h4>
+
+            <p>
+              {medicalRecord.treatment}
+            </p>
+
+          </div>
+
+          {medicalRecord.notes && (
+
+            <div className="clinical-section">
+
+              <h4>
+                Notes
+              </h4>
+
+              <p>
+                {medicalRecord.notes}
+              </p>
+
+            </div>
+
+          )}
+
+        </div>
 
       </div>
 
       {showActions && (
 
-        <div className="button-group">
+        <div className="button-group record-actions">
 
           {canEditMedicalRecord() && (
 
@@ -100,6 +136,7 @@ function MedicalRecordItem({
               disabled={
                 deletingId === medicalRecord.id
               }
+              className="small-button"
             >
               Edit
             </button>
@@ -117,7 +154,7 @@ function MedicalRecordItem({
               disabled={
                 deletingId === medicalRecord.id
               }
-              className="delete-button"
+              className="delete-button small-button"
             >
               {deletingId === medicalRecord.id
                 ? "Deleting..."

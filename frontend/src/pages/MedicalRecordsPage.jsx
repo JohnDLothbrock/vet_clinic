@@ -455,9 +455,33 @@ function MedicalRecordsPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Medical Records
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Medical Records
+          </h1>
+
+          <p className="page-subtitle">
+            Track visit history, diagnoses, treatments, and clinical notes.
+          </p>
+
+        </div>
+
+        <div className="page-summary-card">
+
+          <span className="page-summary-number">
+            {medicalRecords.length}
+          </span>
+
+          <span className="page-summary-label">
+            records shown
+          </span>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -487,10 +511,14 @@ function MedicalRecordsPage() {
 
       ) : (
 
-        <div className="card">
+        <div className="card read-only-card">
+
+          <h2>
+            Read-only access
+          </h2>
 
           <p>
-            You have read-only access to medical records.
+            You can view medical records, but your role cannot create or update them.
           </p>
 
         </div>
@@ -499,11 +527,23 @@ function MedicalRecordsPage() {
 
       <div className="card">
 
-        <h2>
-          Medical Record List
-        </h2>
+        <div className="list-header">
 
-        <div className="filter-row">
+          <div>
+
+            <h2>
+              Medical Record List
+            </h2>
+
+            <p>
+              Filter records by pet or review the full clinical history.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="filter-row polished-filter-row">
 
           <select
             value={selectedPetId}
@@ -538,6 +578,7 @@ function MedicalRecordsPage() {
             onClick={() => {
               setSelectedPetId("");
             }}
+            className="secondary-button"
           >
             Clear Filter
           </button>
@@ -546,9 +587,9 @@ function MedicalRecordsPage() {
 
         {loading ? (
 
-          <p>
+          <div className="loading-card">
             Loading medical records...
-          </p>
+          </div>
 
         ) : (
 

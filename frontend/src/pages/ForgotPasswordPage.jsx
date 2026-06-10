@@ -44,6 +44,11 @@ function ForgotPasswordPage() {
       setError("");
       setMessage("");
 
+      if (loading) {
+
+        return;
+      }
+
       if (!email.trim()) {
 
         setError(
@@ -91,14 +96,22 @@ function ForgotPasswordPage() {
 
     <div className="login-page">
 
-      <div className="login-card">
+      <div className="login-card account-login-card">
+
+        <div className="login-brand">
+
+          <div className="login-logo">
+            ✉️
+          </div>
+
+        </div>
 
         <h1>
           Forgot Password
         </h1>
 
         <p className="login-subtitle">
-          Enter your email to receive a reset link.
+          Enter your email and we will prepare a secure reset link.
         </p>
 
         {error && (
@@ -119,21 +132,30 @@ function ForgotPasswordPage() {
 
         <form onSubmit={handleSubmit}>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(event) => {
+          <div className="form-field">
 
-              setError("");
-              setMessage("");
-              setEmail(
-                event.target.value
-              );
-            }}
-            disabled={loading}
-          />
+            <label>
+              Email Address
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Example: user@clinic.com"
+              value={email}
+              onChange={(event) => {
+
+                setError("");
+                setMessage("");
+
+                setEmail(
+                  event.target.value
+                );
+              }}
+              disabled={loading}
+            />
+
+          </div>
 
           <button
             type="submit"

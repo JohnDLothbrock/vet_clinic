@@ -78,15 +78,77 @@ function AuditLogsPage() {
       ).toLocaleString();
     };
 
+  const getActionClass =
+    (action) => {
+
+      if (action === "CREATE") {
+
+        return "audit-action-create";
+      }
+
+      if (action === "UPDATE") {
+
+        return "audit-action-update";
+      }
+
+      if (action === "DELETE") {
+
+        return "audit-action-delete";
+      }
+
+      return "audit-action-default";
+    };
+
+  const getActionIcon =
+    (action) => {
+
+      if (action === "CREATE") {
+
+        return "＋";
+      }
+
+      if (action === "UPDATE") {
+
+        return "✎";
+      }
+
+      if (action === "DELETE") {
+
+        return "−";
+      }
+
+      return "•";
+    };
+
   if (loading) {
 
     return (
 
       <div className="container">
 
-        <p>
-          Loading audit logs...
-        </p>
+        <div className="page-header">
+
+          <div>
+
+            <h1 className="title">
+              Audit Logs
+            </h1>
+
+            <p className="page-subtitle">
+              Review system activity and administrative changes.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="card">
+
+          <div className="loading-card">
+            Loading audit logs...
+          </div>
+
+        </div>
 
       </div>
     );
@@ -96,9 +158,33 @@ function AuditLogsPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Audit Logs
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Audit Logs
+          </h1>
+
+          <p className="page-subtitle">
+            Review system activity, entity changes, and user actions.
+          </p>
+
+        </div>
+
+        <div className="page-summary-card">
+
+          <span className="page-summary-number">
+            {auditLogs.length}
+          </span>
+
+          <span className="page-summary-label">
+            log entries
+          </span>
+
+        </div>
+
+      </div>
 
       {error && (
 
@@ -110,91 +196,137 @@ function AuditLogsPage() {
 
       <div className="card">
 
+        <div className="list-header">
+
+          <div>
+
+            <h2>
+              Activity History
+            </h2>
+
+            <p>
+              Track create, update, and delete events across the system.
+            </p>
+
+          </div>
+
+        </div>
+
         {auditLogs.length === 0 ? (
 
-          <p>
-            No audit logs found.
-          </p>
+          <div className="empty-state">
+
+            <div className="empty-state-icon audit-empty-icon">
+              🧾
+            </div>
+
+            <h3>
+              No audit logs found
+            </h3>
+
+            <p>
+              Activity will appear here after users create, update, or delete records.
+            </p>
+
+          </div>
 
         ) : (
 
-          <table className="audit-table">
+          <div className="table-wrapper">
 
-            <thead>
+            <table className="audit-table polished-audit-table">
 
-              <tr>
+              <thead>
 
-                <th>
-                  ID
-                </th>
+                <tr>
 
-                <th>
-                  User ID
-                </th>
+                  <th>
+                    ID
+                  </th>
 
-                <th>
-                  Action
-                </th>
+                  <th>
+                    User
+                  </th>
 
-                <th>
-                  Entity
-                </th>
+                  <th>
+                    Action
+                  </th>
 
-                <th>
-                  Entity ID
-                </th>
+                  <th>
+                    Entity
+                  </th>
 
-                <th>
-                  Created At
-                </th>
+                  <th>
+                    Entity ID
+                  </th>
 
-              </tr>
+                  <th>
+                    Created At
+                  </th>
 
-            </thead>
+                </tr>
 
-            <tbody>
+              </thead>
 
-              {auditLogs.map(
-                (log) => (
+              <tbody>
 
-                  <tr key={log.id}>
+                {auditLogs.map(
+                  (log) => (
 
-                    <td>
-                      {log.id}
-                    </td>
+                    <tr key={log.id}>
 
-                    <td>
-                      {log.user_id}
-                    </td>
+                      <td>
+                        <span className="user-id-pill">
+                          #{log.id}
+                        </span>
+                      </td>
 
-                    <td>
-                      <span className="audit-action">
-                        {log.action}
-                      </span>
-                    </td>
+                      <td>
+                        <span className="audit-user-pill">
+                          User {log.user_id}
+                        </span>
+                      </td>
 
-                    <td>
-                      {log.entity}
-                    </td>
+                      <td>
+                        <span
+                          className={`audit-action ${getActionClass(log.action)}`}
+                        >
+                          <span className="audit-action-icon">
+                            {getActionIcon(log.action)}
+                          </span>
 
-                    <td>
-                      {log.entity_id}
-                    </td>
+                          {log.action}
+                        </span>
+                      </td>
 
-                    <td>
-                      {formatDate(
-                        log.created_at
-                      )}
-                    </td>
+                      <td>
+                        <span className="audit-entity">
+                          {log.entity}
+                        </span>
+                      </td>
 
-                  </tr>
+                      <td>
+                        <span className="audit-entity-id">
+                          {log.entity_id}
+                        </span>
+                      </td>
 
-                )
-              )}
+                      <td>
+                        {formatDate(
+                          log.created_at
+                        )}
+                      </td>
 
-            </tbody>
+                    </tr>
 
-          </table>
+                  )
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         )}
 

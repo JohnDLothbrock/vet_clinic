@@ -28,16 +28,61 @@ function UserItem({
       return "Unknown";
     };
 
+  const getRoleClass =
+    (roleId) => {
+
+      if (roleId === 1) {
+
+        return "role-badge-admin";
+      }
+
+      if (roleId === 2) {
+
+        return "role-badge-vet";
+      }
+
+      if (roleId === 3) {
+
+        return "role-badge-receptionist";
+      }
+
+      return "role-badge-default";
+    };
+
   return (
 
     <tr>
 
       <td>
-        {user.id}
+        <span className="user-id-pill">
+          #{user.id}
+        </span>
       </td>
 
       <td>
-        {user.username}
+
+        <div className="user-cell">
+
+          <div className="user-avatar">
+            {user.username
+              .charAt(0)
+              .toUpperCase()}
+          </div>
+
+          <div>
+
+            <strong>
+              {user.username}
+            </strong>
+
+            <span>
+              Staff account
+            </span>
+
+          </div>
+
+        </div>
+
       </td>
 
       <td>
@@ -45,34 +90,41 @@ function UserItem({
       </td>
 
       <td>
-        <select
-          value={user.role_id}
-          onChange={(event) =>
-            handleRoleChange(
-              user.id,
-              Number(event.target.value)
-            )
-          }
-          disabled={updatingId === user.id}
-        >
 
-          <option value="1">
-            Admin
-          </option>
+        <div className="role-control">
 
-          <option value="2">
-            Veterinarian
-          </option>
+          <select
+            value={user.role_id}
+            onChange={(event) =>
+              handleRoleChange(
+                user.id,
+                Number(event.target.value)
+              )
+            }
+            disabled={updatingId === user.id}
+          >
 
-          <option value="3">
-            Receptionist
-          </option>
+            <option value="1">
+              Admin
+            </option>
 
-        </select>
+            <option value="2">
+              Veterinarian
+            </option>
 
-        <span className="role-label">
-          {getRoleName(user.role_id)}
-        </span>
+            <option value="3">
+              Receptionist
+            </option>
+
+          </select>
+
+          <span
+            className={`role-badge ${getRoleClass(user.role_id)}`}
+          >
+            {getRoleName(user.role_id)}
+          </span>
+
+        </div>
 
       </td>
 
@@ -103,8 +155,8 @@ function UserItem({
           disabled={updatingId === user.id}
           className={
             user.active
-              ? "delete-button"
-              : "secondary-button"
+              ? "delete-button small-button"
+              : "secondary-button small-button"
           }
         >
 

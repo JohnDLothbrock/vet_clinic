@@ -72,6 +72,11 @@ function ResetPasswordPage() {
       setError("");
       setMessage("");
 
+      if (loading) {
+
+        return;
+      }
+
       if (!token) {
 
         setError(
@@ -166,14 +171,22 @@ function ResetPasswordPage() {
 
     <div className="login-page">
 
-      <div className="login-card">
+      <div className="login-card account-login-card">
+
+        <div className="login-brand">
+
+          <div className="login-logo">
+            🔑
+          </div>
+
+        </div>
 
         <h1>
           Reset Password
         </h1>
 
         <p className="login-subtitle">
-          Create a new password for your account.
+          Create a new secure password for your account.
         </p>
 
         {error && (
@@ -194,23 +207,47 @@ function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit}>
 
-          <input
-            type="password"
-            name="newPassword"
-            placeholder="New password"
-            value={formData.newPassword}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <div className="form-field">
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm new password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            disabled={loading}
-          />
+            <label>
+              New Password
+            </label>
+
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="Minimum 8 characters"
+              value={formData.newPassword}
+              onChange={handleChange}
+              disabled={loading}
+            />
+
+          </div>
+
+          <div className="form-field">
+
+            <label>
+              Confirm New Password
+            </label>
+
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm new password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              disabled={loading}
+            />
+
+          </div>
+
+          <div className="password-requirements login-password-note">
+
+            <span>
+              Password must contain at least 8 characters.
+            </span>
+
+          </div>
 
           <button
             type="submit"

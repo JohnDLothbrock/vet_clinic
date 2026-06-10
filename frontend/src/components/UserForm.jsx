@@ -11,77 +11,125 @@ function UserForm({
 
     <div>
 
-      <h2>
-        Create User
-      </h2>
+      <div className="form-header">
+
+        <div>
+
+          <h2 className="section-title">
+            Create User
+          </h2>
+
+          <p>
+            Add a new staff account and assign the correct system role.
+          </p>
+
+        </div>
+
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="user-form"
+        className="user-form form-grid"
       >
 
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          disabled={saving}
-        />
+        <div className="form-field">
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          disabled={saving}
-        />
+          <label>
+            Username
+          </label>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Temporary password"
-          value={formData.password}
-          onChange={handleChange}
-          disabled={saving}
-        />
+          <input
+            type="text"
+            name="username"
+            placeholder="Example: vet1"
+            value={formData.username}
+            onChange={handleChange}
+            disabled={saving}
+          />
 
-        <select
-          name="role_id"
-          value={formData.role_id}
-          onChange={handleChange}
-          disabled={saving}
-        >
+        </div>
 
-          <option value="">
-            Select Role
-          </option>
+        <div className="form-field">
 
-          <option value="1">
-            Admin
-          </option>
+          <label>
+            Email
+          </label>
 
-          <option value="2">
-            Veterinarian
-          </option>
+          <input
+            type="email"
+            name="email"
+            placeholder="Example: vet1@clinic.com"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={saving}
+          />
 
-          <option value="3">
-            Receptionist
-          </option>
+        </div>
 
-        </select>
+        <div className="form-field">
 
-        <button
-          type="submit"
-          disabled={saving}
-        >
+          <label>
+            Temporary Password
+          </label>
 
-          {saving
-            ? "Creating..."
-            : "Create User"}
+          <input
+            type="password"
+            name="password"
+            placeholder="Minimum 8 characters"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={saving}
+          />
 
-        </button>
+        </div>
+
+        <div className="form-field">
+
+          <label>
+            Role
+          </label>
+
+          <select
+            name="role_id"
+            value={formData.role_id}
+            onChange={handleChange}
+            disabled={saving}
+          >
+
+            <option value="">
+              Select Role
+            </option>
+
+            <option value="1">
+              Admin
+            </option>
+
+            <option value="2">
+              Veterinarian
+            </option>
+
+            <option value="3">
+              Receptionist
+            </option>
+
+          </select>
+
+        </div>
+
+        <div className="form-actions">
+
+          <button
+            type="submit"
+            disabled={saving}
+          >
+
+            {saving
+              ? "Creating..."
+              : "Create User"}
+
+          </button>
+
+        </div>
 
       </form>
 

@@ -67,6 +67,11 @@ function ChangePasswordPage() {
       setError("");
       setMessage("");
 
+      if (loading) {
+
+        return;
+      }
+
       if (!formData.current_password.trim()) {
 
         setError(
@@ -153,9 +158,25 @@ function ChangePasswordPage() {
 
     <div className="container">
 
-      <h1 className="title">
-        Change Password
-      </h1>
+      <div className="page-header">
+
+        <div>
+
+          <h1 className="title">
+            Change Password
+          </h1>
+
+          <p className="page-subtitle">
+            Update your account password to keep your profile secure.
+          </p>
+
+        </div>
+
+        <div className="account-security-badge">
+          🔐 Secure Account
+        </div>
+
+      </div>
 
       {error && (
 
@@ -173,50 +194,102 @@ function ChangePasswordPage() {
 
       )}
 
-      <div className="card change-password-card">
+      <div className="card change-password-card account-card">
+
+        <div className="form-header">
+
+          <div>
+
+            <h2 className="section-title">
+              Password Settings
+            </h2>
+
+            <p>
+              Use at least 8 characters for your new password.
+            </p>
+
+          </div>
+
+        </div>
 
         <form
           onSubmit={handleSubmit}
           className="change-password-form"
         >
 
-          <input
-            type="password"
-            name="current_password"
-            placeholder="Current password"
-            value={formData.current_password}
-            onChange={handleChange}
-            disabled={loading}
-          />
+          <div className="form-field">
 
-          <input
-            type="password"
-            name="new_password"
-            placeholder="New password"
-            value={formData.new_password}
-            onChange={handleChange}
-            disabled={loading}
-          />
+            <label>
+              Current Password
+            </label>
 
-          <input
-            type="password"
-            name="confirm_password"
-            placeholder="Confirm new password"
-            value={formData.confirm_password}
-            onChange={handleChange}
-            disabled={loading}
-          />
+            <input
+              type="password"
+              name="current_password"
+              placeholder="Enter current password"
+              value={formData.current_password}
+              onChange={handleChange}
+              disabled={loading}
+            />
 
-          <button
-            type="submit"
-            disabled={loading}
-          >
+          </div>
 
-            {loading
-              ? "Changing..."
-              : "Change Password"}
+          <div className="form-field">
 
-          </button>
+            <label>
+              New Password
+            </label>
+
+            <input
+              type="password"
+              name="new_password"
+              placeholder="Enter new password"
+              value={formData.new_password}
+              onChange={handleChange}
+              disabled={loading}
+            />
+
+          </div>
+
+          <div className="form-field">
+
+            <label>
+              Confirm New Password
+            </label>
+
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="Confirm new password"
+              value={formData.confirm_password}
+              onChange={handleChange}
+              disabled={loading}
+            />
+
+          </div>
+
+          <div className="password-requirements">
+
+            <span>
+              Password must contain at least 8 characters.
+            </span>
+
+          </div>
+
+          <div className="form-actions">
+
+            <button
+              type="submit"
+              disabled={loading}
+            >
+
+              {loading
+                ? "Changing..."
+                : "Change Password"}
+
+            </button>
+
+          </div>
 
         </form>
 

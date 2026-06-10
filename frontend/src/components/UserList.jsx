@@ -12,71 +12,88 @@ function UserList({
   if (users.length === 0) {
 
     return (
-      <p>
-        No users found.
-      </p>
+
+      <div className="empty-state">
+
+        <div className="empty-state-icon users-empty-icon">
+          👥
+        </div>
+
+        <h3>
+          No users found
+        </h3>
+
+        <p>
+          Create a new user account to manage staff access.
+        </p>
+
+      </div>
     );
   }
 
   return (
 
-    <table className="users-table">
+    <div className="table-wrapper">
 
-      <thead>
+      <table className="users-table polished-users-table">
 
-        <tr>
+        <thead>
 
-          <th>
-            ID
-          </th>
+          <tr>
 
-          <th>
-            Username
-          </th>
+            <th>
+              ID
+            </th>
 
-          <th>
-            Email
-          </th>
+            <th>
+              User
+            </th>
 
-          <th>
-            Role
-          </th>
+            <th>
+              Email
+            </th>
 
-          <th>
-            Status
-          </th>
+            <th>
+              Role
+            </th>
 
-          <th>
-            Actions
-          </th>
+            <th>
+              Status
+            </th>
 
-        </tr>
+            <th>
+              Actions
+            </th>
 
-      </thead>
+          </tr>
 
-      <tbody>
+        </thead>
 
-        {users.map(
-          (user) => (
+        <tbody>
 
-            <UserItem
-              key={user.id}
-              user={user}
-              updatingId={updatingId}
-              handleRoleChange={
-                handleRoleChange
-              }
-              handleActiveChange={
-                handleActiveChange
-              }
-            />
+          {users.map(
+            (user) => (
 
-          )
-        )}
+              <UserItem
+                key={user.id}
+                user={user}
+                updatingId={updatingId}
+                handleRoleChange={
+                  handleRoleChange
+                }
+                handleActiveChange={
+                  handleActiveChange
+                }
+              />
 
-      </tbody>
+            )
+          )}
 
-    </table>
+        </tbody>
+
+      </table>
+
+    </div>
   );
 }
 
