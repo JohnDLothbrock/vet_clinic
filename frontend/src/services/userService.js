@@ -10,6 +10,45 @@ export async function getUsers() {
   return response.data;
 }
 
+export async function getPaginatedUsers({
+  page = 1,
+  page_size = 10,
+  search = "",
+  role_id = "",
+  active = ""
+}) {
+
+  const params = {
+    page,
+    page_size
+  };
+
+  if (search) {
+
+    params.search = search;
+  }
+
+  if (role_id) {
+
+    params.role_id = role_id;
+  }
+
+  if (active !== "") {
+
+    params.active = active;
+  }
+
+  const response =
+    await api.get(
+      "/users/paginated",
+      {
+        params
+      }
+    );
+
+  return response.data;
+}
+
 export async function createUser(
   userData
 ) {

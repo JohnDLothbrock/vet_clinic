@@ -589,3 +589,22 @@
 2026-06-16 10:23:17,245 - INFO - Fetching paginated owners
 2026-06-16 10:23:21,843 - INFO - Fetching paginated pets with owner data
 2026-06-16 10:23:21,871 - INFO - Fetching paginated pets with owner data
+2026-06-16 10:38:41,614 - INFO - Fetching paginated owners
+2026-06-16 10:38:41,638 - INFO - Fetching paginated owners
+2026-06-16 10:38:44,992 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:38:45,146 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:38:48,702 - INFO - Fetching paginated medical records
+2026-06-16 10:38:48,718 - INFO - Fetching paginated medical records
+2026-06-16 10:39:01,030 - INFO - Fetching paginated pets with owner data
+2026-06-16 10:39:01,047 - INFO - Fetching paginated pets with owner data
+2026-06-16 14:48:51,010 - INFO - Fetching paginated audit logs
+2026-06-16 16:07:27,666 - INFO - Fetching paginated pets with owner data
+2026-06-16 16:07:27,687 - INFO - Fetching paginated pets with owner data
+2026-06-16 16:07:28,244 - INFO - Fetching paginated owners
+2026-06-16 16:07:28,269 - INFO - Fetching paginated owners
+2026-06-16 16:07:28,866 - INFO - Fetching paginated appointments with pet data
+2026-06-16 16:07:28,965 - INFO - Fetching paginated appointments with pet data
+2026-06-16 16:07:29,322 - INFO - Fetching paginated medical records
+2026-06-16 16:07:29,362 - INFO - Fetching paginated medical records
+2026-06-16 16:07:30,667 - INFO - Fetching paginated audit logs
+2026-06-16 16:07:30,694 - INFO - Fetching paginated audit logs

@@ -79,6 +79,44 @@ class UserService:
             .get_all()
         )
 
+    def get_paginated_users(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            role_id: int | None = None,
+            active: bool | None = None
+    ):
+
+        if page < 1:
+
+            page = 1
+
+        if page_size < 1:
+
+            page_size = 10
+
+        if page_size > 100:
+
+            page_size = 100
+
+        if role_id:
+
+            self._validate_role(
+                role_id
+            )
+
+        return (
+            self.user_repository
+            .get_paginated(
+                page=page,
+                page_size=page_size,
+                search=search,
+                role_id=role_id,
+                active=active
+            )
+        )
+
     def create_user(
             self,
             username,

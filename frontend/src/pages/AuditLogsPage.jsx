@@ -3,8 +3,10 @@ import {
   useState
 } from "react";
 
+import PaginationControls from "../components/PaginationControls";
+
 import {
-  getAuditLogs
+  getPaginatedAuditLogs
 } from "../services/auditLogService";
 
 import "../styles/app.css";
@@ -17,6 +19,51 @@ function AuditLogsPage() {
   ] = useState([]);
 
   const [
+    actionFilter,
+    setActionFilter
+  ] = useState("");
+
+  const [
+    entityFilter,
+    setEntityFilter
+  ] = useState("");
+
+  const [
+    userIdFilter,
+    setUserIdFilter
+  ] = useState("");
+
+  const [
+    dateFrom,
+    setDateFrom
+  ] = useState("");
+
+  const [
+    dateTo,
+    setDateTo
+  ] = useState("");
+
+  const [
+    page,
+    setPage
+  ] = useState(1);
+
+  const [
+    pageSize,
+    setPageSize
+  ] = useState(10);
+
+  const [
+    total,
+    setTotal
+  ] = useState(0);
+
+  const [
+    totalPages,
+    setTotalPages
+  ] = useState(0);
+
+  const [
     loading,
     setLoading
   ] = useState(true);
@@ -26,18 +73,76 @@ function AuditLogsPage() {
     setError
   ] = useState("");
 
+  const buildDateFromFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 00:00:00`;
+    };
+
+  const buildDateToFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 23:59:59`;
+    };
+
   const fetchAuditLogs =
-    async () => {
+    async (
+      pageToLoad = page,
+      filtersOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
+        const filters =
+          filtersOverride || {
+            action: actionFilter,
+            entity: entityFilter,
+            user_id: userIdFilter,
+            date_from: buildDateFromFilter(
+              dateFrom
+            ),
+            date_to: buildDateToFilter(
+              dateTo
+            )
+          };
+
         const data =
-          await getAuditLogs();
+          await getPaginatedAuditLogs({
+            page: pageToLoad,
+            page_size: pageSize,
+            action: filters.action,
+            entity: filters.entity,
+            user_id: filters.user_id,
+            date_from: filters.date_from,
+            date_to: filters.date_to
+          });
 
         setAuditLogs(
-          data
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
         );
 
         setError("");
@@ -61,9 +166,78 @@ function AuditLogsPage() {
 
   useEffect(() => {
 
-    fetchAuditLogs();
+    fetchAuditLogs(
+      page
+    );
 
-  }, []);
+  }, [
+    page,
+    pageSize
+  ]);
+
+  const handleSearch =
+    async () => {
+
+      setError("");
+
+      const filters = {
+        action: actionFilter,
+        entity: entityFilter,
+        user_id: userIdFilter,
+        date_from: buildDateFromFilter(
+          dateFrom
+        ),
+        date_to: buildDateToFilter(
+          dateTo
+        )
+      };
+
+      await fetchAuditLogs(
+        1,
+        filters
+      );
+    };
+
+  const handleClearFilters =
+    async () => {
+
+      setError("");
+
+      setActionFilter("");
+      setEntityFilter("");
+      setUserIdFilter("");
+      setDateFrom("");
+      setDateTo("");
+
+      await fetchAuditLogs(
+        1,
+        {
+          action: "",
+          entity: "",
+          user_id: "",
+          date_from: "",
+          date_to: ""
+        }
+      );
+    };
+
+  const handlePageChange =
+    (newPage) => {
+
+      setPage(
+        newPage
+      );
+    };
+
+  const handlePageSizeChange =
+    (newPageSize) => {
+
+      setPageSize(
+        newPageSize
+      );
+
+      setPage(1);
+    };
 
   const formatDate =
     (dateValue) => {
@@ -120,40 +294,6 @@ function AuditLogsPage() {
       return "•";
     };
 
-  if (loading) {
-
-    return (
-
-      <div className="container">
-
-        <div className="page-header">
-
-          <div>
-
-            <h1 className="title">
-              Audit Logs
-            </h1>
-
-            <p className="page-subtitle">
-              Review system activity and administrative changes.
-            </p>
-
-          </div>
-
-        </div>
-
-        <div className="card">
-
-          <div className="loading-card">
-            Loading audit logs...
-          </div>
-
-        </div>
-
-      </div>
-    );
-  }
-
   return (
 
     <div className="container">
@@ -175,7 +315,7 @@ function AuditLogsPage() {
         <div className="page-summary-card">
 
           <span className="page-summary-number">
-            {auditLogs.length}
+            {total}
           </span>
 
           <span className="page-summary-label">
@@ -205,14 +345,152 @@ function AuditLogsPage() {
             </h2>
 
             <p>
-              Track create, update, and delete events across the system.
+              Filter create, update, and delete events across the system.
             </p>
 
           </div>
 
         </div>
 
-        {auditLogs.length === 0 ? (
+        <div className="advanced-filter-grid">
+
+          <select
+            value={actionFilter}
+            onChange={(event) => {
+
+              setError("");
+
+              setActionFilter(
+                event.target.value
+              );
+
+            }}
+          >
+
+            <option value="">
+              All actions
+            </option>
+
+            <option value="CREATE">
+              CREATE
+            </option>
+
+            <option value="UPDATE">
+              UPDATE
+            </option>
+
+            <option value="DELETE">
+              DELETE
+            </option>
+
+          </select>
+
+          <select
+            value={entityFilter}
+            onChange={(event) => {
+
+              setError("");
+
+              setEntityFilter(
+                event.target.value
+              );
+
+            }}
+          >
+
+            <option value="">
+              All entities
+            </option>
+
+            <option value="Pet">
+              Pet
+            </option>
+
+            <option value="Owner">
+              Owner
+            </option>
+
+            <option value="Appointment">
+              Appointment
+            </option>
+
+            <option value="MedicalRecord">
+              MedicalRecord
+            </option>
+
+            <option value="User">
+              User
+            </option>
+
+          </select>
+
+          <input
+            type="number"
+            placeholder="User ID"
+            value={userIdFilter}
+            onChange={(event) => {
+
+              setError("");
+
+              setUserIdFilter(
+                event.target.value
+              );
+
+            }}
+          />
+
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(event) => {
+
+              setError("");
+
+              setDateFrom(
+                event.target.value
+              );
+
+            }}
+          />
+
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(event) => {
+
+              setError("");
+
+              setDateTo(
+                event.target.value
+              );
+
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={handleSearch}
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="secondary-button"
+          >
+            Clear
+          </button>
+
+        </div>
+
+        {loading ? (
+
+          <div className="loading-card">
+            Loading audit logs...
+          </div>
+
+        ) : auditLogs.length === 0 ? (
 
           <div className="empty-state">
 
@@ -232,101 +510,114 @@ function AuditLogsPage() {
 
         ) : (
 
-          <div className="table-wrapper">
+          <>
 
-            <table className="audit-table polished-audit-table">
+            <div className="table-wrapper">
 
-              <thead>
+              <table className="audit-table polished-audit-table">
 
-                <tr>
+                <thead>
 
-                  <th>
-                    ID
-                  </th>
+                  <tr>
 
-                  <th>
-                    User
-                  </th>
+                    <th>
+                      ID
+                    </th>
 
-                  <th>
-                    Action
-                  </th>
+                    <th>
+                      User
+                    </th>
 
-                  <th>
-                    Entity
-                  </th>
+                    <th>
+                      Action
+                    </th>
 
-                  <th>
-                    Entity ID
-                  </th>
+                    <th>
+                      Entity
+                    </th>
 
-                  <th>
-                    Created At
-                  </th>
+                    <th>
+                      Entity ID
+                    </th>
 
-                </tr>
+                    <th>
+                      Created At
+                    </th>
 
-              </thead>
+                  </tr>
 
-              <tbody>
+                </thead>
 
-                {auditLogs.map(
-                  (log) => (
+                <tbody>
 
-                    <tr key={log.id}>
+                  {auditLogs.map(
+                    (log) => (
 
-                      <td>
-                        <span className="user-id-pill">
-                          #{log.id}
-                        </span>
-                      </td>
+                      <tr key={log.id}>
 
-                      <td>
-                        <span className="audit-user-pill">
-                          User {log.user_id}
-                        </span>
-                      </td>
-
-                      <td>
-                        <span
-                          className={`audit-action ${getActionClass(log.action)}`}
-                        >
-                          <span className="audit-action-icon">
-                            {getActionIcon(log.action)}
+                        <td>
+                          <span className="user-id-pill">
+                            #{log.id}
                           </span>
+                        </td>
 
-                          {log.action}
-                        </span>
-                      </td>
+                        <td>
+                          <span className="audit-user-pill">
+                            User {log.user_id}
+                          </span>
+                        </td>
 
-                      <td>
-                        <span className="audit-entity">
-                          {log.entity}
-                        </span>
-                      </td>
+                        <td>
+                          <span
+                            className={`audit-action ${getActionClass(log.action)}`}
+                          >
+                            <span className="audit-action-icon">
+                              {getActionIcon(log.action)}
+                            </span>
 
-                      <td>
-                        <span className="audit-entity-id">
-                          {log.entity_id}
-                        </span>
-                      </td>
+                            {log.action}
+                          </span>
+                        </td>
 
-                      <td>
-                        {formatDate(
-                          log.created_at
-                        )}
-                      </td>
+                        <td>
+                          <span className="audit-entity">
+                            {log.entity}
+                          </span>
+                        </td>
 
-                    </tr>
+                        <td>
+                          <span className="audit-entity-id">
+                            {log.entity_id}
+                          </span>
+                        </td>
 
-                  )
-                )}
+                        <td>
+                          {formatDate(
+                            log.created_at
+                          )}
+                        </td>
 
-              </tbody>
+                      </tr>
 
-            </table>
+                    )
+                  )}
 
-          </div>
+                </tbody>
+
+              </table>
+
+            </div>
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 

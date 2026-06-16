@@ -8,11 +8,12 @@ import toast from "react-hot-toast";
 import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
 import ConfirmModal from "../components/ConfirmModal";
+import PaginationControls from "../components/PaginationControls";
 
 import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
-  getUsers,
+  getPaginatedUsers,
   createUser,
   updateUserRole,
   updateUserActive
@@ -26,6 +27,41 @@ function UsersPage() {
     users,
     setUsers
   ] = useState([]);
+
+  const [
+    searchTerm,
+    setSearchTerm
+  ] = useState("");
+
+  const [
+    roleFilter,
+    setRoleFilter
+  ] = useState("");
+
+  const [
+    activeFilter,
+    setActiveFilter
+  ] = useState("");
+
+  const [
+    page,
+    setPage
+  ] = useState(1);
+
+  const [
+    pageSize,
+    setPageSize
+  ] = useState(10);
+
+  const [
+    total,
+    setTotal
+  ] = useState(0);
+
+  const [
+    totalPages,
+    setTotalPages
+  ] = useState(0);
 
   const [
     formData,
@@ -62,23 +98,51 @@ function UsersPage() {
     openConfirmModal
   } = useConfirmModal();
 
-  const activeUsers =
+  const activeUsersShown =
     users.filter(
       (user) => user.active
     ).length;
 
   const fetchUsers =
-    async () => {
+    async (
+      pageToLoad = page,
+      filtersOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
+        const filters =
+          filtersOverride || {
+            search: searchTerm.trim(),
+            role_id: roleFilter,
+            active: activeFilter
+          };
+
         const data =
-          await getUsers();
+          await getPaginatedUsers({
+            page: pageToLoad,
+            page_size: pageSize,
+            search: filters.search,
+            role_id: filters.role_id,
+            active: filters.active
+          });
 
         setUsers(
-          data
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
         );
 
         setError("");
@@ -102,9 +166,77 @@ function UsersPage() {
 
   useEffect(() => {
 
-    fetchUsers();
+    fetchUsers(
+      page
+    );
 
-  }, []);
+  }, [
+    page,
+    pageSize
+  ]);
+
+  const handleSearch =
+    async () => {
+
+      setError("");
+
+      const filters = {
+        search: searchTerm.trim(),
+        role_id: roleFilter,
+        active: activeFilter
+      };
+
+      await fetchUsers(
+        1,
+        filters
+      );
+    };
+
+  const handleClearFilters =
+    async () => {
+
+      setError("");
+
+      setSearchTerm("");
+      setRoleFilter("");
+      setActiveFilter("");
+
+      await fetchUsers(
+        1,
+        {
+          search: "",
+          role_id: "",
+          active: ""
+        }
+      );
+    };
+
+  const handleSearchKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSearch();
+      }
+    };
+
+  const handlePageChange =
+    (newPage) => {
+
+      setPage(
+        newPage
+      );
+    };
+
+  const handlePageSizeChange =
+    (newPageSize) => {
+
+      setPageSize(
+        newPageSize
+      );
+
+      setPage(1);
+    };
 
   const handleChange =
     (event) => {
@@ -203,7 +335,9 @@ function UsersPage() {
 
         resetForm();
 
-        await fetchUsers();
+        await fetchUsers(
+          page
+        );
 
       } catch (error) {
 
@@ -257,7 +391,9 @@ function UsersPage() {
           "User role updated successfully."
         );
 
-        await fetchUsers();
+        await fetchUsers(
+          page
+        );
 
       } catch (error) {
 
@@ -321,7 +457,9 @@ function UsersPage() {
           "User status updated successfully."
         );
 
-        await fetchUsers();
+        await fetchUsers(
+          page
+        );
 
       } catch (error) {
 
@@ -369,7 +507,7 @@ function UsersPage() {
           <div className="page-summary-card">
 
             <span className="page-summary-number">
-              {users.length}
+              {total}
             </span>
 
             <span className="page-summary-label">
@@ -381,11 +519,11 @@ function UsersPage() {
           <div className="page-summary-card">
 
             <span className="page-summary-number">
-              {activeUsers}
+              {activeUsersShown}
             </span>
 
             <span className="page-summary-label">
-              active users
+              active shown
             </span>
 
           </div>
@@ -424,10 +562,103 @@ function UsersPage() {
             </h2>
 
             <p>
-              Review users, update roles, and activate or deactivate accounts.
+              Search users, filter by role or status, and update access controls.
             </p>
 
           </div>
+
+        </div>
+
+        <div className="advanced-filter-grid">
+
+          <input
+            type="text"
+            placeholder="Search username or email..."
+            value={searchTerm}
+            onChange={(event) => {
+
+              setError("");
+
+              setSearchTerm(
+                event.target.value
+              );
+
+            }}
+            onKeyDown={handleSearchKeyDown}
+          />
+
+          <select
+            value={roleFilter}
+            onChange={(event) => {
+
+              setError("");
+
+              setRoleFilter(
+                event.target.value
+              );
+
+            }}
+          >
+
+            <option value="">
+              All roles
+            </option>
+
+            <option value="1">
+              Admin
+            </option>
+
+            <option value="2">
+              Veterinarian
+            </option>
+
+            <option value="3">
+              Receptionist
+            </option>
+
+          </select>
+
+          <select
+            value={activeFilter}
+            onChange={(event) => {
+
+              setError("");
+
+              setActiveFilter(
+                event.target.value
+              );
+
+            }}
+          >
+
+            <option value="">
+              All statuses
+            </option>
+
+            <option value="true">
+              Active
+            </option>
+
+            <option value="false">
+              Inactive
+            </option>
+
+          </select>
+
+          <button
+            type="button"
+            onClick={handleSearch}
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="secondary-button"
+          >
+            Clear
+          </button>
 
         </div>
 
@@ -439,16 +670,29 @@ function UsersPage() {
 
         ) : (
 
-          <UserList
-            users={users}
-            updatingId={updatingId}
-            handleRoleChange={
-              handleRoleChange
-            }
-            handleActiveChange={
-              handleActiveChange
-            }
-          />
+          <>
+
+            <UserList
+              users={users}
+              updatingId={updatingId}
+              handleRoleChange={
+                handleRoleChange
+              }
+              handleActiveChange={
+                handleActiveChange
+              }
+            />
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 

@@ -29,6 +29,17 @@ class UserResponse(
     active: bool
 
 
+class PaginatedUserResponse(
+    BaseModel
+):
+
+    items: list[UserResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
 class UserRoleUpdate(
     BaseModel
 ):

@@ -50,6 +50,46 @@ class AuditLogService:
             .get_all()
         )
 
+    def get_paginated_audit_logs(
+            self,
+            page: int,
+            page_size: int,
+            action: str | None = None,
+            entity: str | None = None,
+            user_id: int | None = None,
+            date_from: str | None = None,
+            date_to: str | None = None
+    ):
+
+        logger.info(
+            "Fetching paginated audit logs"
+        )
+
+        if page < 1:
+
+            page = 1
+
+        if page_size < 1:
+
+            page_size = 10
+
+        if page_size > 100:
+
+            page_size = 100
+
+        return (
+            self.audit_log_repository
+            .get_paginated(
+                page=page,
+                page_size=page_size,
+                action=action,
+                entity=entity,
+                user_id=user_id,
+                date_from=date_from,
+                date_to=date_to
+            )
+        )
+
     def get_audit_logs_by_entity(
             self,
             entity,

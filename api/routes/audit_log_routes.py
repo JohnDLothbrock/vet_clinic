@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from services.audit_log_service import (
@@ -12,7 +13,8 @@ from app.dependencies import (
 )
 
 from api.schemas.audit_log_schema import (
-    AuditLogResponse
+    AuditLogResponse,
+    PaginatedAuditLogResponse
 )
 
 from auth.current_user import (
@@ -41,6 +43,57 @@ def get_audit_logs(
     return (
         audit_log_service
         .get_all_audit_logs()
+    )
+
+
+@router.get(
+    "/paginated",
+    response_model=PaginatedAuditLogResponse
+)
+def get_paginated_audit_logs(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        action: str | None = Query(
+            None
+        ),
+        entity: str | None = Query(
+            None
+        ),
+        user_id: int | None = Query(
+            None
+        ),
+        date_from: str | None = Query(
+            None
+        ),
+        date_to: str | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_admin
+        ),
+        audit_log_service: AuditLogService = Depends(
+            get_audit_log_service
+        )
+):
+
+    return (
+        audit_log_service
+        .get_paginated_audit_logs(
+            page=page,
+            page_size=page_size,
+            action=action,
+            entity=entity,
+            user_id=user_id,
+            date_from=date_from,
+            date_to=date_to
+        )
     )
 
 

@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from services.user_service import (
@@ -14,6 +15,7 @@ from app.dependencies import (
 from api.schemas.user_schema import (
     UserCreate,
     UserResponse,
+    PaginatedUserResponse,
     UserRoleUpdate,
     UserActiveUpdate,
     ChangePasswordRequest
@@ -50,6 +52,49 @@ def get_users(
     return (
         user_service
         .get_all_users()
+    )
+
+
+@router.get(
+    "/paginated",
+    response_model=PaginatedUserResponse
+)
+def get_paginated_users(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        search: str | None = Query(
+            None
+        ),
+        role_id: int | None = Query(
+            None
+        ),
+        active: bool | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_admin
+        ),
+        user_service: UserService = Depends(
+            get_user_service
+        )
+):
+
+    return (
+        user_service
+        .get_paginated_users(
+            page=page,
+            page_size=page_size,
+            search=search,
+            role_id=role_id,
+            active=active
+        )
     )
 
 
