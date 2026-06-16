@@ -4,13 +4,13 @@
 
 A full-stack veterinary clinic management system built with **FastAPI**, **SQL Server**, **React**, **Vite**, and **Docker**.
 
-This project was built as a portfolio-ready application to demonstrate backend architecture, REST API development, role-based authentication, frontend CRUD workflows, testing, CI/CD basics, and Docker-based deployment preparation.
+This project was built as a portfolio-ready application to demonstrate backend architecture, REST API development, authentication, authorization, CRUD workflows, frontend integration, testing, CI/CD basics, pagination, filtering, and Docker-based deployment preparation.
 
 ---
 
 ## Overview
 
-The Veterinary Clinic Management System allows clinic staff to manage daily operational data such as owners, pets, appointments, users, medical records, and audit logs.
+The Veterinary Clinic Management System helps clinic staff manage daily operational data such as owners, pets, appointments, users, medical records, and audit logs.
 
 The application includes:
 
@@ -26,6 +26,8 @@ The application includes:
 * Forgot password flow with email reset link
 * Reset password flow using secure token
 * Change password flow
+* Advanced filtering and pagination
+* Custom confirmation modal for destructive actions
 * React frontend
 * FastAPI backend
 * SQL Server database
@@ -111,6 +113,7 @@ The system supports three main roles:
 * Update owners
 * Delete owners
 * Search owners
+* Paginated owner list
 * View owner details
 
 ---
@@ -121,6 +124,9 @@ The system supports three main roles:
 * Update pets
 * Delete pets
 * Search pets
+* Filter pets by species
+* Filter pets by owner
+* Paginated pet list
 * Link pets to owners
 * View pets with owner information
 
@@ -132,6 +138,10 @@ The system supports three main roles:
 * Update appointments
 * Delete appointments
 * View appointments with pet information
+* Search appointments by reason or pet
+* Filter appointments by pet
+* Filter appointments by date range
+* Paginated appointment list
 * Role-based UI actions
 
 ---
@@ -142,6 +152,10 @@ The system supports three main roles:
 * Update medical records
 * Delete medical records as Admin
 * View medical history by pet
+* Search records by diagnosis, treatment, notes, or pet
+* Filter medical records by pet
+* Filter medical records by visit date range
+* Paginated medical record list
 * Store diagnosis, treatment, weight, notes, and visit date
 
 ---
@@ -153,6 +167,10 @@ The system supports three main roles:
 * Assign roles
 * Activate users
 * Deactivate users
+* Search users by username or email
+* Filter users by role
+* Filter users by active or inactive status
+* Paginated user list
 
 ---
 
@@ -161,6 +179,11 @@ The system supports three main roles:
 * Track create, update, and delete actions
 * Store user ID, action, entity, entity ID, and timestamp
 * Admin-only access
+* Filter audit logs by action
+* Filter audit logs by entity
+* Filter audit logs by user ID
+* Filter audit logs by date range
+* Paginated audit log list
 
 ---
 
@@ -250,6 +273,7 @@ vet_clinic/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
+│   │   ├── hooks/
 │   │   ├── pages/
 │   │   ├── services/
 │   │   └── styles/
@@ -285,14 +309,14 @@ Repositories
 Database
 ```
 
-### Main backend layers
+### Main Backend Layers
 
 * **Routes:** FastAPI endpoints
 * **Schemas:** Request and response validation
 * **Services:** Business logic
 * **Repositories:** Database access
 * **Models:** Domain objects
-* **Validators:** Input/business validations
+* **Validators:** Input and business validations
 * **Exception handlers:** Centralized API error handling
 
 This separation makes the code easier to test, maintain, and extend.
@@ -308,19 +332,89 @@ Main frontend structure:
 ```text
 src/
 ├── components/
+├── hooks/
 ├── pages/
 ├── services/
 └── styles/
 ```
 
-### Main frontend responsibilities
+### Main Frontend Responsibilities
 
 * **Pages:** Main screens and workflows
 * **Components:** Reusable UI sections
+* **Hooks:** Reusable frontend logic, such as confirmation modal behavior
 * **Services:** API calls using Axios
 * **Styles:** Global UI styling
 * **Protected routes:** Route-level authentication
 * **Permission service:** Role-based UI behavior
+
+---
+
+## API Highlights
+
+The backend includes standard CRUD endpoints as well as paginated endpoints for larger datasets.
+
+### Core API Areas
+
+```text
+/api/v1/auth
+/api/v1/owners
+/api/v1/pets
+/api/v1/appointments
+/api/v1/medical-records
+/api/v1/users
+/api/v1/audit-logs
+/api/v1/dashboard
+```
+
+### Paginated Endpoints
+
+```text
+GET /api/v1/owners/paginated
+GET /api/v1/pets/with-owner-paginated
+GET /api/v1/appointments/paginated
+GET /api/v1/medical-records/paginated
+GET /api/v1/audit-logs/paginated
+GET /api/v1/users/paginated
+```
+
+### Example Paginated Appointment Request
+
+```text
+GET /api/v1/appointments/paginated?page=1&page_size=10&search=vaccine&pet_id=3&date_from=2026-06-01 00:00:00&date_to=2026-06-30 23:59:59
+```
+
+### Example Paginated Medical Record Request
+
+```text
+GET /api/v1/medical-records/paginated?page=1&page_size=10&search=infection&pet_id=3&date_from=2026-06-01 00:00:00&date_to=2026-06-30 23:59:59
+```
+
+### Example Paginated Audit Log Request
+
+```text
+GET /api/v1/audit-logs/paginated?page=1&page_size=10&action=CREATE&entity=Pet&user_id=1&date_from=2026-06-01 00:00:00&date_to=2026-06-30 23:59:59
+```
+
+### Example Paginated User Request
+
+```text
+GET /api/v1/users/paginated?page=1&page_size=10&search=juan&role_id=1&active=true
+```
+
+### Paginated Response Format
+
+Paginated endpoints return a consistent response format:
+
+```json
+{
+  "items": [],
+  "total": 0,
+  "page": 1,
+  "page_size": 10,
+  "total_pages": 0
+}
+```
 
 ---
 
@@ -511,6 +605,13 @@ Run tests with coverage:
 pytest --cov=. --cov-report=term-missing
 ```
 
+Run the frontend production build:
+
+```bash
+cd frontend
+npm run build
+```
+
 The project includes tests for:
 
 * Services
@@ -565,12 +666,68 @@ A typical demo flow for this project:
 2. Review dashboard statistics.
 3. Create an owner.
 4. Create a pet linked to that owner.
-5. Create an appointment for the pet.
-6. Add a medical record.
-7. Review audit logs.
-8. Create or deactivate a user.
-9. Test role-based access with a Veterinarian or Receptionist account.
-10. Test forgot password and reset password flows using the email reset link.
+5. Search, filter, and paginate pet records.
+6. Create an appointment for the pet.
+7. Filter appointments by pet and date range.
+8. Add a medical record.
+9. Search and filter medical records.
+10. Review audit logs.
+11. Filter audit logs by action, entity, user, or date range.
+12. Create or deactivate a user.
+13. Filter users by role and active status.
+14. Test role-based access with a Veterinarian or Receptionist account.
+15. Test forgot password and reset password flows using the email reset link.
+
+---
+
+## Demo Credentials
+
+Demo credentials are not included in this repository for security reasons.
+
+For local testing, create an Admin user directly in the database or through your setup script, then use the application to create additional staff users.
+
+Example roles:
+
+```text
+1 = Admin
+2 = Veterinarian
+3 = Receptionist
+```
+
+---
+
+## Security Notes
+
+* Passwords are hashed using bcrypt.
+* JWT tokens are used for authenticated requests.
+* Role-based dependencies protect backend endpoints.
+* Frontend route protection prevents unauthenticated navigation.
+* Destructive actions use confirmation modals.
+* Sensitive values are managed through environment variables.
+* The real `.env` file should never be committed.
+
+---
+
+## Portfolio Highlights
+
+This project demonstrates:
+
+* Full-stack application development
+* REST API design with FastAPI
+* SQL Server integration through repositories
+* JWT authentication
+* Role-based authorization
+* Frontend protected routes
+* Frontend permission-based UI rendering
+* CRUD workflows across multiple business entities
+* Advanced filtering and pagination
+* Audit logging
+* Password reset workflow
+* Automated tests
+* GitHub Actions CI
+* Dockerized backend and frontend setup
+* Clean layered backend architecture
+* React component-based frontend architecture
 
 ---
 
@@ -578,20 +735,20 @@ A typical demo flow for this project:
 
 Possible future improvements include:
 
-* Custom confirmation modal instead of browser confirmation dialogs
 * Appointment reminder notifications
-* Advanced search and filtering
-* Pagination for large datasets
 * Full SQL Server Docker container setup
 * Cloud deployment
 * Refresh token support
 * More detailed audit log descriptions
 * Export reports to CSV or PDF
+* Automated email notifications
+* More dashboard charts and analytics
+* End-to-end frontend tests
 
 ---
 
 ## Author
 
-****Juan Andrey Ureña Chaves****
+**Juan Andrey Ureña Chaves**
 
 Costa Rica
