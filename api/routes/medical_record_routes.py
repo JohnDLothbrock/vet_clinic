@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from models.medical_record import (
@@ -18,7 +19,8 @@ from app.dependencies import (
 from api.schemas.medical_record_schema import (
     MedicalRecordCreate,
     MedicalRecordUpdate,
-    MedicalRecordResponse
+    MedicalRecordResponse,
+    PaginatedMedicalRecordResponse
 )
 
 from utils.api_response import (
@@ -53,6 +55,53 @@ def get_medical_records(
     return (
         medical_record_service
         .get_all_medical_records()
+    )
+
+
+@router.get(
+    "/paginated",
+    response_model=PaginatedMedicalRecordResponse
+)
+def get_paginated_medical_records(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        search: str | None = Query(
+            None
+        ),
+        pet_id: int | None = Query(
+            None
+        ),
+        date_from: str | None = Query(
+            None
+        ),
+        date_to: str | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        medical_record_service: MedicalRecordService = Depends(
+            get_medical_record_service
+        )
+):
+
+    return (
+        medical_record_service
+        .get_paginated_medical_records(
+            page=page,
+            page_size=page_size,
+            search=search,
+            pet_id=pet_id,
+            date_from=date_from,
+            date_to=date_to
+        )
     )
 
 

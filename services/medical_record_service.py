@@ -95,6 +95,62 @@ class MedicalRecordService:
             .get_all()
         )
 
+    def get_paginated_medical_records(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            pet_id: int | None = None,
+            date_from: str | None = None,
+            date_to: str | None = None
+    ):
+
+        logger.info(
+            "Fetching paginated medical records"
+        )
+
+        if page < 1:
+
+            page = 1
+
+        if page_size < 1:
+
+            page_size = 10
+
+        if page_size > 100:
+
+            page_size = 100
+
+        if pet_id:
+
+            pet = (
+                self.pet_service.get_pet_by_id(
+                    pet_id
+                )
+            )
+
+            if not pet:
+
+                logger.warning(
+                    f"Pet ID {pet_id} not found"
+                )
+
+                raise PetNotFoundException(
+                    pet_id
+                )
+
+        return (
+            self.medical_record_repository
+            .get_paginated(
+                page=page,
+                page_size=page_size,
+                search=search,
+                pet_id=pet_id,
+                date_from=date_from,
+                date_to=date_to
+            )
+        )
+
     def get_medical_record_by_id(
             self,
             medical_record_id

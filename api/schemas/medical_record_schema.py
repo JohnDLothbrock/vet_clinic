@@ -36,3 +36,14 @@ class MedicalRecordResponse(
     treatment: str
     notes: str
     created_by: int
+
+
+class PaginatedMedicalRecordResponse(
+    BaseModel
+):
+
+    items: list[MedicalRecordResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int

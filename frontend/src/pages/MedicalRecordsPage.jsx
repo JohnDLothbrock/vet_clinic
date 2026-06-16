@@ -8,12 +8,12 @@ import toast from "react-hot-toast";
 import MedicalRecordForm from "../components/MedicalRecordForm";
 import MedicalRecordList from "../components/MedicalRecordList";
 import ConfirmModal from "../components/ConfirmModal";
+import PaginationControls from "../components/PaginationControls";
 
 import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
-  getMedicalRecords,
-  getMedicalRecordsByPet,
+  getPaginatedMedicalRecords,
   createMedicalRecord,
   updateMedicalRecord,
   deleteMedicalRecord
@@ -44,9 +44,44 @@ function MedicalRecordsPage() {
   ] = useState([]);
 
   const [
+    searchTerm,
+    setSearchTerm
+  ] = useState("");
+
+  const [
     selectedPetId,
     setSelectedPetId
   ] = useState("");
+
+  const [
+    dateFrom,
+    setDateFrom
+  ] = useState("");
+
+  const [
+    dateTo,
+    setDateTo
+  ] = useState("");
+
+  const [
+    page,
+    setPage
+  ] = useState(1);
+
+  const [
+    pageSize,
+    setPageSize
+  ] = useState(10);
+
+  const [
+    total,
+    setTotal
+  ] = useState(0);
+
+  const [
+    totalPages,
+    setTotalPages
+  ] = useState(0);
 
   const [
     formData,
@@ -94,22 +129,74 @@ function MedicalRecordsPage() {
     canCreateMedicalRecord() ||
     canEditMedicalRecord();
 
+  const buildDateFromFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 00:00:00`;
+    };
+
+  const buildDateToFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 23:59:59`;
+    };
+
   const fetchMedicalRecords =
-    async () => {
+    async (
+      pageToLoad = page,
+      filtersOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
-        const data =
-          selectedPetId
-            ? await getMedicalRecordsByPet(
-              selectedPetId
+        const filters =
+          filtersOverride || {
+            search: searchTerm.trim(),
+            pet_id: selectedPetId,
+            date_from: buildDateFromFilter(
+              dateFrom
+            ),
+            date_to: buildDateToFilter(
+              dateTo
             )
-            : await getMedicalRecords();
+          };
+
+        const data =
+          await getPaginatedMedicalRecords({
+            page: pageToLoad,
+            page_size: pageSize,
+            search: filters.search,
+            pet_id: filters.pet_id,
+            date_from: filters.date_from,
+            date_to: filters.date_to
+          });
 
         setMedicalRecords(
-          data
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
         );
 
         setError("");
@@ -164,11 +251,84 @@ function MedicalRecordsPage() {
 
   useEffect(() => {
 
-    fetchMedicalRecords();
+    fetchMedicalRecords(
+      page
+    );
 
   }, [
-    selectedPetId
+    page,
+    pageSize
   ]);
+
+  const handleSearch =
+    async () => {
+
+      setError("");
+
+      const filters = {
+        search: searchTerm.trim(),
+        pet_id: selectedPetId,
+        date_from: buildDateFromFilter(
+          dateFrom
+        ),
+        date_to: buildDateToFilter(
+          dateTo
+        )
+      };
+
+      await fetchMedicalRecords(
+        1,
+        filters
+      );
+    };
+
+  const handleClearFilters =
+    async () => {
+
+      setError("");
+
+      setSearchTerm("");
+      setSelectedPetId("");
+      setDateFrom("");
+      setDateTo("");
+
+      await fetchMedicalRecords(
+        1,
+        {
+          search: "",
+          pet_id: "",
+          date_from: "",
+          date_to: ""
+        }
+      );
+    };
+
+  const handleSearchKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSearch();
+      }
+    };
+
+  const handlePageChange =
+    (newPage) => {
+
+      setPage(
+        newPage
+      );
+    };
+
+  const handlePageSizeChange =
+    (newPageSize) => {
+
+      setPageSize(
+        newPageSize
+      );
+
+      setPage(1);
+    };
 
   const handleChange =
     (event) => {
@@ -322,7 +482,9 @@ function MedicalRecordsPage() {
 
         resetForm();
 
-        await fetchMedicalRecords();
+        await fetchMedicalRecords(
+          page
+        );
 
       } catch (error) {
 
@@ -425,7 +587,9 @@ function MedicalRecordsPage() {
 
         setError("");
 
-        await fetchMedicalRecords();
+        await fetchMedicalRecords(
+          page
+        );
 
       } catch (error) {
 
@@ -488,11 +652,11 @@ function MedicalRecordsPage() {
         <div className="page-summary-card">
 
           <span className="page-summary-number">
-            {medicalRecords.length}
+            {total}
           </span>
 
           <span className="page-summary-label">
-            records shown
+            total records
           </span>
 
         </div>
@@ -552,26 +716,46 @@ function MedicalRecordsPage() {
             </h2>
 
             <p>
-              Filter records by pet or review the full clinical history.
+              Search by diagnosis, treatment, notes, or pet, and filter by visit date.
             </p>
 
           </div>
 
         </div>
 
-        <div className="filter-row polished-filter-row">
+        <div className="advanced-filter-grid">
+
+          <input
+            type="text"
+            placeholder="Search diagnosis, treatment, notes, or pet..."
+            value={searchTerm}
+            onChange={(event) => {
+
+              setError("");
+
+              setSearchTerm(
+                event.target.value
+              );
+
+            }}
+            onKeyDown={handleSearchKeyDown}
+          />
 
           <select
             value={selectedPetId}
             onChange={(event) => {
+
+              setError("");
+
               setSelectedPetId(
                 event.target.value
               );
+
             }}
           >
 
             <option value="">
-              All Pets
+              All pets
             </option>
 
             {pets.map(
@@ -589,14 +773,47 @@ function MedicalRecordsPage() {
 
           </select>
 
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(event) => {
+
+              setError("");
+
+              setDateFrom(
+                event.target.value
+              );
+
+            }}
+          />
+
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(event) => {
+
+              setError("");
+
+              setDateTo(
+                event.target.value
+              );
+
+            }}
+          />
+
           <button
             type="button"
-            onClick={() => {
-              setSelectedPetId("");
-            }}
+            onClick={handleSearch}
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearFilters}
             className="secondary-button"
           >
-            Clear Filter
+            Clear
           </button>
 
         </div>
@@ -609,19 +826,32 @@ function MedicalRecordsPage() {
 
         ) : (
 
-          <MedicalRecordList
-            medicalRecords={
-              medicalRecords
-            }
-            pets={pets}
-            editMedicalRecord={
-              handleEditMedicalRecord
-            }
-            deleteMedicalRecord={
-              handleDeleteMedicalRecord
-            }
-            deletingId={deletingId}
-          />
+          <>
+
+            <MedicalRecordList
+              medicalRecords={
+                medicalRecords
+              }
+              pets={pets}
+              editMedicalRecord={
+                handleEditMedicalRecord
+              }
+              deleteMedicalRecord={
+                handleDeleteMedicalRecord
+              }
+              deletingId={deletingId}
+            />
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 

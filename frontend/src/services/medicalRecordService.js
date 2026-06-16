@@ -10,6 +10,51 @@ export async function getMedicalRecords() {
   return response.data;
 }
 
+export async function getPaginatedMedicalRecords({
+  page = 1,
+  page_size = 10,
+  search = "",
+  pet_id = "",
+  date_from = "",
+  date_to = ""
+}) {
+
+  const params = {
+    page,
+    page_size
+  };
+
+  if (search) {
+
+    params.search = search;
+  }
+
+  if (pet_id) {
+
+    params.pet_id = pet_id;
+  }
+
+  if (date_from) {
+
+    params.date_from = date_from;
+  }
+
+  if (date_to) {
+
+    params.date_to = date_to;
+  }
+
+  const response =
+    await api.get(
+      "/medical-records/paginated",
+      {
+        params
+      }
+    );
+
+  return response.data;
+}
+
 export async function getMedicalRecordsByPet(
   petId
 ) {

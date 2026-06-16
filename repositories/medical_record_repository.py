@@ -1,3 +1,5 @@
+from math import ceil
+
 from models.medical_record import MedicalRecord
 
 from repositories.base_repository import (
@@ -304,6 +306,191 @@ class MedicalRecordRepository(
                 )
 
             return records
+
+        finally:
+
+            self._close(
+                connection,
+                cursor
+            )
+
+    def get_paginated(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            pet_id: int | None = None,
+            date_from: str | None = None,
+            date_to: str | None = None
+    ):
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            where_clauses = []
+            params = []
+
+            if search:
+
+                where_clauses.append(
+                    """
+                    (
+                        mr.diagnosis LIKE ?
+                        OR mr.treatment LIKE ?
+                        OR mr.notes LIKE ?
+                        OR p.name LIKE ?
+                    )
+                    """
+                )
+
+                search_value = f"%{search}%"
+
+                params.extend(
+                    [
+                        search_value,
+                        search_value,
+                        search_value,
+                        search_value
+                    ]
+                )
+
+            if pet_id:
+
+                where_clauses.append(
+                    "mr.pet_id = ?"
+                )
+
+                params.append(
+                    pet_id
+                )
+
+            if date_from:
+
+                where_clauses.append(
+                    "mr.visit_date >= ?"
+                )
+
+                params.append(
+                    date_from
+                )
+
+            if date_to:
+
+                where_clauses.append(
+                    "mr.visit_date <= ?"
+                )
+
+                params.append(
+                    date_to
+                )
+
+            where_sql = ""
+
+            if where_clauses:
+
+                where_sql = (
+                    "WHERE " +
+                    " AND ".join(
+                        where_clauses
+                    )
+                )
+
+            count_query = f"""
+            SELECT
+                COUNT(*) AS total
+            FROM MedicalRecords mr
+            INNER JOIN Pets p
+                ON mr.pet_id = p.id
+            {where_sql}
+            """
+
+            cursor.execute(
+                count_query,
+                tuple(params)
+            )
+
+            total_row = cursor.fetchone()
+
+            total = (
+                total_row[0]
+                if total_row
+                else 0
+            )
+
+            offset = (
+                page - 1
+            ) * page_size
+
+            data_query = f"""
+            SELECT
+                mr.id,
+                mr.pet_id,
+                mr.visit_date,
+                mr.weight,
+                mr.diagnosis,
+                mr.treatment,
+                mr.notes,
+                mr.created_by
+            FROM MedicalRecords mr
+            INNER JOIN Pets p
+                ON mr.pet_id = p.id
+            {where_sql}
+            ORDER BY mr.visit_date DESC
+            OFFSET ? ROWS
+            FETCH NEXT ? ROWS ONLY
+            """
+
+            data_params = (
+                params +
+                [
+                    offset,
+                    page_size
+                ]
+            )
+
+            cursor.execute(
+                data_query,
+                tuple(data_params)
+            )
+
+            rows = cursor.fetchall()
+
+            records = []
+
+            for row in rows:
+
+                records.append(
+                    {
+                        "id": row.id,
+                        "pet_id": row.pet_id,
+                        "visit_date": str(row.visit_date),
+                        "weight": (
+                            float(row.weight)
+                            if row.weight is not None
+                            else 0
+                        ),
+                        "diagnosis": row.diagnosis,
+                        "treatment": row.treatment,
+                        "notes": row.notes,
+                        "created_by": row.created_by
+                    }
+                )
+
+            total_pages = (
+                ceil(total / page_size)
+                if total > 0
+                else 0
+            )
+
+            return {
+                "items": records,
+                "total": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages
+            }
 
         finally:
 
