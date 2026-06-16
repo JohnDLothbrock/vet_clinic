@@ -23,7 +23,8 @@ The application includes:
 * Medical records management
 * Audit logging
 * Dashboard statistics
-* Password reset flow
+* Forgot password flow with email reset link
+* Reset password flow using secure token
 * Change password flow
 * React frontend
 * FastAPI backend
@@ -43,7 +44,7 @@ The application includes:
 * SQL Server
 * PyODBC
 * Pydantic
-* Python-Jose JWT
+* python-jose for JWT creation and validation
 * Passlib / Bcrypt
 * Pytest
 
@@ -75,8 +76,8 @@ The application includes:
 * Protected API routes
 * Protected frontend routes
 * Role-based access control
-* Forgot password flow
-* Reset password flow
+* Forgot password flow with email reset link
+* Reset password flow using secure token
 * Change password flow
 * Password hashing with bcrypt
 
@@ -86,10 +87,10 @@ The application includes:
 
 The system supports three main roles:
 
-| Role         | Permissions                                                                         |
-| ------------ | ----------------------------------------------------------------------------------- |
-| Admin        | Full access to users, audit logs, pets, owners, appointments, and medical records   |
-| Veterinarian | Can manage medical records and appointments, with limited administrative access     |
+| Role | Permissions |
+| --- | --- |
+| Admin | Full access to users, audit logs, pets, owners, appointments, and medical records |
+| Veterinarian | Can manage medical records and appointments, with limited administrative access |
 | Receptionist | Can manage owners, pets, and appointments, with read-only access to medical records |
 
 ---
@@ -165,43 +166,57 @@ The system supports three main roles:
 
 ## Screenshots
 
-> Add your screenshots inside a root folder named `screenshots/`.
-
 ### Login
 
-![Login](screenshots/login.png)
+![Login](screenshots/Screenshot%202026-06-15%20203821.png)
 
 ### Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Screenshot%202026-06-15%20204114.png)
 
 ### Pets
 
-![Pets](screenshots/pets.png)
+![Pets](screenshots/pets1.png)
+
+![Pet Details](screenshots/pet2.png)
 
 ### Owners
 
-![Owners](screenshots/owners.png)
+![Owners](screenshots/owner.png)
+
+![Owner Details](screenshots/owner1.png)
 
 ### Appointments
 
 ![Appointments](screenshots/appointments.png)
 
+![Appointment Details](screenshots/appointment1.png)
+
 ### Medical Records
 
-![Medical Records](screenshots/medical-records.png)
+![Medical Records](screenshots/medical.png)
+
+![Medical Record Details](screenshots/medical1.png)
+
+![Medical Record Form](screenshots/medical3.png)
 
 ### Users
 
-![Users](screenshots/users.png)
+![Users](screenshots/user.png)
+
+![User Management](screenshots/user2.png)
 
 ### Audit Logs
 
-![Audit Logs](screenshots/audit-logs.png)
+![Audit Logs](screenshots/auditLogs.png)
 
 ### Change Password
 
-![Change Password](screenshots/change-password.png)
+![Change Password](screenshots/changepassword.png)
+
+### Forgot Password / Email Reset Link
+
+![Forgot Password](screenshots/forgotpasswordemail.png)
 
 ---
 
@@ -555,6 +570,7 @@ A typical demo flow for this project:
 7. Review audit logs.
 8. Create or deactivate a user.
 9. Test role-based access with a Veterinarian or Receptionist account.
+10. Test forgot password and reset password flows using the email reset link.
 
 ---
 
@@ -563,7 +579,6 @@ A typical demo flow for this project:
 Possible future improvements include:
 
 * Custom confirmation modal instead of browser confirmation dialogs
-* Email delivery provider integration for password reset links
 * Appointment reminder notifications
 * Advanced search and filtering
 * Pagination for large datasets
@@ -577,6 +592,6 @@ Possible future improvements include:
 
 ## Author
 
-**Juan Andrey Ureña Chaves**
+****Juan Andrey Ureña Chaves****
 
 Costa Rica
