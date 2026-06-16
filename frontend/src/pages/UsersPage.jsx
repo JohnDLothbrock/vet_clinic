@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 
 import UserForm from "../components/UserForm";
 import UserList from "../components/UserList";
+import ConfirmModal from "../components/ConfirmModal";
+
+import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
   getUsers,
@@ -53,6 +56,11 @@ function UsersPage() {
     error,
     setError
   ] = useState("");
+
+  const {
+    confirmModalProps,
+    openConfirmModal
+  } = useConfirmModal();
 
   const activeUsers =
     users.filter(
@@ -221,9 +229,13 @@ function UsersPage() {
     ) => {
 
       const confirmed =
-        window.confirm(
-          "Are you sure you want to change this user's role?"
-        );
+        await openConfirmModal({
+          title: "Change user role?",
+          message: "This will update the permissions available to this user.",
+          confirmText: "Change Role",
+          cancelText: "Cancel",
+          variant: "default"
+        });
 
       if (!confirmed) {
 
@@ -273,11 +285,21 @@ function UsersPage() {
     ) => {
 
       const confirmed =
-        window.confirm(
-          active
-            ? "Activate this user?"
-            : "Deactivate this user?"
-        );
+        await openConfirmModal({
+          title: active
+            ? "Activate user?"
+            : "Deactivate user?",
+          message: active
+            ? "This user will be able to access the system again."
+            : "This user will no longer be able to access the system.",
+          confirmText: active
+            ? "Activate User"
+            : "Deactivate User",
+          cancelText: "Cancel",
+          variant: active
+            ? "default"
+            : "danger"
+        });
 
       if (!confirmed) {
 
@@ -323,6 +345,10 @@ function UsersPage() {
   return (
 
     <div className="container">
+
+      <ConfirmModal
+        {...confirmModalProps}
+      />
 
       <div className="page-header">
 

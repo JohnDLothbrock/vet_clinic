@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 
 import MedicalRecordForm from "../components/MedicalRecordForm";
 import MedicalRecordList from "../components/MedicalRecordList";
+import ConfirmModal from "../components/ConfirmModal";
+
+import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
   getMedicalRecords,
@@ -81,6 +84,11 @@ function MedicalRecordsPage() {
     error,
     setError
   ] = useState("");
+
+  const {
+    confirmModalProps,
+    openConfirmModal
+  } = useConfirmModal();
 
   const canShowMedicalRecordForm =
     canCreateMedicalRecord() ||
@@ -388,9 +396,13 @@ function MedicalRecordsPage() {
       }
 
       const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this medical record?"
-        );
+        await openConfirmModal({
+          title: "Delete medical record?",
+          message: "This will permanently remove this clinical record from the pet history.",
+          confirmText: "Delete Record",
+          cancelText: "Keep Record",
+          variant: "danger"
+        });
 
       if (!confirmed) {
 
@@ -454,6 +466,10 @@ function MedicalRecordsPage() {
   return (
 
     <div className="container">
+
+      <ConfirmModal
+        {...confirmModalProps}
+      />
 
       <div className="page-header">
 

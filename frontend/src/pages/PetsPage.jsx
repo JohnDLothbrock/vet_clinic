@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 
 import PetForm from "../components/PetForm";
 import PetList from "../components/PetList";
+import ConfirmModal from "../components/ConfirmModal";
+
+import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
   getPetsWithOwner,
@@ -71,6 +74,11 @@ function PetsPage() {
     error,
     setError
   ] = useState("");
+
+  const {
+    confirmModalProps,
+    openConfirmModal
+  } = useConfirmModal();
 
   const canShowPetForm =
     canCreatePet() ||
@@ -353,9 +361,13 @@ function PetsPage() {
       }
 
       const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this pet?"
-        );
+        await openConfirmModal({
+          title: "Delete pet?",
+          message: "This will permanently remove this pet record from the system.",
+          confirmText: "Delete Pet",
+          cancelText: "Keep Pet",
+          variant: "danger"
+        });
 
       if (!confirmed) {
 
@@ -446,6 +458,10 @@ function PetsPage() {
   return (
 
     <div className="container">
+
+      <ConfirmModal
+        {...confirmModalProps}
+      />
 
       <div className="page-header">
 

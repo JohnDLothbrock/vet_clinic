@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 
 import OwnerForm from "../components/OwnerForm";
 import OwnerList from "../components/OwnerList";
+import ConfirmModal from "../components/ConfirmModal";
+
+import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
   getOwners,
@@ -62,6 +65,11 @@ function OwnersPage() {
     error,
     setError
   ] = useState("");
+
+  const {
+    confirmModalProps,
+    openConfirmModal
+  } = useConfirmModal();
 
   const canShowOwnerForm =
     canCreateOwner() ||
@@ -284,9 +292,13 @@ function OwnersPage() {
       }
 
       const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this owner?"
-        );
+        await openConfirmModal({
+          title: "Delete owner?",
+          message: "This will permanently remove this owner record from the system.",
+          confirmText: "Delete Owner",
+          cancelText: "Keep Owner",
+          variant: "danger"
+        });
 
       if (!confirmed) {
 
@@ -373,6 +385,10 @@ function OwnersPage() {
   return (
 
     <div className="container">
+
+      <ConfirmModal
+        {...confirmModalProps}
+      />
 
       <div className="page-header">
 

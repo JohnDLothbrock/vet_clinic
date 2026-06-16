@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 
 import AppointmentForm from "../components/AppointmentForm";
 import AppointmentList from "../components/AppointmentList";
+import ConfirmModal from "../components/ConfirmModal";
+
+import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
   getAppointments,
@@ -72,6 +75,11 @@ function AppointmentsPage() {
     error,
     setError
   ] = useState("");
+
+  const {
+    confirmModalProps,
+    openConfirmModal
+  } = useConfirmModal();
 
   const canShowAppointmentForm =
     canCreateAppointment() ||
@@ -295,9 +303,13 @@ function AppointmentsPage() {
       }
 
       const confirmed =
-        window.confirm(
-          "Are you sure you want to delete this appointment?"
-        );
+        await openConfirmModal({
+          title: "Delete appointment?",
+          message: "This will permanently remove this appointment from the schedule.",
+          confirmText: "Delete Appointment",
+          cancelText: "Keep Appointment",
+          variant: "danger"
+        });
 
       if (!confirmed) {
 
@@ -396,6 +408,10 @@ function AppointmentsPage() {
   return (
 
     <div className="container">
+
+      <ConfirmModal
+        {...confirmModalProps}
+      />
 
       <div className="page-header">
 
