@@ -10,6 +10,45 @@ export async function getPets() {
   return response.data;
 }
 
+export async function getPaginatedPetsWithOwner({
+  page = 1,
+  page_size = 10,
+  search = "",
+  species = "",
+  owner_id = ""
+}) {
+
+  const params = {
+    page,
+    page_size
+  };
+
+  if (search) {
+
+    params.search = search;
+  }
+
+  if (species) {
+
+    params.species = species;
+  }
+
+  if (owner_id) {
+
+    params.owner_id = owner_id;
+  }
+
+  const response =
+    await api.get(
+      "/pets/with-owner-paginated",
+      {
+        params
+      }
+    );
+
+  return response.data;
+}
+
 export async function createPet(
   petData
 ) {

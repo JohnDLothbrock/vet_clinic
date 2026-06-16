@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from models.pet import Pet
@@ -17,7 +18,8 @@ from api.schemas.pet_schema import (
     PetCreate,
     PetUpdate,
     PetResponse,
-    PetWithOwnerResponse
+    PetWithOwnerResponse,
+    PaginatedPetWithOwnerResponse
 )
 
 from utils.api_response import (
@@ -70,6 +72,49 @@ def get_pets_with_owner(
     return (
         pet_service
         .get_all_pets_with_owner()
+    )
+
+
+@router.get(
+    "/with-owner-paginated",
+    response_model=PaginatedPetWithOwnerResponse
+)
+def get_paginated_pets_with_owner(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        search: str | None = Query(
+            None
+        ),
+        species: str | None = Query(
+            None
+        ),
+        owner_id: int | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        pet_service: PetService = Depends(
+            get_pet_service
+        )
+):
+
+    return (
+        pet_service
+        .get_paginated_pets_with_owner(
+            page=page,
+            page_size=page_size,
+            search=search,
+            species=species,
+            owner_id=owner_id
+        )
     )
 
 

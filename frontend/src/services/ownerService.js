@@ -10,6 +10,33 @@ export async function getOwners() {
   return response.data;
 }
 
+export async function getPaginatedOwners({
+  page = 1,
+  page_size = 10,
+  search = ""
+}) {
+
+  const params = {
+    page,
+    page_size
+  };
+
+  if (search) {
+
+    params.search = search;
+  }
+
+  const response =
+    await api.get(
+      "/owners/paginated",
+      {
+        params
+      }
+    );
+
+  return response.data;
+}
+
 export async function searchOwners(
   name
 ) {

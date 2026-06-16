@@ -50,3 +50,14 @@ class AppointmentWithPetResponse(
     pet_name: str
     appointment_date: datetime
     reason: str
+
+
+class PaginatedAppointmentWithPetResponse(
+    BaseModel
+):
+
+    items: list[AppointmentWithPetResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int

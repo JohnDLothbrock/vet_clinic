@@ -8,11 +8,12 @@ import toast from "react-hot-toast";
 import AppointmentForm from "../components/AppointmentForm";
 import AppointmentList from "../components/AppointmentList";
 import ConfirmModal from "../components/ConfirmModal";
+import PaginationControls from "../components/PaginationControls";
 
 import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
-  getAppointments,
+  getPaginatedAppointments,
   createAppointment,
   updateAppointment,
   deleteAppointment
@@ -41,6 +42,46 @@ function AppointmentsPage() {
     pets,
     setPets
   ] = useState([]);
+
+  const [
+    searchTerm,
+    setSearchTerm
+  ] = useState("");
+
+  const [
+    petFilter,
+    setPetFilter
+  ] = useState("");
+
+  const [
+    dateFrom,
+    setDateFrom
+  ] = useState("");
+
+  const [
+    dateTo,
+    setDateTo
+  ] = useState("");
+
+  const [
+    page,
+    setPage
+  ] = useState(1);
+
+  const [
+    pageSize,
+    setPageSize
+  ] = useState(10);
+
+  const [
+    total,
+    setTotal
+  ] = useState(0);
+
+  const [
+    totalPages,
+    setTotalPages
+  ] = useState(0);
 
   const [
     formData,
@@ -85,18 +126,74 @@ function AppointmentsPage() {
     canCreateAppointment() ||
     canEditAppointment();
 
+  const buildDateFromFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 00:00:00`;
+    };
+
+  const buildDateToFilter =
+    (value) => {
+
+      if (!value) {
+
+        return "";
+      }
+
+      return `${value} 23:59:59`;
+    };
+
   const fetchAppointments =
-    async () => {
+    async (
+      pageToLoad = page,
+      filtersOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
+        const filters =
+          filtersOverride || {
+            search: searchTerm.trim(),
+            pet_id: petFilter,
+            date_from: buildDateFromFilter(
+              dateFrom
+            ),
+            date_to: buildDateToFilter(
+              dateTo
+            )
+          };
+
         const data =
-          await getAppointments();
+          await getPaginatedAppointments({
+            page: pageToLoad,
+            page_size: pageSize,
+            search: filters.search,
+            pet_id: filters.pet_id,
+            date_from: filters.date_from,
+            date_to: filters.date_to
+          });
 
         setAppointments(
-          data
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
         );
 
         setError("");
@@ -141,10 +238,90 @@ function AppointmentsPage() {
 
   useEffect(() => {
 
-    fetchAppointments();
     fetchPets();
 
   }, []);
+
+  useEffect(() => {
+
+    fetchAppointments(
+      page
+    );
+
+  }, [
+    page,
+    pageSize
+  ]);
+
+  const handleSearch =
+    async () => {
+
+      setError("");
+
+      const filters = {
+        search: searchTerm.trim(),
+        pet_id: petFilter,
+        date_from: buildDateFromFilter(
+          dateFrom
+        ),
+        date_to: buildDateToFilter(
+          dateTo
+        )
+      };
+
+      await fetchAppointments(
+        1,
+        filters
+      );
+    };
+
+  const handleClearFilters =
+    async () => {
+
+      setError("");
+
+      setSearchTerm("");
+      setPetFilter("");
+      setDateFrom("");
+      setDateTo("");
+
+      await fetchAppointments(
+        1,
+        {
+          search: "",
+          pet_id: "",
+          date_from: "",
+          date_to: ""
+        }
+      );
+    };
+
+  const handleSearchKeyDown =
+    (event) => {
+
+      if (event.key === "Enter") {
+
+        handleSearch();
+      }
+    };
+
+  const handlePageChange =
+    (newPage) => {
+
+      setPage(
+        newPage
+      );
+    };
+
+  const handlePageSizeChange =
+    (newPageSize) => {
+
+      setPageSize(
+        newPageSize
+      );
+
+      setPage(1);
+    };
 
   const handleChange =
     (event) => {
@@ -271,7 +448,9 @@ function AppointmentsPage() {
 
         resetForm();
 
-        await fetchAppointments();
+        await fetchAppointments(
+          page
+        );
 
       } catch (error) {
 
@@ -332,7 +511,9 @@ function AppointmentsPage() {
 
         setError("");
 
-        await fetchAppointments();
+        await fetchAppointments(
+          page
+        );
 
       } catch (error) {
 
@@ -422,7 +603,7 @@ function AppointmentsPage() {
           </h1>
 
           <p className="page-subtitle">
-            Schedule, update, and review upcoming clinic visits.
+            Schedule, update, filter, and review clinic visits.
           </p>
 
         </div>
@@ -430,11 +611,11 @@ function AppointmentsPage() {
         <div className="page-summary-card">
 
           <span className="page-summary-number">
-            {appointments.length}
+            {total}
           </span>
 
           <span className="page-summary-label">
-            appointments shown
+            total appointments
           </span>
 
         </div>
@@ -490,10 +671,93 @@ function AppointmentsPage() {
             </h2>
 
             <p>
-              Review scheduled appointments and visit reasons.
+              Search by reason or pet, filter by date range, and browse paginated results.
             </p>
 
           </div>
+
+        </div>
+
+        <div className="advanced-filter-grid">
+
+          <input
+            type="text"
+            placeholder="Search reason or pet..."
+            value={searchTerm}
+            onChange={(event) => {
+              setError("");
+              setSearchTerm(
+                event.target.value
+              );
+            }}
+            onKeyDown={handleSearchKeyDown}
+          />
+
+          <select
+            value={petFilter}
+            onChange={(event) => {
+              setError("");
+              setPetFilter(
+                event.target.value
+              );
+            }}
+          >
+
+            <option value="">
+              All pets
+            </option>
+
+            {pets.map(
+              (pet) => (
+
+                <option
+                  key={pet.id}
+                  value={pet.id}
+                >
+                  {pet.name} ({pet.owner_name})
+                </option>
+
+              )
+            )}
+
+          </select>
+
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(event) => {
+              setError("");
+              setDateFrom(
+                event.target.value
+              );
+            }}
+          />
+
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(event) => {
+              setError("");
+              setDateTo(
+                event.target.value
+              );
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={handleSearch}
+          >
+            Apply
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="secondary-button"
+          >
+            Clear
+          </button>
 
         </div>
 
@@ -505,16 +769,29 @@ function AppointmentsPage() {
 
         ) : (
 
-          <AppointmentList
-            appointments={appointments}
-            editAppointment={
-              handleEditAppointment
-            }
-            deleteAppointment={
-              handleDeleteAppointment
-            }
-            deletingId={deletingId}
-          />
+          <>
+
+            <AppointmentList
+              appointments={appointments}
+              editAppointment={
+                handleEditAppointment
+              }
+              deleteAppointment={
+                handleDeleteAppointment
+              }
+              deletingId={deletingId}
+            />
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 

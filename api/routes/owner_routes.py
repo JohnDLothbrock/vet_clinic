@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from models.owner import Owner
@@ -16,7 +17,8 @@ from app.dependencies import (
 from api.schemas.owner_schema import (
     OwnerCreate,
     OwnerUpdate,
-    OwnerResponse
+    OwnerResponse,
+    PaginatedOwnerResponse
 )
 
 from utils.api_response import (
@@ -49,6 +51,61 @@ def get_owners(
 ):
 
     return owner_service.get_all_owners()
+
+
+@router.get(
+    "/paginated",
+    response_model=PaginatedOwnerResponse
+)
+def get_paginated_owners(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        search: str | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
+):
+
+    return (
+        owner_service.get_paginated_owners(
+            page=page,
+            page_size=page_size,
+            search=search
+        )
+    )
+
+
+@router.get(
+    "/search/{name}",
+    response_model=list[OwnerResponse]
+)
+def search_owners(
+        name: str,
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        owner_service: OwnerService = Depends(
+            get_owner_service
+        )
+):
+
+    return (
+        owner_service.search_owners_by_name(
+            name
+        )
+    )
 
 
 @router.get(
@@ -153,22 +210,4 @@ def delete_owner(
         {
             "id": deleted_owner_id
         }
-    )
-
-
-@router.get("/search/{name}")
-def search_owners(
-        name: str,
-        current_user=Depends(
-            require_authenticated_user
-        ),
-        owner_service: OwnerService = Depends(
-            get_owner_service
-        )
-):
-
-    return (
-        owner_service.search_owners_by_name(
-            name
-        )
     )

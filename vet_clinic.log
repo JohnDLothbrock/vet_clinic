@@ -559,3 +559,33 @@
 2026-06-16 09:29:54,859 - WARNING - Pet ID 999 not found
 2026-06-16 09:29:54,862 - INFO - Pet deleted: 1
 2026-06-16 09:29:54,864 - WARNING - Pet ID 999 not found
+2026-06-16 09:42:51,834 - WARNING - Pet ID 999 not found
+2026-06-16 09:42:51,840 - INFO - Appointment created: None for pet 1
+2026-06-16 09:42:51,848 - WARNING - Appointment ID 999 not found
+2026-06-16 09:42:52,987 - INFO - Owner created: Juan
+2026-06-16 09:42:52,992 - WARNING - Owner ID 999 not found
+2026-06-16 09:42:52,995 - INFO - Owner deleted: 1
+2026-06-16 09:42:52,998 - WARNING - Owner 1 still has pets assigned
+2026-06-16 09:42:53,000 - INFO - Owner updated: 1
+2026-06-16 09:42:53,015 - INFO - Password reset requested for user ID 1
+2026-06-16 09:42:53,018 - WARNING - Password reset requested for non-existing email: missing@vetclinic.com
+2026-06-16 09:42:53,022 - WARNING - Password reset requested for inactive user: admin@vetclinic.com
+2026-06-16 09:42:53,243 - INFO - Password reset completed for user ID 10
+2026-06-16 09:42:53,251 - WARNING - Invalid owner ID: 999
+2026-06-16 09:42:53,255 - INFO - Pet created: Max
+2026-06-16 09:42:53,260 - WARNING - Pet ID 999 not found
+2026-06-16 09:42:53,263 - INFO - Pet deleted: 1
+2026-06-16 09:42:53,267 - INFO - Pet updated: 1
+2026-06-16 09:42:53,271 - WARNING - Pet ID 999 not found
+2026-06-16 09:42:53,275 - INFO - Pet deleted: 1
+2026-06-16 09:42:53,278 - WARNING - Pet ID 999 not found
+2026-06-16 10:22:59,408 - INFO - Fetching paginated owners
+2026-06-16 10:22:59,640 - INFO - Fetching paginated owners
+2026-06-16 10:23:00,909 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:23:01,114 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:23:13,470 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:23:13,493 - INFO - Fetching paginated appointments with pet data
+2026-06-16 10:23:17,227 - INFO - Fetching paginated owners
+2026-06-16 10:23:17,245 - INFO - Fetching paginated owners
+2026-06-16 10:23:21,843 - INFO - Fetching paginated pets with owner data
+2026-06-16 10:23:21,871 - INFO - Fetching paginated pets with owner data

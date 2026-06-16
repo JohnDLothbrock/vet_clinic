@@ -94,6 +94,44 @@ class AppointmentService:
             self.appointment_repository.get_all()
         )
 
+    def get_paginated_appointments_with_pet(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            pet_id: int | None = None,
+            date_from: str | None = None,
+            date_to: str | None = None
+    ):
+
+        logger.info(
+            "Fetching paginated appointments with pet data"
+        )
+
+        if page < 1:
+
+            page = 1
+
+        if page_size < 1:
+
+            page_size = 10
+
+        if page_size > 100:
+
+            page_size = 100
+
+        return (
+            self.appointment_repository
+            .get_paginated_with_pet(
+                page=page,
+                page_size=page_size,
+                search=search,
+                pet_id=pet_id,
+                date_from=date_from,
+                date_to=date_to
+            )
+        )
+
     def get_appointment_by_id(
             self,
             appointment_id

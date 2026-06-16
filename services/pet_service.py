@@ -227,6 +227,42 @@ class PetService:
             .get_all_with_owner()
         )
 
+    def get_paginated_pets_with_owner(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            species: str | None = None,
+            owner_id: int | None = None
+    ):
+
+        logger.info(
+            "Fetching paginated pets with owner data"
+        )
+
+        if page < 1:
+
+            page = 1
+
+        if page_size < 1:
+
+            page_size = 10
+
+        if page_size > 100:
+
+            page_size = 100
+
+        return (
+            self.pet_repository
+            .get_paginated_with_owner(
+                page=page,
+                page_size=page_size,
+                search=search,
+                species=species,
+                owner_id=owner_id
+            )
+        )
+
     def get_pets_by_owner_id(
             self,
             owner_id

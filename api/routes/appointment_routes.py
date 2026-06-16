@@ -1,6 +1,7 @@
 from fastapi import (
     APIRouter,
-    Depends
+    Depends,
+    Query
 )
 
 from models.appointments import Appointment
@@ -17,7 +18,8 @@ from api.schemas.appointment_schema import (
     AppointmentCreate,
     AppointmentUpdate,
     AppointmentResponse,
-    AppointmentWithPetResponse
+    AppointmentWithPetResponse,
+    PaginatedAppointmentWithPetResponse
 )
 
 from utils.api_response import (
@@ -73,6 +75,74 @@ def get_appointments_with_pet(
     return (
         appointment_service
         .get_all_appointments_with_pet()
+    )
+
+
+@router.get(
+    "/paginated",
+    response_model=PaginatedAppointmentWithPetResponse
+)
+def get_paginated_appointments(
+        page: int = Query(
+            1,
+            ge=1
+        ),
+        page_size: int = Query(
+            10,
+            ge=1,
+            le=100
+        ),
+        search: str | None = Query(
+            None
+        ),
+        pet_id: int | None = Query(
+            None
+        ),
+        date_from: str | None = Query(
+            None
+        ),
+        date_to: str | None = Query(
+            None
+        ),
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
+):
+
+    return (
+        appointment_service
+        .get_paginated_appointments_with_pet(
+            page=page,
+            page_size=page_size,
+            search=search,
+            pet_id=pet_id,
+            date_from=date_from,
+            date_to=date_to
+        )
+    )
+
+
+@router.get(
+    "/search/{pet_id}"
+)
+def search_appointments(
+        pet_id: int,
+        current_user=Depends(
+            require_authenticated_user
+        ),
+        appointment_service: AppointmentService = Depends(
+            get_appointment_service
+        )
+):
+
+    return (
+        appointment_service
+        .search_appointments_by_pet_id(
+            pet_id
+        )
     )
 
 
@@ -184,23 +254,4 @@ def delete_appointment(
         {
             "id": deleted_appointment_id
         }
-    )
-
-
-@router.get("/search/{pet_id}")
-def search_appointments(
-        pet_id: int,
-        current_user=Depends(
-            require_authenticated_user
-        ),
-        appointment_service: AppointmentService = Depends(
-            get_appointment_service
-        )
-):
-
-    return (
-        appointment_service
-        .search_appointments_by_pet_id(
-            pet_id
-        )
     )

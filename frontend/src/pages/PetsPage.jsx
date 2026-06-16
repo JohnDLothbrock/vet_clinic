@@ -8,15 +8,15 @@ import toast from "react-hot-toast";
 import PetForm from "../components/PetForm";
 import PetList from "../components/PetList";
 import ConfirmModal from "../components/ConfirmModal";
+import PaginationControls from "../components/PaginationControls";
 
 import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
-  getPetsWithOwner,
+  getPaginatedPetsWithOwner,
   createPet,
   updatePet,
-  deletePet,
-  searchPets
+  deletePet
 } from "../services/petService";
 
 import {
@@ -41,6 +41,24 @@ function PetsPage() {
 
   const [searchTerm, setSearchTerm] =
     useState("");
+
+  const [speciesFilter, setSpeciesFilter] =
+    useState("");
+
+  const [ownerFilter, setOwnerFilter] =
+    useState("");
+
+  const [page, setPage] =
+    useState(1);
+
+  const [pageSize, setPageSize] =
+    useState(10);
+
+  const [total, setTotal] =
+    useState(0);
+
+  const [totalPages, setTotalPages] =
+    useState(0);
 
   const [formData, setFormData] =
     useState({
@@ -85,16 +103,46 @@ function PetsPage() {
     canEditPet();
 
   const fetchPets =
-    async () => {
+    async (
+      pageToLoad = page,
+      filtersOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
-        const data =
-          await getPetsWithOwner();
+        const filters =
+          filtersOverride || {
+            search: searchTerm.trim(),
+            species: speciesFilter.trim(),
+            owner_id: ownerFilter
+          };
 
-        setPets(data);
+        const data =
+          await getPaginatedPetsWithOwner({
+            page: pageToLoad,
+            page_size: pageSize,
+            search: filters.search,
+            species: filters.species,
+            owner_id: filters.owner_id
+          });
+
+        setPets(
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
+        );
 
         setError("");
 
@@ -138,44 +186,55 @@ function PetsPage() {
       }
     };
 
+  useEffect(() => {
+
+    fetchOwners();
+
+  }, []);
+
+  useEffect(() => {
+
+    fetchPets(page);
+
+  }, [
+    page,
+    pageSize
+  ]);
+
   const handleSearch =
     async () => {
 
       setError("");
 
-      if (!searchTerm.trim()) {
+      const filters = {
+        search: searchTerm.trim(),
+        species: speciesFilter.trim(),
+        owner_id: ownerFilter
+      };
 
-        fetchPets();
+      await fetchPets(
+        1,
+        filters
+      );
+    };
 
-        return;
-      }
+  const handleClearFilters =
+    async () => {
 
-      try {
+      setError("");
 
-        setLoading(true);
+      setSearchTerm("");
+      setSpeciesFilter("");
+      setOwnerFilter("");
 
-        const data =
-          await searchPets(
-            searchTerm
-          );
-
-        setPets(data);
-
-      } catch (error) {
-
-        console.error(
-          "Error searching pets:",
-          error
-        );
-
-        setError(
-          error.message
-        );
-
-      } finally {
-
-        setLoading(false);
-      }
+      await fetchPets(
+        1,
+        {
+          search: "",
+          species: "",
+          owner_id: ""
+        }
+      );
     };
 
   const handleSearchKeyDown =
@@ -187,21 +246,23 @@ function PetsPage() {
       }
     };
 
-  useEffect(() => {
+  const handlePageChange =
+    (newPage) => {
 
-    const loadData =
-      async () => {
+      setPage(
+        newPage
+      );
+    };
 
-        await Promise.all([
-          fetchPets(),
-          fetchOwners()
-        ]);
+  const handlePageSizeChange =
+    (newPageSize) => {
 
-      };
+      setPageSize(
+        newPageSize
+      );
 
-    loadData();
-
-  }, []);
+      setPage(1);
+    };
 
   const handleChange =
     (event) => {
@@ -329,7 +390,7 @@ function PetsPage() {
 
         resetForm();
 
-        await fetchPets();
+        await fetchPets(page);
 
       } catch (error) {
 
@@ -390,7 +451,7 @@ function PetsPage() {
 
         setError("");
 
-        await fetchPets();
+        await fetchPets(page);
 
       } catch (error) {
 
@@ -480,11 +541,11 @@ function PetsPage() {
         <div className="page-summary-card">
 
           <span className="page-summary-number">
-            {pets.length}
+            {total}
           </span>
 
           <span className="page-summary-label">
-            pets shown
+            total pets
           </span>
 
         </div>
@@ -542,48 +603,80 @@ function PetsPage() {
             </h2>
 
             <p>
-              Search by pet name or browse all registered pets.
+              Search by pet, species, or owner and browse paginated results.
             </p>
 
           </div>
 
         </div>
 
-        <div className="search-bar">
+        <div className="advanced-filter-grid">
 
           <input
             type="text"
-            placeholder="Search pet by name..."
+            placeholder="Search pet, species, or owner..."
             value={searchTerm}
             onChange={(event) => {
-
               setError("");
-
               setSearchTerm(
                 event.target.value
               );
-
             }}
             onKeyDown={handleSearchKeyDown}
           />
+
+          <input
+            type="text"
+            placeholder="Filter by species..."
+            value={speciesFilter}
+            onChange={(event) => {
+              setError("");
+              setSpeciesFilter(
+                event.target.value
+              );
+            }}
+            onKeyDown={handleSearchKeyDown}
+          />
+
+          <select
+            value={ownerFilter}
+            onChange={(event) => {
+              setError("");
+              setOwnerFilter(
+                event.target.value
+              );
+            }}
+          >
+
+            <option value="">
+              All owners
+            </option>
+
+            {owners.map(
+              (owner) => (
+
+                <option
+                  key={owner.id}
+                  value={owner.id}
+                >
+                  {owner.name}
+                </option>
+
+              )
+            )}
+
+          </select>
 
           <button
             type="button"
             onClick={handleSearch}
           >
-            Search
+            Apply
           </button>
 
           <button
             type="button"
-            onClick={() => {
-
-              setError("");
-
-              setSearchTerm("");
-
-              fetchPets();
-            }}
+            onClick={handleClearFilters}
             className="secondary-button"
           >
             Clear
@@ -599,12 +692,25 @@ function PetsPage() {
 
         ) : (
 
-          <PetList
-            pets={pets}
-            editPet={handleEditPet}
-            deletePet={handleDeletePet}
-            deletingId={deletingId}
-          />
+          <>
+
+            <PetList
+              pets={pets}
+              editPet={handleEditPet}
+              deletePet={handleDeletePet}
+              deletingId={deletingId}
+            />
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 
@@ -615,3 +721,4 @@ function PetsPage() {
 }
 
 export default PetsPage;
+

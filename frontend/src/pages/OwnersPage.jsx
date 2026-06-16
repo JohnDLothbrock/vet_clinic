@@ -8,12 +8,12 @@ import toast from "react-hot-toast";
 import OwnerForm from "../components/OwnerForm";
 import OwnerList from "../components/OwnerList";
 import ConfirmModal from "../components/ConfirmModal";
+import PaginationControls from "../components/PaginationControls";
 
 import useConfirmModal from "../hooks/useConfirmModal";
 
 import {
-  getOwners,
-  searchOwners,
+  getPaginatedOwners,
   createOwner,
   updateOwner,
   deleteOwner
@@ -34,6 +34,18 @@ function OwnersPage() {
 
   const [searchTerm, setSearchTerm] =
     useState("");
+
+  const [page, setPage] =
+    useState(1);
+
+  const [pageSize, setPageSize] =
+    useState(10);
+
+  const [total, setTotal] =
+    useState(0);
+
+  const [totalPages, setTotalPages] =
+    useState(0);
 
   const [formData, setFormData] =
     useState({
@@ -76,16 +88,40 @@ function OwnersPage() {
     canEditOwner();
 
   const fetchOwners =
-    async () => {
+    async (
+      pageToLoad = page,
+      searchOverride = null
+    ) => {
 
       try {
 
         setLoading(true);
 
         const data =
-          await getOwners();
+          await getPaginatedOwners({
+            page: pageToLoad,
+            page_size: pageSize,
+            search:
+              searchOverride !== null
+                ? searchOverride
+                : searchTerm.trim()
+          });
 
-        setOwners(data);
+        setOwners(
+          data.items
+        );
+
+        setTotal(
+          data.total
+        );
+
+        setTotalPages(
+          data.total_pages
+        );
+
+        setPage(
+          data.page
+        );
 
         setError("");
 
@@ -108,48 +144,38 @@ function OwnersPage() {
 
   useEffect(() => {
 
-    fetchOwners();
+    fetchOwners(page);
 
-  }, []);
+  }, [
+    page,
+    pageSize
+  ]);
 
   const handleSearch =
     async () => {
 
       setError("");
 
-      if (!searchTerm.trim()) {
+      const searchValue =
+        searchTerm.trim();
 
-        fetchOwners();
+      await fetchOwners(
+        1,
+        searchValue
+      );
+    };
 
-        return;
-      }
+  const handleClearFilters =
+    async () => {
 
-      try {
+      setError("");
 
-        setLoading(true);
+      setSearchTerm("");
 
-        const data =
-          await searchOwners(
-            searchTerm
-          );
-
-        setOwners(data);
-
-      } catch (error) {
-
-        console.error(
-          "Error searching owners:",
-          error
-        );
-
-        setError(
-          error.message
-        );
-
-      } finally {
-
-        setLoading(false);
-      }
+      await fetchOwners(
+        1,
+        ""
+      );
     };
 
   const handleSearchKeyDown =
@@ -159,6 +185,24 @@ function OwnersPage() {
 
         handleSearch();
       }
+    };
+
+  const handlePageChange =
+    (newPage) => {
+
+      setPage(
+        newPage
+      );
+    };
+
+  const handlePageSizeChange =
+    (newPageSize) => {
+
+      setPageSize(
+        newPageSize
+      );
+
+      setPage(1);
     };
 
   const handleChange =
@@ -260,7 +304,7 @@ function OwnersPage() {
 
         resetForm();
 
-        await fetchOwners();
+        await fetchOwners(page);
 
       } catch (error) {
 
@@ -321,7 +365,7 @@ function OwnersPage() {
 
         setError("");
 
-        await fetchOwners();
+        await fetchOwners(page);
 
       } catch (error) {
 
@@ -407,11 +451,11 @@ function OwnersPage() {
         <div className="page-summary-card">
 
           <span className="page-summary-number">
-            {owners.length}
+            {total}
           </span>
 
           <span className="page-summary-label">
-            owners shown
+            total owners
           </span>
 
         </div>
@@ -468,7 +512,7 @@ function OwnersPage() {
             </h2>
 
             <p>
-              Search by owner name or browse all registered clients.
+              Search owners by name or phone and browse paginated results.
             </p>
 
           </div>
@@ -479,7 +523,7 @@ function OwnersPage() {
 
           <input
             type="text"
-            placeholder="Search owner by name..."
+            placeholder="Search owner by name or phone..."
             value={searchTerm}
             onChange={(event) => {
 
@@ -502,14 +546,7 @@ function OwnersPage() {
 
           <button
             type="button"
-            onClick={() => {
-
-              setError("");
-
-              setSearchTerm("");
-
-              fetchOwners();
-            }}
+            onClick={handleClearFilters}
             className="secondary-button"
           >
             Clear
@@ -525,12 +562,25 @@ function OwnersPage() {
 
         ) : (
 
-          <OwnerList
-            owners={owners}
-            editOwner={handleEditOwner}
-            deleteOwner={handleDeleteOwner}
-            deletingId={deletingId}
-          />
+          <>
+
+            <OwnerList
+              owners={owners}
+              editOwner={handleEditOwner}
+              deleteOwner={handleDeleteOwner}
+              deletingId={deletingId}
+            />
+
+            <PaginationControls
+              page={page}
+              pageSize={pageSize}
+              total={total}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+
+          </>
 
         )}
 

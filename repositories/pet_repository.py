@@ -1,3 +1,5 @@
+from math import ceil
+
 from models.pet import Pet
 
 from repositories.base_repository import (
@@ -370,6 +372,170 @@ class PetRepository(
                 )
 
             return pets
+
+        finally:
+
+            self._close(
+                connection,
+                cursor
+            )
+
+    def get_paginated_with_owner(
+            self,
+            page: int,
+            page_size: int,
+            search: str | None = None,
+            species: str | None = None,
+            owner_id: int | None = None
+    ):
+
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        try:
+
+            where_clauses = []
+            params = []
+
+            if search:
+
+                where_clauses.append(
+                    """
+                    (
+                        p.name LIKE ?
+                        OR p.species LIKE ?
+                        OR o.name LIKE ?
+                    )
+                    """
+                )
+
+                search_value = f"%{search}%"
+
+                params.extend(
+                    [
+                        search_value,
+                        search_value,
+                        search_value
+                    ]
+                )
+
+            if species:
+
+                where_clauses.append(
+                    "p.species LIKE ?"
+                )
+
+                params.append(
+                    f"%{species}%"
+                )
+
+            if owner_id:
+
+                where_clauses.append(
+                    "p.owner_id = ?"
+                )
+
+                params.append(
+                    owner_id
+                )
+
+            where_sql = ""
+
+            if where_clauses:
+
+                where_sql = (
+                    "WHERE " +
+                    " AND ".join(
+                        where_clauses
+                    )
+                )
+
+            count_query = f"""
+            SELECT
+                COUNT(*) AS total
+            FROM Pets p
+            INNER JOIN Owners o
+                ON p.owner_id = o.id
+            {where_sql}
+            """
+
+            cursor.execute(
+                count_query,
+                tuple(params)
+            )
+
+            total_row = cursor.fetchone()
+
+            total = (
+                total_row.total
+                if total_row
+                else 0
+            )
+
+            offset = (
+                page - 1
+            ) * page_size
+
+            data_query = f"""
+            SELECT
+                p.id,
+                p.name,
+                p.species,
+                p.age,
+                p.owner_id,
+                o.name AS owner_name
+            FROM Pets p
+            INNER JOIN Owners o
+                ON p.owner_id = o.id
+            {where_sql}
+            ORDER BY p.id DESC
+            OFFSET ? ROWS
+            FETCH NEXT ? ROWS ONLY
+            """
+
+            data_params = (
+                params +
+                [
+                    offset,
+                    page_size
+                ]
+            )
+
+            cursor.execute(
+                data_query,
+                tuple(data_params)
+            )
+
+            rows = cursor.fetchall()
+
+            pets = []
+
+            for row in rows:
+
+                pets.append(
+                    {
+                        "id": row.id,
+                        "name": row.name,
+                        "species": row.species,
+                        "age": row.age,
+                        "owner_id": row.owner_id,
+                        "owner_name": row.owner_name
+                    }
+                )
+
+            total_pages = (
+                ceil(total / page_size)
+                if total > 0
+                else 0
+            )
+
+            return {
+                "items": pets,
+                "total": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": total_pages
+            }
 
         finally:
 
